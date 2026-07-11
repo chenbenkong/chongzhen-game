@@ -127,6 +127,7 @@ function fileTreeApiPlugin() {
 }
 
 export default defineConfig({
+  base: '/chongzhen-game/',
   plugins: [
     react(),
     fileTreeApiPlugin()
