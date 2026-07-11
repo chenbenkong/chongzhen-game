@@ -168,7 +168,7 @@ async function* streamChatOnce(
       // 显式禁用 thinking 模式：否则模型把所有 token 耗在 reasoning_content，
       // 导致 delta.content 为空
       chat_template_kwargs: { enable_thinking: false },
-      max_tokens: 512,
+      max_tokens: 5000,
       stream: true
     }),
     signal
@@ -238,7 +238,7 @@ export async function chat(
       messages: fullMessages,
       temperature: 0.8,
       chat_template_kwargs: { enable_thinking: false },
-      max_tokens: 512
+      max_tokens: 5000
     }),
     signal
   })
