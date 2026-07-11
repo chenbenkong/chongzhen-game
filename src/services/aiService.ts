@@ -98,7 +98,7 @@ function buildSystemPrompt(ctx: GameContext): string {
 
   prompt += `\n\n【行为准则】
 1. 始终以谋士口吻回答，称呼对方为"大人"或"${ctx.playerName}大人"
-2. 回答简洁有力，一般不超过300字，切忌空泛
+2. 回答简洁有力，**严格控制在200字以内**，切忌空泛
 3. 结合当前局势给出具体建议，而非泛泛而谈
 4. 深谙明末历史背景，可引用史实、典故、先例
 5. 如果大人面临抉择，分析每个选项的利弊得失
@@ -168,7 +168,7 @@ async function* streamChatOnce(
       // 显式禁用 thinking 模式：否则模型把所有 token 耗在 reasoning_content，
       // 导致 delta.content 为空
       chat_template_kwargs: { enable_thinking: false },
-      max_tokens: 32000,
+      max_tokens: 512,
       stream: true
     }),
     signal
@@ -238,7 +238,7 @@ export async function chat(
       messages: fullMessages,
       temperature: 0.8,
       chat_template_kwargs: { enable_thinking: false },
-      max_tokens: 32000
+      max_tokens: 512
     }),
     signal
   })

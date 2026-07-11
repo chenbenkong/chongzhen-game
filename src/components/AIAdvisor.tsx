@@ -26,14 +26,26 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  // 自动滚动到底部
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  // 流式批处理：把多个 chunk 合并到下一帧再 setState，避免高频重渲染
+  const streamBufferRef = useRef('')
+  const rafIdRef = useRef<number | null>(null)
+
+  // 自动滚动到底部 —— 仅在新消息开始时或流式结束时滚动，避免每帧滚动
+  const scrollToBottom = useCallback((force = false) => {
+    const el = messagesEndRef.current
+    if (!el) return
+    // 仅在离底部很近时才滚动，避免用户向上翻看历史时被强制拉回
+    const parent = el.parentElement
+    if (parent && !force) {
+      const distanceFromBottom = parent.scrollHeight - parent.scrollTop - parent.clientHeight
+      if (distanceFromBottom > 120) return
+    }
+    el.scrollIntoView({ behavior: force ? 'auto' : 'smooth', block: 'end' })
   }, [])
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, streamingText, scrollToBottom])
+    scrollToBottom(true)
+  }, [messages, scrollToBottom])
 
   // 打开时检查 API Key
   useEffect(() => {
@@ -77,13 +89,35 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
 
     abortRef.current = new AbortController()
 
+    // 初始化批处理缓冲
+    streamBufferRef.current = ''
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current)
+      rafIdRef.current = null
+    }
+
     try {
       let accumulated = ''
       for await (const chunk of streamChat(chatHistory, gameContext, abortRef.current.signal)) {
         accumulated += chunk
-        setStreamingText(accumulated)
+        streamBufferRef.current = accumulated
+        // 用 rAF 调度下一帧更新
+        if (rafIdRef.current === null) {
+          rafIdRef.current = requestAnimationFrame(() => {
+            setStreamingText(streamBufferRef.current)
+            rafIdRef.current = null
+            // 仅在用户已滚到接近底部时才自动跟随
+            scrollToBottom()
+          })
+        }
       }
 
+      // 流结束：确保最后一批内容写入
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = null
+      }
+      setStreamingText(accumulated)
       setMessages(prev => [...prev, { role: 'assistant', content: accumulated }])
       setStreamingText('')
 
