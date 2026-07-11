@@ -125,6 +125,36 @@ export async function* streamChat(
     ...messages
   ]
 
+  // 重试 3 次以应对 API 偶发 500 错误
+  let lastError: Error | null = null
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      yield* streamChatOnce(fullMessages, apiKey, signal)
+      return
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw err
+      }
+      lastError = err instanceof Error ? err : new Error(String(err))
+      const msg = lastError.message
+      // 客户端错误（4xx）不重试
+      if (msg.includes('(400)') || msg.includes('(401)') || msg.includes('(403)')) {
+        throw lastError
+      }
+      // 服务端错误（5xx）等待 1.5s 后重试
+      if (attempt < 2) {
+        await new Promise(r => setTimeout(r, 1500))
+      }
+    }
+  }
+  throw lastError || new Error('API 请求失败')
+}
+
+async function* streamChatOnce(
+  fullMessages: ChatMessage[],
+  apiKey: string,
+  signal?: AbortSignal
+): AsyncGenerator<string> {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -135,7 +165,8 @@ export async function* streamChat(
       model: MODEL,
       messages: fullMessages,
       temperature: 0.8,
-      max_tokens: 1024,
+      // 给 thinking 留够空间：thinking 1024 + 输出 1024 ≈ 2048 tokens
+      max_tokens: 2048,
       stream: true
     }),
     signal
@@ -204,7 +235,7 @@ export async function chat(
       model: MODEL,
       messages: fullMessages,
       temperature: 0.8,
-      max_tokens: 1024
+      max_tokens: 2048
     }),
     signal
   })

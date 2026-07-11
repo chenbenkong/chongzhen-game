@@ -94,7 +94,19 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
           setStreamingText('')
         }
       } else {
-        setError(err instanceof Error ? err.message : '请求失败')
+        const msg = err instanceof Error ? err.message : '请求失败'
+        // 友好化常见错误
+        let displayMsg = msg
+        if (msg.includes('upstream error') || msg.includes('(500)')) {
+          displayMsg = 'API 服务暂时繁忙，请稍后重试（已自动重试 3 次）'
+        } else if (msg.includes('(401)') || msg.includes('(403)')) {
+          displayMsg = 'API Key 无效或已过期，请点击 ⚙ 重新设置'
+        } else if (msg.includes('(429)')) {
+          displayMsg = '请求过于频繁，请稍候片刻'
+        } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+          displayMsg = '网络连接失败，请检查网络后重试'
+        }
+        setError(displayMsg)
       }
     } finally {
       setIsStreaming(false)
