@@ -1,4 +1,4 @@
-/* AI 谋士对谈面板 */
+/* AI 谋士对谈面板 —— 性能优先：所有装饰性动画已移除 */
 .ai-advisor-overlay {
   position: fixed;
   top: 0;
@@ -9,12 +9,6 @@
   z-index: 9000;
   display: flex;
   justify-content: flex-end;
-  animation: ai-fade-in 0.2s ease;
-}
-
-@keyframes ai-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .ai-advisor-panel {
@@ -25,12 +19,9 @@
   border-left: 1px solid #2a2015;
   display: flex;
   flex-direction: column;
-  animation: ai-slide-in 0.3s ease;
-}
-
-@keyframes ai-slide-in {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  /* GPU 合成：避免流式更新时回流整个面板 */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* 头部 */
@@ -85,7 +76,6 @@
   color: #6b5a3a;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .ai-header-btn:hover {
@@ -124,7 +114,6 @@
   font-size: 0.82rem;
   font-family: monospace;
   outline: none;
-  transition: border-color 0.2s;
 }
 
 .ai-settings-input:focus {
@@ -139,7 +128,6 @@
   color: #c9a227;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.2s;
   white-space: nowrap;
 }
 
@@ -266,7 +254,13 @@
   color: #c9b896;
 }
 
-/* 流式光标 */
+/* 流式气泡：GPU 合成，避免文字更新触发整个面板回流 */
+.ai-streaming-bubble .ai-msg-content {
+  contain: layout paint style;
+  will-change: contents;
+}
+
+/* 流式光标 —— 唯一保留的动画 */
 .ai-cursor {
   display: inline-block;
   color: #c9a227;
@@ -307,7 +301,6 @@
   color: #8b7540;
   font-size: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s;
   white-space: nowrap;
 }
 
@@ -338,7 +331,6 @@
   font-family: inherit;
   resize: none;
   outline: none;
-  transition: border-color 0.2s;
   max-height: 100px;
   line-height: 1.5;
 }
@@ -364,7 +356,6 @@
   color: #c9a227;
   font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s;
   white-space: nowrap;
   letter-spacing: 2px;
 }

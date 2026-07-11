@@ -155,6 +155,7 @@ async function* streamChatOnce(
   apiKey: string,
   signal?: AbortSignal
 ): AsyncGenerator<string> {
+  // 关键：keepalive + 优先权，让浏览器立即把请求发出去
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -168,10 +169,14 @@ async function* streamChatOnce(
       // 显式禁用 thinking 模式：否则模型把所有 token 耗在 reasoning_content，
       // 导致 delta.content 为空
       chat_template_kwargs: { enable_thinking: false },
-      max_tokens: 5000,
+      // 不限制 token 数量上限
+      max_tokens: 32000,
       stream: true
     }),
-    signal
+    signal,
+    keepalive: true,
+    // @ts-expect-error 优先权，浏览器支持的 fetch 扩展
+    priority: 'high'
   })
 
   if (!response.ok) {
@@ -184,10 +189,28 @@ async function* streamChatOnce(
 
   const decoder = new TextDecoder()
   let buffer = ''
+  // 批 yield：把多个小 chunk 累积到 30ms 或 64 字节后一次性 yield，
+  // 极大减少上层 setState 次数（从每 chunk 1 次降到每 30ms 1 次）
+  let batch = ''
+  let lastFlush = performance.now()
+  const BATCH_MS = 30
+  const BATCH_BYTES = 64
+
+  const flushBatch = (): string | null => {
+    if (!batch) return null
+    const out = batch
+    batch = ''
+    lastFlush = performance.now()
+    return out
+  }
 
   while (true) {
     const { done, value } = await reader.read()
-    if (done) break
+    if (done) {
+      const tail = flushBatch()
+      if (tail) yield tail
+      break
+    }
 
     buffer += decoder.decode(value, { stream: true })
     const lines = buffer.split('\n')
@@ -197,12 +220,23 @@ async function* streamChatOnce(
       const trimmed = line.trim()
       if (!trimmed || !trimmed.startsWith('data: ')) continue
       const data = trimmed.slice(6)
-      if (data === '[DONE]') return
+      if (data === '[DONE]') {
+        const tail = flushBatch()
+        if (tail) yield tail
+        return
+      }
 
       try {
         const json = JSON.parse(data)
         const delta = json.choices?.[0]?.delta?.content
-        if (delta) yield delta
+        if (delta) {
+          batch += delta
+          const now = performance.now()
+          if (now - lastFlush >= BATCH_MS || batch.length >= BATCH_BYTES) {
+            const out = flushBatch()
+            if (out) yield out
+          }
+        }
       } catch {
         // 跳过无法解析的行
       }
