@@ -44,3 +44,6 @@ pnpm-debug.log*
 # Cache
 .cache/
 .eslintcache
+
+# GitHub CLI local config
+.gh-config/
