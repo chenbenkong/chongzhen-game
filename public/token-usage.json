@@ -1,0 +1,17 @@
+﻿{
+    "total_input_tokens":  7000,
+    "total_output_tokens":  1800,
+    "total_tokens":  8800,
+    "session_count":  1,
+    "records":  [
+                    {
+                        "total_tokens":  8800,
+                        "output_tokens":  1800,
+                        "timestamp":  "2026-06-07T09:10:12.1203006+08:00",
+                        "turn_id":  "20260607091012-1",
+                        "input_tokens":  7000,
+                        "summary":  "Activate token-tracker + build local token visualization tool",
+                        "duration_seconds":  95
+                    }
+                ]
+}

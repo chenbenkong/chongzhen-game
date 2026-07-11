@@ -1,0 +1,161 @@
+.dice-simple-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+}
+
+/* 简洁骰子方框 */
+.dice-box-simple {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #5a4a3a;
+  background: linear-gradient(145deg, #1e1812 0%, #15100c 100%);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+}
+
+/* 滚动动画 */
+.dice-box-simple.rolling {
+  animation: diceShake 0.5s ease-in-out infinite;
+}
+
+@keyframes diceShake {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+    border-color: #5a4a3a;
+  }
+  25% { 
+    transform: scale(0.97) rotate(-1deg);
+    border-color: #7a6a4a;
+  }
+  50% { 
+    transform: scale(1.01) rotate(0deg);
+    border-color: #a09060;
+    box-shadow: 
+      inset 0 0 10px rgba(201, 162, 39, 0.1),
+      0 0 10px rgba(201, 162, 39, 0.2);
+  }
+  75% { 
+    transform: scale(0.97) rotate(1deg);
+    border-color: #7a6a4a;
+  }
+}
+
+/* 成功状态 */
+.dice-box-simple.success {
+  border-color: #c9a227;
+  box-shadow: 
+    inset 0 0 15px rgba(201, 162, 39, 0.1),
+    0 0 15px rgba(201, 162, 39, 0.2);
+  animation: resultPulse 0.6s ease-out;
+}
+
+@keyframes resultPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dice-box-simple.success .dice-char {
+  color: #c9a227;
+  text-shadow: 
+    0 0 10px rgba(201, 162, 39, 0.5),
+    0 0 20px rgba(201, 162, 39, 0.3);
+}
+
+/* 失败状态 */
+.dice-box-simple.fail {
+  border-color: #8a4a4a;
+  box-shadow: 
+    inset 0 0 15px rgba(154, 74, 74, 0.1),
+    0 0 15px rgba(154, 74, 74, 0.2);
+  animation: resultPulse 0.6s ease-out;
+}
+
+.dice-box-simple.fail .dice-char {
+  color: #a05040;
+  text-shadow: 
+    0 0 10px rgba(154, 74, 74, 0.4),
+    0 0 20px rgba(154, 74, 74, 0.2);
+}
+
+/* 骰子字符 */
+.dice-char {
+  font-size: 2.8rem;
+  font-weight: 700;
+  font-family: 'Noto Serif SC', serif;
+  color: #c9a227;
+  text-shadow: 
+    0 0 8px rgba(201, 162, 39, 0.4),
+    0 0 16px rgba(201, 162, 39, 0.2);
+  line-height: 1;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.1s ease;
+  user-select: none;
+}
+
+/* 数字跳动时的效果 */
+.dice-char.shuffling {
+  animation: numberFlash 0.08s ease-out;
+  color: #d9b93a;
+  text-shadow: 
+    0 0 12px rgba(233, 201, 74, 0.6),
+    0 0 24px rgba(233, 201, 74, 0.3);
+}
+
+@keyframes numberFlash {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 问号状态 */
+.dice-box-simple:not(.success):not(.fail):not(.rolling) .dice-char {
+  color: #8a7a5a;
+  text-shadow: none;
+}
+
+/* 滚动时的效果 */
+.dice-box-simple.rolling .dice-char {
+  color: #d9b93a;
+}
+
+/* 悬停效果 */
+.dice-box-simple:not(.rolling):hover {
+  border-color: #6a5a4a;
+  transform: scale(1.01);
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .dice-box-simple {
+    width: 75px;
+    height: 75px;
+  }
+
+  .dice-char {
+    font-size: 2.4rem;
+  }
+}

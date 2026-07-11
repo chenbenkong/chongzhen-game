@@ -1,0 +1,396 @@
+/* 死亡结局界面 - 全屏独立界面 */
+.death-ending-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  animation: fadeIn 1s ease;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 顶部装饰条 */
+.death-ending-top-bar {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #8b0000, transparent);
+  animation: glow 3s infinite;
+}
+
+.martyrdom .death-ending-top-bar {
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+}
+
+.suicide .death-ending-top-bar {
+  background: linear-gradient(90deg, transparent, #4a4a4a, transparent);
+}
+
+.execution .death-ending-top-bar {
+  background: linear-gradient(90deg, transparent, #660000, transparent);
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* 主容器 */
+.death-ending-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 60px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 头部区域 */
+.death-ending-header {
+  text-align: center;
+  margin-bottom: 15px;
+  animation: slideDown 1s ease 0.3s both;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.death-ending-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+  animation: pulse 3s infinite;
+  filter: drop-shadow(0 0 15px rgba(139, 0, 0, 0.5));
+}
+
+.martyrdom .death-ending-icon {
+  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.death-ending-type {
+  font-size: 14px;
+  color: #8b0000;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+
+.martyrdom .death-ending-type {
+  color: #d4af37;
+}
+
+.suicide .death-ending-type {
+  color: #888;
+}
+
+/* 标题 */
+.death-ending-title {
+  font-size: 28px;
+  color: #e8e0d0;
+  text-align: center;
+  margin: 10px 0 20px 0;
+  font-weight: normal;
+  letter-spacing: 4px;
+  animation: fadeInUp 1s ease 0.5s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 属性标签 */
+.death-ending-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  animation: fadeInUp 1s ease 0.7s both;
+}
+
+.death-ending-tag {
+  padding: 6px 16px;
+  background: rgba(139, 0, 0, 0.15);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  border-radius: 4px;
+  font-size: 13px;
+  color: #c9a86c;
+  letter-spacing: 2px;
+}
+
+.martyrdom .death-ending-tag {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.25);
+  color: #d4af37;
+}
+
+/* 描述文本 */
+.death-ending-description {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #b8b0a0;
+  text-align: center;
+  margin-bottom: 30px;
+  max-width: 900px;
+  animation: fadeInUp 1s ease 0.9s both;
+}
+
+/* 回音区域 */
+.death-ending-echo {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+  border-left: 4px solid #8b0000;
+  padding: 20px 30px;
+  margin-bottom: 30px;
+  max-width: 900px;
+  width: 100%;
+  animation: fadeInUp 1s ease 1.1s both;
+}
+
+.martyrdom .death-ending-echo {
+  border-left-color: #d4af37;
+}
+
+.death-ending-echo-label {
+  font-size: 14px;
+  color: #8b0000;
+  margin-bottom: 15px;
+  letter-spacing: 4px;
+}
+
+.martyrdom .death-ending-echo-label {
+  color: #d4af37;
+}
+
+.death-ending-echo-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #a09080;
+  margin: 0;
+  font-style: italic;
+}
+
+/* 墓志铭 */
+.death-ending-epitaph {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInUp 1s ease 1.3s both;
+}
+
+.death-ending-epitaph-border {
+  display: inline-block;
+  border: 2px solid rgba(139, 0, 0, 0.3);
+  padding: 25px 50px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 100%);
+  position: relative;
+}
+
+.death-ending-epitaph-border::before,
+.death-ending-epitaph-border::after {
+  content: '❧';
+  position: absolute;
+  font-size: 20px;
+  color: rgba(139, 0, 0, 0.5);
+}
+
+.death-ending-epitaph-border::before {
+  top: 10px;
+  left: 15px;
+}
+
+.death-ending-epitaph-border::after {
+  bottom: 10px;
+  right: 15px;
+  transform: rotate(180deg);
+}
+
+.martyrdom .death-ending-epitaph-border {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.martyrdom .death-ending-epitaph-border::before,
+.martyrdom .death-ending-epitaph-border::after {
+  color: rgba(212, 175, 55, 0.5);
+}
+
+.death-ending-epitaph-text {
+  font-size: 16px;
+  line-height: 2;
+  color: #888;
+  margin: 0;
+  letter-spacing: 4px;
+}
+
+/* 按钮区域 */
+.death-ending-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 40px;
+  animation: fadeInUp 1s ease 1.5s both;
+}
+
+.death-ending-btn {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 3px;
+  min-width: 140px;
+}
+
+.death-ending-btn-primary {
+  background: linear-gradient(180deg, #8b0000 0%, #660000 100%);
+  color: #e8e0d0;
+  border: 2px solid #a00000;
+}
+
+.death-ending-btn-primary:hover {
+  background: linear-gradient(180deg, #a00000 0%, #800000 100%);
+  box-shadow: 0 0 30px rgba(139, 0, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.martyrdom .death-ending-btn-primary {
+  background: linear-gradient(180deg, #d4af37 0%, #b8941f 100%);
+  color: #1a1a1a;
+  border-color: #e8c547;
+}
+
+.martyrdom .death-ending-btn-primary:hover {
+  background: linear-gradient(180deg, #e8c547 0%, #d4af37 100%);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+}
+
+.death-ending-btn-secondary {
+  background: transparent;
+  color: #888;
+  border: 2px solid #444;
+}
+
+.death-ending-btn-secondary:hover {
+  border-color: #666;
+  color: #aaa;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 底部装饰 */
+.death-ending-footer {
+  text-align: center;
+  padding: 30px;
+  border-top: 1px solid rgba(139, 0, 0, 0.2);
+  animation: fadeIn 1s ease 1.7s both;
+}
+
+.death-ending-footer-text {
+  font-size: 12px;
+  color: #444;
+  letter-spacing: 4px;
+}
+
+/* 底部装饰条 */
+.death-ending-bottom-bar {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #8b0000, transparent);
+  animation: glow 3s infinite;
+}
+
+.martyrdom .death-ending-bottom-bar {
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+}
+
+.suicide .death-ending-bottom-bar {
+  background: linear-gradient(90deg, transparent, #4a4a4a, transparent);
+}
+
+.execution .death-ending-bottom-bar {
+  background: linear-gradient(90deg, transparent, #660000, transparent);
+}
+
+/* 滚动条样式 */
+.death-ending-overlay::-webkit-scrollbar {
+  width: 8px;
+}
+
+.death-ending-overlay::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.death-ending-overlay::-webkit-scrollbar-thumb {
+  background: rgba(139, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+.death-ending-overlay::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 0, 0, 0.7);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .death-ending-container {
+    padding: 40px 20px;
+  }
+  
+  .death-ending-title {
+    font-size: 28px;
+    letter-spacing: 4px;
+  }
+  
+  .death-ending-icon {
+    font-size: 60px;
+  }
+  
+  .death-ending-epitaph-border {
+    padding: 30px 40px;
+  }
+  
+  .death-ending-epitaph-text {
+    font-size: 14px;
+    letter-spacing: 3px;
+  }
+  
+  .death-ending-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .death-ending-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+}

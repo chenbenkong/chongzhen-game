@@ -1,0 +1,1004 @@
+/* ============ 结局界面 - 全屏深色古风 · 一屏紧凑布局 ============ */
+
+.ending-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', 'SimSun', serif;
+  z-index: 9999;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* 主题色调变 */
+.ending-legendary {
+  background: radial-gradient(ellipse at 50% 30%, #3a2815 0%, #0d0a07 70%);
+}
+.ending-good {
+  background: radial-gradient(ellipse at 50% 30%, #1f2a15 0%, #0a0d07 70%);
+}
+.ending-normal {
+  background: radial-gradient(ellipse at 50% 30%, #1a1a1a 0%, #0a0a0a 70%);
+}
+.ending-bad {
+  background: radial-gradient(ellipse at 50% 30%, #2a1515 0%, #0d0707 70%);
+}
+.ending-dark {
+  background: radial-gradient(ellipse at 50% 30%, #1a1020 0%, #0a070d 70%);
+}
+
+/* 背景纹理（竹简纹） */
+.ending-bg-pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 28px,
+      rgba(201, 162, 39, 0.025) 28px,
+      rgba(201, 162, 39, 0.025) 29px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 40px,
+      rgba(201, 162, 39, 0.015) 40px,
+      rgba(201, 162, 39, 0.015) 41px
+    );
+  z-index: 1;
+}
+
+/* 暗角 */
+.ending-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.7) 100%);
+  z-index: 2;
+}
+
+/* ============ 主体容器 - 一屏装下所有信息 ============ */
+.ending-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1280px;
+  height: 100vh;
+  padding: 18px 32px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .ending-container { padding: 14px 20px; gap: 10px; }
+}
+@media (max-width: 480px) {
+  .ending-container { padding: 10px 12px; gap: 8px; }
+}
+
+/* ============ 顶部：3列（印章+标题 | 人物列传 | 评分）========= */
+.ending-top {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr 0.9fr;
+  gap: 16px;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  background: linear-gradient(165deg, rgba(40, 30, 20, 0.55), rgba(20, 15, 10, 0.65));
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  border-radius: 2px;
+  position: relative;
+}
+
+.top-left::before, .top-left::after {
+  content: '';
+  position: absolute;
+  width: 7px; height: 7px;
+  border: 1px solid #8b6914;
+}
+.top-left::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.top-left::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+/* 朝代印章 */
+.dynasty-stamp {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  width: 48px;
+  padding: 5px 3px;
+  background: rgba(180, 40, 40, 0.9);
+  border: 2px solid #8b2020;
+  box-shadow: 0 0 10px rgba(180, 40, 40, 0.45);
+  transform: rotate(6deg);
+  flex-shrink: 0;
+}
+.dynasty-stamp .stamp-row {
+  font-size: 0.92rem;
+  color: #f4e8c8;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  line-height: 1.05;
+}
+.dynasty-stamp .stamp-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: #f4e8c8;
+  margin: 1px 0;
+}
+
+.title-block {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.ending-title {
+  font-size: 1.65rem;
+  color: #d4a520;
+  letter-spacing: 0.55rem;
+  font-weight: 600;
+  font-family: 'LiSu', 'STLiti', 'SimLi', '隶书', serif;
+  text-shadow:
+    0 0 16px rgba(212, 165, 32, 0.4),
+    0 0 4px rgba(212, 165, 32, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.ending-subtitle {
+  font-size: 0.78rem;
+  color: #8b7540;
+  letter-spacing: 4px;
+  margin-top: 2px;
+}
+
+/* 卷首徽章：仕林卷·名臣垂范 */
+.archetype-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  border-radius: 2px;
+  margin-top: 4px;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  border: 1px solid;
+  background: rgba(0, 0, 0, 0.2);
+}
+.archetype-badge.tone-gold {
+  color: #d4a520;
+  border-color: rgba(201, 162, 39, 0.5);
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.08), rgba(201, 162, 39, 0.02));
+}
+.archetype-badge.tone-red {
+  color: #c8483a;
+  border-color: rgba(200, 72, 58, 0.5);
+  background: linear-gradient(135deg, rgba(200, 72, 58, 0.08), rgba(200, 72, 58, 0.02));
+}
+.archetype-badge.tone-gray {
+  color: #a09080;
+  border-color: rgba(160, 144, 128, 0.4);
+  background: linear-gradient(135deg, rgba(160, 144, 128, 0.06), rgba(160, 144, 128, 0.02));
+}
+.archetype-icon { display: inline-flex; align-items: center; }
+.archetype-name { font-weight: 600; }
+.archetype-sep { color: rgba(201, 162, 39, 0.4); margin: 0 1px; }
+.archetype-variant { color: #e8d4a0; font-weight: 400; }
+
+/* 卷首内嵌：玩家名（title-block 内左对齐小一号） */
+.profile-name-large {
+  font-size: 1.4rem;
+  color: #d4a520;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px rgba(212, 165, 32, 0.3);
+  font-family: 'STKaiti', 'KaiTi', serif;
+  margin-top: 2px;
+}
+.profile-ranks {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #9a8870;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.rank-tag { color: #c9b896; }
+.rank-sep { color: #5a4520; }
+.rank-final { color: #c9a227; }
+.profile-posthumous {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-top: 1px solid rgba(201, 162, 39, 0.2);
+  border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+.posthumous-label {
+  font-size: 0.72rem;
+  color: #6b5a3a;
+  letter-spacing: 2px;
+}
+.posthumous-name {
+  font-size: 1.4rem;
+  color: #d4a520;
+  font-weight: bold;
+  letter-spacing: 4px;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  text-shadow: 0 0 8px rgba(212, 165, 32, 0.3);
+}
+
+/* 右侧：核心评价（综合分 + 史馆定位） */
+.top-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 18px;
+  background: linear-gradient(165deg, rgba(50, 35, 22, 0.65), rgba(25, 18, 10, 0.75));
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  border-radius: 2px;
+  position: relative;
+}
+.top-right::before, .top-right::after {
+  content: '';
+  position: absolute;
+  width: 7px; height: 7px;
+  border: 1px solid #8b6914;
+}
+.top-right::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.top-right::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+.rating-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.score-block {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.score-num {
+  font-size: 3.4rem;
+  color: #d4a520;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 0 0 18px rgba(212, 165, 32, 0.4);
+  font-family: 'Georgia', serif;
+  background: linear-gradient(180deg, #f0c850 0%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.score-label {
+  font-size: 0.9rem;
+  color: #8b7540;
+  letter-spacing: 2px;
+}
+.rank-block {
+  font-size: 0.85rem;
+  color: #c9a227;
+  letter-spacing: 4px;
+  font-weight: 500;
+  margin-top: 2px;
+  padding: 2px 10px;
+  background: rgba(201, 162, 39, 0.08);
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  border-radius: 2px;
+}
+
+/* ============ 中部：2 列（史馆传略 | 功过 + 留名）========= */
+.ending-middle {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-auto-rows: 1fr;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+.middle-col {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(165deg, rgba(40, 30, 20, 0.5), rgba(20, 15, 10, 0.6));
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  border-radius: 2px;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.middle-col::before, .middle-col::after {
+  content: '';
+  position: absolute;
+  width: 7px; height: 7px;
+  border: 1px solid #8b6914;
+  pointer-events: none;
+}
+.middle-col::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.middle-col::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+.col-title {
+  font-size: 0.95rem;
+  color: #c9a227;
+  letter-spacing: 6px;
+  text-align: center;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(201, 162, 39, 0.25);
+  font-family: 'STKaiti', 'KaiTi', serif;
+  background: linear-gradient(180deg, rgba(201, 162, 39, 0.06), transparent);
+  flex-shrink: 0;
+  position: relative;
+}
+.col-title::before, .col-title::after {
+  content: '◇';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5a4520;
+  font-size: 0.55rem;
+}
+.col-title::before { left: 14%; }
+.col-title::after  { right: 14%; }
+
+.col-content {
+  padding: 10px 14px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.achievements-content { padding: 8px 10px; }
+
+.col-content::-webkit-scrollbar { width: 4px; }
+.col-content::-webkit-scrollbar-track { background: transparent; }
+.col-content::-webkit-scrollbar-thumb { background: rgba(201, 162, 39, 0.3); border-radius: 2px; }
+
+/* 史评列 - 仿史书风格，简洁 */
+.comment-block {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.05), rgba(201, 162, 39, 0.01));
+  padding: 12px 14px;
+  border-left: 2px solid #c9a227;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 主评 - 仿史书正文（楷体） */
+.comment-text {
+  font-size: 0.92rem;
+  color: #a8a098 !important;
+  line-height: 1.95;
+  letter-spacing: 0.5px;
+  text-align: justify;
+  text-indent: 2em;
+  font-family: 'STKaiti', 'KaiTi', 'STZhongsong', 'FangSong', 'STFangsong', '楷体', 'SimKai', 'SimSun', '宋体', serif;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+}
+
+/* 副评 - 紧随主评的小字 */
+.comment-sub {
+  font-size: 0.82rem;
+  color: #9a8870;
+  line-height: 1.7;
+  letter-spacing: 0.5px;
+  text-align: justify;
+  margin: 0;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(201, 162, 39, 0.18);
+  font-family: 'STKaiti', 'KaiTi', 'FangSong', 'STFangsong', 'STZhongsong', '楷体', 'SimKai', 'SimSun', '宋体', serif;
+  font-weight: 400;
+}
+
+/* 史官落款 - 右对齐小字 */
+.comment-attribution {
+  text-align: right;
+  font-size: 0.72rem;
+  color: #8b7540;
+  letter-spacing: 3px;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  margin: 2px 0 0;
+  font-style: normal;
+}
+.comment-attribution::before { content: '—— '; color: #5a4520; }
+
+/* 史馆传略（明史列传）—— 替代原史评位置 */
+.comment-biography {
+  flex: 1;
+  margin: 0;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.05), rgba(201, 162, 39, 0.01));
+  border-left: 3px solid rgba(180, 140, 80, 0.5);
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', serif;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  color: #d4c8a8;
+  letter-spacing: 1px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto;
+  min-height: 0;
+  border-radius: 2px;
+}
+
+.cause-box {
+  margin-top: 8px;
+  background: rgba(180, 50, 40, 0.1);
+  border: 1px solid rgba(180, 50, 40, 0.28);
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.cause-label { color: #8b7540; margin-right: 4px; }
+.cause-text  { color: #c96030; font-weight: bold; }
+
+/* 一生功过列 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.stat-item {
+  text-align: center;
+  padding: 6px 4px;
+  background: linear-gradient(165deg, rgba(40, 30, 20, 0.45), rgba(20, 15, 10, 0.55));
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  border-radius: 2px;
+}
+.stat-value {
+  font-size: 1.25rem;
+  color: #d4a520;
+  font-weight: bold;
+  margin-bottom: 1px;
+  font-family: 'Georgia', serif;
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 0.7rem;
+  color: #8b7540;
+  letter-spacing: 1px;
+}
+
+.micro-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.3), transparent);
+  margin: 4px 0 8px;
+  flex-shrink: 0;
+}
+
+/* 属性分组（无进度条，紧凑网格） */
+.attr-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.attr-group:last-child { margin-bottom: 0; }
+
+.attr-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.attr-group-name {
+  font-size: 0.7rem;
+  color: #8b7540;
+  letter-spacing: 3px;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  white-space: nowrap;
+}
+.attr-group-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 162, 39, 0.25), transparent);
+}
+
+.attr-cells {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+.attr-cells.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.attr-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 2px;
+  background: linear-gradient(165deg, rgba(40, 30, 20, 0.4), rgba(20, 15, 10, 0.5));
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  border-radius: 2px;
+  text-align: center;
+  min-width: 0;
+}
+.attr-cell.tone-good { border-color: rgba(120, 180, 100, 0.45); background: linear-gradient(165deg, rgba(60, 80, 50, 0.35), rgba(30, 40, 25, 0.45)); }
+.attr-cell.tone-mid  { border-color: rgba(201, 162, 39, 0.35); }
+.attr-cell.tone-low  { border-color: rgba(200, 140, 80, 0.35); }
+.attr-cell.tone-bad  { border-color: rgba(180, 80, 70, 0.45); background: linear-gradient(165deg, rgba(70, 40, 35, 0.35), rgba(35, 20, 18, 0.45)); }
+
+.attr-cell-name {
+  font-size: 0.72rem;
+  color: #9a8870;
+  letter-spacing: 1px;
+  margin-bottom: 1px;
+}
+.attr-cell-val {
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: 'Georgia', serif;
+  line-height: 1.1;
+  margin-bottom: 1px;
+}
+.attr-cell-lv {
+  font-size: 0.66rem;
+  letter-spacing: 1px;
+  font-family: 'STKaiti', 'KaiTi', serif;
+}
+.attr-cell.tone-good .attr-cell-val,
+.attr-cell.tone-good .attr-cell-lv { color: #88c870; }
+.attr-cell.tone-mid  .attr-cell-val { color: #d4a520; }
+.attr-cell.tone-mid  .attr-cell-lv  { color: #c9b896; }
+.attr-cell.tone-low  .attr-cell-val { color: #d4a070; }
+.attr-cell.tone-low  .attr-cell-lv  { color: #b09070; }
+.attr-cell.tone-bad  .attr-cell-val,
+.attr-cell.tone-bad  .attr-cell-lv  { color: #d06858; }
+
+/* 青史留名列 - 2列网格，多色系 */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  align-content: flex-start;
+}
+.achievement-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 8px;
+  background: rgba(40, 30, 20, 0.35);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 2px;
+  letter-spacing: 1px;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  cursor: default;
+  min-width: 0;
+  line-height: 1.4;
+}
+.achievement-item::before {
+  content: '◆';
+  font-size: 0.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.85;
+}
+.achievement-item:hover {
+  background: rgba(60, 45, 30, 0.55);
+  transform: translateY(-1px);
+}
+
+/* === 5 种色系（与属性值 tone-good/mid/low/bad 对齐）=== */
+
+/* 属性类成就（高财、高文、强体）→ 翠绿 */
+.achievement-item.tone-attribute {
+  border-color: rgba(120, 180, 100, 0.4);
+}
+.achievement-item.tone-attribute::before { color: #88c870; }
+.achievement-item.tone-attribute:hover {
+  border-color: #88c870;
+  box-shadow: 0 0 8px rgba(120, 180, 100, 0.25);
+}
+
+/* 仕途类（升官、进士等）→ 金 */
+.achievement-item.tone-career {
+  border-color: rgba(212, 165, 32, 0.4);
+}
+.achievement-item.tone-career::before { color: #d4a520; }
+.achievement-item.tone-career:hover {
+  border-color: #d4a520;
+  box-shadow: 0 0 8px rgba(212, 165, 32, 0.25);
+}
+
+/* 关系类（清议、士绅、圣眷等）→ 紫 */
+.achievement-item.tone-relationship {
+  border-color: rgba(180, 140, 200, 0.4);
+}
+.achievement-item.tone-relationship::before { color: #b890d0; }
+.achievement-item.tone-relationship:hover {
+  border-color: #b890d0;
+  box-shadow: 0 0 8px rgba(180, 140, 200, 0.25);
+}
+
+/* 结局类（善始善终、悲剧收场等）→ 橙 */
+.achievement-item.tone-endgame {
+  border-color: rgba(212, 140, 80, 0.4);
+}
+.achievement-item.tone-endgame::before { color: #d49050; }
+.achievement-item.tone-endgame:hover {
+  border-color: #d49050;
+  box-shadow: 0 0 8px rgba(212, 140, 80, 0.25);
+}
+
+/* 特殊类（持之以恒、幸运等）→ 暗金（青灰） */
+.achievement-item.tone-special {
+  border-color: rgba(160, 160, 152, 0.4);
+}
+.achievement-item.tone-special::before { color: #a8a098; }
+.achievement-item.tone-special:hover {
+  border-color: #a8a098;
+  box-shadow: 0 0 8px rgba(160, 160, 152, 0.2);
+}
+
+/* 负面成就（贬官、贪官、悲剧）→ 红 */
+.achievement-item.tone-negative {
+  border-color: rgba(200, 100, 88, 0.45);
+}
+.achievement-item.tone-negative::before { color: #c86048; }
+.achievement-item.tone-negative:hover {
+  border-color: #c86048;
+  box-shadow: 0 0 8px rgba(200, 100, 88, 0.3);
+}
+
+.achievement-name {
+  font-size: 0.85rem;
+  font-family: 'STKaiti', 'KaiTi', 'STZhongsong', 'FangSong', 'STFangsong', '楷体', 'SimKai', 'SimSun', '宋体', serif;
+  font-weight: 400;
+  letter-spacing: 2px;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+  text-align: center;
+  line-height: 1.3;
+  color: #a8a098;
+}
+
+/* 一生功过列内嵌的子标题（"青史留名"小标） */
+.merit-subtitle {
+  font-size: 0.78rem;
+  color: #8b7540;
+  letter-spacing: 4px;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  padding-left: 6px;
+  border-left: 2px solid rgba(201, 162, 39, 0.5);
+}
+
+/* 内联空状态（不像 empty-state 占满整列） */
+.empty-state-mini {
+  color: #5a4520;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* 5 种 tone 的文字色 - 与 ◆ 符号色一致，更醒目 */
+.achievement-item.tone-attribute    .achievement-name { color: #88c870; }
+.achievement-item.tone-career       .achievement-name { color: #d4a520; }
+.achievement-item.tone-relationship .achievement-name { color: #b890d0; }
+.achievement-item.tone-endgame      .achievement-name { color: #d49050; }
+.achievement-item.tone-special      .achievement-name { color: #a8a098; }
+.achievement-item.tone-negative     .achievement-name { color: #c86048; }
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5a4520;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  text-align: center;
+}
+
+/* ============ 底部：按钮 + 落款（一行）========= */
+.ending-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 4px 4px 0;
+}
+.bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  color: #6b5a3a;
+  letter-spacing: 3px;
+}
+.footer-time { color: #8b7540; }
+.footer-sep   { color: #3a2a1a; }
+.footer-author{ color: #5a4520; }
+
+.ending-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.end-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 22px;
+  font-size: 0.88rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  font-family: 'KaiTi', 'STKaiti', serif;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  border-radius: 2px;
+  background: transparent;
+}
+.end-btn.primary {
+  background: linear-gradient(180deg, #c9a227 0%, #8b6914 100%);
+  color: #0d0a07;
+  border: 1px solid #c9a227;
+  font-weight: bold;
+  box-shadow: 0 0 14px rgba(201, 162, 39, 0.25);
+}
+.end-btn.primary:hover {
+  background: linear-gradient(180deg, #ddb82f 0%, #a07818 100%);
+  box-shadow: 0 0 22px rgba(201, 162, 39, 0.45);
+  transform: translateY(-2px);
+}
+.end-btn.secondary {
+  color: #c9a227;
+  border: 1px solid #8b6914;
+}
+.end-btn.secondary:hover {
+  background: rgba(201, 162, 39, 0.1);
+  border-color: #c9a227;
+  color: #d4a520;
+  transform: translateY(-2px);
+}
+.btn-icon { font-size: 0.95rem; line-height: 1; }
+
+/* ============ 响应式 ============ */
+@media (max-width: 1100px) {
+  .ending-container { max-width: 100%; padding: 16px 24px; }
+  .ending-top { gap: 12px; }
+  .ending-middle { gap: 10px; }
+}
+
+@media (max-width: 900px) {
+  .ending-screen { overflow-y: auto; height: auto; min-height: 100vh; }
+  .ending-container { height: auto; min-height: 100vh; }
+  .ending-top { grid-template-columns: 1fr; }
+  .ending-middle { grid-template-columns: 1fr; }
+  .col-content { overflow-y: visible; }
+  .attr-cells { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .ending-top { grid-template-columns: 1fr; }
+  .ending-middle { grid-template-columns: 1fr; }
+  .ending-bottom { flex-direction: column; gap: 10px; align-items: stretch; }
+  .ending-actions { flex-direction: column; }
+  .end-btn { width: 100%; justify-content: center; }
+  .ending-title { font-size: 1.3rem; letter-spacing: 0.4rem; }
+  .profile-name-large { font-size: 1.2rem; }
+  .attr-cells { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .ending-container { padding: 10px 12px; gap: 8px; }
+  .ending-title { font-size: 1.15rem; letter-spacing: 0.3rem; }
+  .ending-subtitle { font-size: 0.7rem; letter-spacing: 2px; }
+  .dynasty-stamp { width: 40px; }
+  .dynasty-stamp .stamp-row { font-size: 0.78rem; }
+  .profile-name-large { font-size: 1.25rem; letter-spacing: 4px; }
+  .posthumous-name { font-size: 1.1rem; }
+  .score-num { font-size: 2.1rem; }
+  .stars-block .star { font-size: 0.95rem; }
+  .rank-block { font-size: 0.78rem; letter-spacing: 2px; }
+  .col-title { font-size: 0.85rem; letter-spacing: 4px; }
+  .comment-text { font-size: 0.82rem; line-height: 1.7; }
+  .stat-value { font-size: 1.05rem; }
+  .stat-label { font-size: 0.64rem; }
+  .attr-cell-name { font-size: 0.66rem; }
+  .attr-cell-val { font-size: 0.95rem; }
+  .attr-cell-lv { font-size: 0.6rem; }
+  .achievement-name { font-size: 0.72rem; }
+  .end-btn { padding: 8px 14px; font-size: 0.82rem; letter-spacing: 2px; }
+  .bottom-left { font-size: 0.7rem; letter-spacing: 2px; gap: 6px; flex-wrap: wrap; justify-content: center; }
+}
+
+@media (max-height: 720px) {
+  .ending-container { padding: 12px 24px; gap: 8px; }
+  .ending-title { font-size: 1.4rem; }
+  .profile-name-large { font-size: 1.45rem; }
+  .col-title { padding: 5px 0; font-size: 0.88rem; }
+  .col-content { padding: 8px 12px; }
+  .stat-item { padding: 4px 4px; }
+  .stat-value { font-size: 1.1rem; }
+  .stats-grid { gap: 5px; }
+  .comment-block { padding: 8px 10px; }
+  .ending-actions { gap: 8px; }
+  .end-btn { padding: 7px 18px; font-size: 0.82rem; }
+  .attr-cell { padding: 4px 2px; }
+  .attr-cell-val { font-size: 1rem; }
+}
+
+@media (max-height: 600px) {
+  .ending-container { padding: 8px 20px; gap: 6px; }
+  .top-left, .top-center, .top-right, .middle-col { padding: 6px 10px; }
+  .ending-title { font-size: 1.2rem; }
+  .profile-name-large { font-size: 1.25rem; }
+  .posthumous-name { font-size: 1.1rem; }
+  .score-num { font-size: 2rem; }
+  .col-title { padding: 4px 0; font-size: 0.82rem; letter-spacing: 4px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* 减少动效 */
+@media (prefers-reduced-motion: reduce) {
+  .end-btn, .attr-cell, .achievement-item, .stars-block .star {
+    transition: none !important;
+  }
+  .end-btn:hover, .end-btn.primary:hover, .end-btn.secondary:hover,
+  .achievement-item:hover {
+    transform: none !important;
+  }
+}
+
+/* ============ 人物志（明史列传）============ */
+.biography-section {
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(180deg, rgba(45, 30, 18, 0.85) 0%, rgba(35, 22, 12, 0.95) 100%);
+  border: 1px solid rgba(180, 140, 80, 0.3);
+  border-left: 4px solid rgba(200, 160, 90, 0.6);
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.biography-title {
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 1.05rem;
+  letter-spacing: 6px;
+  color: #d4af6f;
+  text-align: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(212, 175, 111, 0.3);
+}
+
+.biography-content {
+  font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', serif;
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: #d4c8a8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.biography-content::-webkit-scrollbar {
+  width: 6px;
+}
+.biography-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.biography-content::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 111, 0.3);
+  border-radius: 3px;
+}
+
+@media (max-width: 900px) {
+  .biography-section { padding: 12px 16px; max-height: 180px; }
+  .biography-content { font-size: 0.82rem; }
+}
+
+/* ============ 反事实分支（其他可能）============ */
+.counterfactual-section {
+  width: 100%;
+  margin-top: 12px;
+}
+.counterfactual-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, rgba(45,30,18,0.6) 0%, rgba(35,22,12,0.75) 100%);
+  border: 1px solid rgba(180,140,80,0.25);
+  border-radius: 4px;
+  color: #d4af6f;
+  font-family: 'Ma Shan Zheng','STKaiti','KaiTi','楷体',serif;
+  font-size: 0.95rem;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.counterfactual-toggle:hover {
+  background: linear-gradient(180deg, rgba(60,42,25,0.7) 0%, rgba(50,32,18,0.85) 100%);
+  border-color: rgba(212,175,111,0.5);
+}
+.counterfactual-icon { font-size: 1.1rem; }
+.counterfactual-label { color: #d4af6f; }
+.counterfactual-chevron {
+  display: inline-block;
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+  color: #d4af6f;
+}
+.counterfactual-chevron.open { transform: rotate(180deg); }
+
+.counterfactual-list {
+  margin-top: 8px;
+  padding: 12px 20px;
+  background: rgba(30,20,12,0.55);
+  border: 1px solid rgba(180,140,80,0.18);
+  border-left: 3px solid rgba(160,120,60,0.5);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.counterfactual-item {
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(180,140,80,0.18);
+}
+.counterfactual-item:last-child { border-bottom: none; padding-bottom: 0; }
+.counterfactual-title {
+  font-family: 'Ma Shan Zheng','STKaiti','KaiTi','楷体',serif;
+  font-size: 0.95rem;
+  color: #c8a060;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.counterfactual-text {
+  font-family: 'KaiTi','STKaiti','SimKai','楷体',serif;
+  font-size: 0.85rem;
+  line-height: 1.75;
+  color: #c8b88a;
+  margin: 0;
+  letter-spacing: 0.5px;
+  white-space: pre-wrap;
+}
+.counterfactual-list::-webkit-scrollbar { width: 5px; }
+.counterfactual-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+.counterfactual-list::-webkit-scrollbar-thumb { background: rgba(212,175,111,0.3); border-radius: 3px; }
+
+@media (max-width: 900px) {
+  .counterfactual-toggle { font-size: 0.85rem; letter-spacing: 2px; }
+  .counterfactual-text { font-size: 0.78rem; }
+}

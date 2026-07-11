@@ -1,0 +1,788 @@
+/* 生平回顾界面 */
+.life-review-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 100%);
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+  overflow-y: auto;
+}
+
+/* 顶部装饰条 */
+.life-review-top-bar {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #8b7355, transparent);
+}
+
+/* 主容器 */
+.life-review-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 30px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 头部 */
+.life-review-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.life-review-title {
+  font-size: 28px;
+  color: #d4af37;
+  margin: 0 0 6px 0;
+  font-weight: normal;
+  letter-spacing: 6px;
+}
+
+.life-review-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+/* 标签页 */
+.life-review-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.3);
+  padding-bottom: 10px;
+}
+
+.tab-btn {
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.tab-btn:hover {
+  color: #c9a86c;
+}
+
+.tab-btn.active {
+  color: #d4af37;
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+/* 内容区域 */
+.life-review-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 5px 0;
+}
+
+/* 时间线 */
+.life-review-timeline {
+  padding: 0 10px;
+}
+
+.timeline-item {
+  display: flex;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 12px;
+  position: relative;
+}
+
+.timeline-icon {
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 115, 85, 0.2);
+  border-radius: 50%;
+  border: 2px solid rgba(139, 115, 85, 0.4);
+  z-index: 1;
+}
+
+.timeline-item.promotion .timeline-icon {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.4);
+}
+
+.timeline-item.demotion .timeline-icon {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.4);
+}
+
+.timeline-item.death .timeline-icon {
+  background: rgba(139, 0, 0, 0.2);
+  border-color: rgba(139, 0, 0, 0.4);
+}
+
+.timeline-item.exam .timeline-icon {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.4);
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: rgba(139, 115, 85, 0.3);
+  margin-top: 8px;
+}
+
+.timeline-content {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(139, 115, 85, 0.2);
+  border-radius: 4px;
+  padding: 10px 14px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.timeline-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.timeline-type {
+  font-size: 14px;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.timeline-description {
+  font-size: 12px;
+  color: #b8b0a0;
+  line-height: 1.5;
+  margin: 0 0 4px 0;
+}
+
+.timeline-impact {
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+  margin: 0;
+}
+
+/* 时间线 - 紧凑版 */
+.life-review-timeline.compact {
+  padding: 0 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 6px 10px;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  margin-bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(139, 115, 85, 0.15);
+  border-radius: 4px;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.2s ease;
+}
+
+.timeline-row:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(139, 115, 85, 0.25);
+}
+
+/* 日期徽章 */
+.timeline-date-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 2px 4px;
+  background: rgba(139, 115, 85, 0.15);
+  border-radius: 3px;
+  border: 1px solid rgba(139, 115, 85, 0.2);
+}
+
+.date-year {
+  font-size: 12px;
+  color: #d4af37;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.date-month {
+  font-size: 9px;
+  color: #8b7355;
+  line-height: 1.1;
+}
+
+/* 图标徽章 */
+.timeline-icon-badge {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 115, 85, 0.2);
+  border-radius: 50%;
+  border: 1px solid rgba(139, 115, 85, 0.3);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* 内容区 */
+.timeline-content-compact {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.timeline-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.timeline-event-title {
+  font-size: 12px;
+  color: #d4af37;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.timeline-impact-tag {
+  font-size: 9px;
+  color: #8b7355;
+  padding: 1px 5px;
+  background: rgba(139, 115, 85, 0.15);
+  border-radius: 2px;
+  border: 1px solid rgba(139, 115, 85, 0.2);
+  white-space: nowrap;
+}
+
+.timeline-desc-text {
+  font-size: 11px;
+  color: #b8b0a0;
+  line-height: 1.3;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 不同类型的事件颜色 */
+.timeline-row.birth .timeline-icon-badge {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.timeline-row.promotion .timeline-icon-badge {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.timeline-row.demotion .timeline-icon-badge {
+  background: rgba(244, 67, 54, 0.15);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.timeline-row.death .timeline-icon-badge {
+  background: rgba(156, 39, 176, 0.15);
+  border-color: rgba(156, 39, 176, 0.3);
+}
+
+/* 总结 - 紧凑版 */
+.life-review-summary.compact {
+  padding: 0 10px;
+}
+
+/* 顶部信息卡片 */
+.summary-top-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(139, 115, 85, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
+  border: 1px solid rgba(139, 115, 85, 0.3);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.top-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.top-card-rank {
+  font-size: 18px;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.top-card-degree {
+  font-size: 12px;
+  color: #888;
+}
+
+.top-card-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.top-stat {
+  font-size: 12px;
+  color: #b8b0a0;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border: 1px solid rgba(139, 115, 85, 0.2);
+}
+
+/* 评价卡片 */
+.summary-evaluation-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(139, 115, 85, 0.2);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.evaluation-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.evaluation-label {
+  font-size: 11px;
+  color: #8b7355;
+  padding: 2px 8px;
+  background: rgba(139, 115, 85, 0.15);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.evaluation-reputation {
+  font-size: 14px;
+  color: #d4af37;
+  margin: 0;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.evaluation-legacy {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* 人际关系 - 紧凑标签式 */
+.summary-relations-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(139, 115, 85, 0.15);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.relations-label {
+  font-size: 11px;
+  color: #8b7355;
+}
+
+.relations-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.relation-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.relation-tag.good {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.relation-tag.bad {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.relation-tag.neutral {
+  background: rgba(158, 158, 158, 0.1);
+  color: #9e9e9e;
+  border-color: rgba(158, 158, 158, 0.3);
+}
+
+/* 功过评价 - 紧凑版 */
+.life-review-achievements.compact {
+  padding: 0 10px;
+}
+
+/* 功过并排卡片 */
+.merit-demerit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.merit-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(139, 115, 85, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.merit-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.merit-icon {
+  font-size: 14px;
+}
+
+.merit-title {
+  font-size: 12px;
+  color: #8b7355;
+  flex: 1;
+}
+
+.merit-count {
+  font-size: 11px;
+  color: #666;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.merit-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.merit-tag {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.merit-tag.positive {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.merit-tag.negative {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+/* 属性面板 - 紧凑 */
+.attributes-compact-panel {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(139, 115, 85, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.attr-panel-header {
+  font-size: 12px;
+  color: #8b7355;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+}
+
+.attributes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.attr-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attr-col-title {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.attr-mini-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attr-mini-name {
+  font-size: 11px;
+  color: #888;
+  min-width: 36px;
+}
+
+.attr-mini-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.attr-mini-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b7355, #d4af37);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.attr-mini-value {
+  font-size: 11px;
+  color: #d4af37;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* 底部按钮 */
+.life-review-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(139, 115, 85, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   墓志铭样式 — 仿古碑帖/古卷
+   ═══════════════════════════════════════════ */
+.life-review-epitaph {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.epitaph-empty {
+  color: rgba(139, 115, 85, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 40px;
+}
+
+.epitaph-paper {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  padding: 36px 48px;
+  background: linear-gradient(135deg, #f5ead4 0%, #ebd9b3 50%, #e0c995 100%);
+  background-image:
+    radial-gradient(ellipse at top left, rgba(160, 120, 60, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(80, 40, 20, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #f5ead4 0%, #ebd9b3 50%, #e0c995 100%);
+  border: 1px solid #8b6f3a;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    inset 0 0 60px rgba(139, 111, 58, 0.15),
+    0 4px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+  /* 轻微的卷轴感 */
+  position: relative;
+}
+
+.epitaph-paper::before,
+.epitaph-paper::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #8b6f3a 50%, transparent 100%);
+  opacity: 0.5;
+}
+
+.epitaph-paper::before { top: 8px; }
+.epitaph-paper::after { bottom: 8px; }
+
+.epitaph-text {
+  font-family: 'STKaiti', 'KaiTi', '楷体', 'FangSong', '仿宋', serif;
+  color: #2a1a08;
+  font-size: 17px;
+  line-height: 2.0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: justify;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 600px) {
+  .epitaph-paper {
+    padding: 24px 20px;
+  }
+  .epitaph-text {
+    font-size: 14px;
+    line-height: 1.9;
+  }
+}
+
+.life-review-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 2px;
+  min-width: 100px;
+}
+
+.life-review-btn-primary {
+  background: linear-gradient(180deg, #d4af37 0%, #b8941f 100%);
+  color: #1a1a1a;
+  border: 2px solid #e8c547;
+}
+
+.life-review-btn-primary:hover {
+  background: linear-gradient(180deg, #e8c547 0%, #d4af37 100%);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.life-review-btn-secondary {
+  background: transparent;
+  color: #888;
+  border: 2px solid #444;
+}
+
+.life-review-btn-secondary:hover {
+  border-color: #666;
+  color: #aaa;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 底部装饰 */
+.life-review-footer {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.life-review-footer-text {
+  font-size: 12px;
+  color: #555;
+  letter-spacing: 2px;
+}
+
+/* 底部装饰条 */
+.life-review-bottom-bar {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #8b7355, transparent);
+}
+
+/* 滚动条 */
+.life-review-overlay::-webkit-scrollbar {
+  width: 8px;
+}
+
+.life-review-overlay::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+
+.life-review-overlay::-webkit-scrollbar-thumb {
+  background: rgba(139, 115, 85, 0.5);
+  border-radius: 4px;
+}
+
+.life-review-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.life-review-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.life-review-content::-webkit-scrollbar-thumb {
+  background: rgba(139, 115, 85, 0.3);
+  border-radius: 3px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .life-review-container {
+    padding: 15px 20px 25px;
+  }
+
+  .life-review-title {
+    font-size: 24px;
+  }
+
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .final-attributes {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}

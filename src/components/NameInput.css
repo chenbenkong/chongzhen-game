@@ -1,0 +1,412 @@
+/* ============================================
+   命名输入界面 - 单屏布局（顶部 / 底部都不撑留空）
+   ============================================ */
+.name-input-screen {
+  background: transparent;   /* 容器不再用纯色填充，body 已经深色（看 index.css） */
+  display: flex;
+  align-items: flex-start;        /* 顶部对齐，不再垂直居中 */
+  justify-content: center;
+  padding: 14px 24px 14px;        /* 上下都 14px（底部 24 → 14，收一半） */
+  /* 不再写 min-height: 100vh —— 让容器收缩到内容高度，
+     下方留白交给 body（body 是 100vh 深色，视觉无接缝） */
+}
+
+@media (max-width: 768px) {
+  .name-input-screen {
+    padding: 10px 12px 12px;
+  }
+}
+
+.name-scroll {
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+}
+
+.name-scroll h2 {
+  font-size: 1.9rem;
+  color: #c9a227;
+  letter-spacing: 0.6rem;
+  margin: 0 0 4px 0;             /* 顶部不撑开，紧贴容器 */
+  text-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .name-scroll h2 {
+    font-size: 1.6rem;
+    letter-spacing: 0.4rem;
+  }
+}
+
+.name-quote {
+  color: #8b7355;
+  font-size: 0.9rem;
+  margin: 0 0 14px 0;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .name-quote {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+}
+
+/* ============================================
+   主表单：横向 4 列 + 籍贯行
+   ============================================ */
+.name-form {
+  background: rgba(30, 24, 18, 0.85);
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  border-radius: 8px;
+  padding: 16px 22px 14px;       /* 上下内边距 18 → 16 / 14，更紧凑 */
+  margin-bottom: 10px;            /* 14 → 10 */
+}
+
+@media (max-width: 768px) {
+  .name-form {
+    padding: 14px 14px;
+  }
+}
+
+.name-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.name-row:last-child {
+  margin-bottom: 0;
+}
+
+.name-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.name-cell.flex-grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.name-cell.action-cell {
+  flex: 0 0 auto;
+  flex-direction: row;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.name-cell label {
+  color: #8b7355;
+  font-size: 0.75rem;
+  letter-spacing: 0.18rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .name-cell label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12rem;
+  }
+}
+
+/* ============================================
+   4 列横向排版 - 主行（姓 / 名 / 字 / 年岁）
+   ============================================ */
+.name-row.primary-row {
+  display: grid;
+  grid-template-columns: 0.6fr 0.8fr 0.9fr 0.55fr;
+  gap: 10px;
+  align-items: end;
+}
+
+@media (max-width: 768px) {
+  .name-row.primary-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ============================================
+   输入框统一样式
+   ============================================ */
+.name-input {
+  background: rgba(13, 10, 7, 0.9);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 4px;
+  color: #e8dcc8;
+  font-size: 1.1rem;
+  padding: 6px 10px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  font-family: 'SimSun', 'STSong', serif;
+  letter-spacing: 0.2rem;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.name-input:focus {
+  border-color: #c9a227;
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.25);
+}
+
+.name-input::placeholder {
+  color: #554a38;
+  font-size: 0.85rem;
+  letter-spacing: 0.08rem;
+}
+
+.surname-input { max-width: 130px; }
+.given-name-input { max-width: 110px; }
+.courtesy-input { max-width: 110px; }
+.age-input { max-width: 80px; letter-spacing: 0.05rem; }
+
+@media (max-width: 768px) {
+  .surname-input, .given-name-input, .courtesy-input { max-width: none; }
+  .age-input { max-width: none; }
+}
+
+/* ============================================
+   籍贯行（带"随机抽"按钮）
+   ============================================ */
+.hometown-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+@media (max-width: 768px) {
+  .hometown-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hometown-input-wrap {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.hometown-input {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  letter-spacing: 0.08rem;
+  font-size: 0.95rem;
+  padding: 6px 10px;
+}
+
+.random-hometown-btn {
+  flex-shrink: 0;
+  background: rgba(201, 162, 39, 0.15);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  color: #c9a227;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+  letter-spacing: 0.1rem;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  white-space: nowrap;
+}
+
+.random-hometown-btn:hover {
+  background: rgba(201, 162, 39, 0.28);
+  border-color: #c9a227;
+  color: #e8dcc8;
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.3);
+}
+
+@media (max-width: 768px) {
+  .random-hometown-btn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}
+
+/* ============================================
+   按钮（行内版，用于右侧挤着的 action-cell）
+   ============================================ */
+.confirm-btn.inline,
+.random-btn.inline {
+  display: inline-block;
+  width: auto;
+  padding: 7px 18px;
+  letter-spacing: 0.25rem;
+  font-size: 0.9rem;
+  margin: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  white-space: nowrap;
+}
+
+.confirm-btn.inline {
+  background: linear-gradient(135deg, #8b6914, #c9a227);
+  border: none;
+  color: #0d0a07;
+  font-weight: bold;
+}
+
+.confirm-btn.inline:hover:not(.disabled) {
+  background: linear-gradient(135deg, #a07d18, #ddb82f);
+  box-shadow: 0 0 16px rgba(201, 162, 39, 0.35);
+}
+
+.confirm-btn.inline.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.random-btn.inline {
+  background: transparent;
+  border: 1px solid rgba(139, 115, 85, 0.4);
+  color: #8b7355;
+}
+
+.random-btn.inline:hover {
+  border-color: #c9a227;
+  color: #c9a227;
+}
+
+@media (max-width: 768px) {
+  .name-cell.action-cell {
+    flex-direction: column;
+  }
+  .confirm-btn.inline,
+  .random-btn.inline {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   预览：横向单行
+   ============================================ */
+.preview-name {
+  padding: 8px 12px;
+  border-top: 1px solid rgba(139, 115, 85, 0.2);
+  border-bottom: 1px solid rgba(139, 115, 85, 0.2);
+  margin-top: 10px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preview-horizontal {
+  margin-bottom: 0;
+}
+
+.preview-label {
+  color: #8b7355;
+  font-size: 0.85rem;
+}
+
+.preview-value {
+  color: #c9a227;
+  font-size: 1.3rem;
+  font-family: 'SimSun', 'STSong', serif;
+  letter-spacing: 0.3rem;
+  text-shadow: 0 0 12px rgba(201, 162, 39, 0.35);
+}
+
+.preview-value-small {
+  color: #c9a227;
+  font-size: 0.95rem;
+  font-family: 'SimSun', 'STSong', serif;
+  letter-spacing: 0.15rem;
+}
+
+@media (max-width: 768px) {
+  .preview-value { font-size: 1.1rem; }
+  .preview-value-small { font-size: 0.85rem; }
+}
+
+.preview-placeholder {
+  color: #4a4035;
+  font-style: italic;
+}
+
+/* ============================================
+   提示文字
+   ============================================ */
+.auto-hint {
+  font-size: 0.65rem;
+  color: #6b5a45;
+  letter-spacing: 0.05rem;
+  margin-left: 3px;
+  font-weight: normal;
+}
+
+/* ============================================
+   候选字库（chips）
+   ============================================ */
+.suggested-names {
+  text-align: left;
+}
+
+.suggest-section {
+  margin-bottom: 8px;            /* 10 → 8 */
+}
+
+.suggest-section:last-child {
+  margin-bottom: 0;
+}
+
+.suggest-section h4 {
+  color: #6b5a45;
+  font-size: 0.72rem;
+  letter-spacing: 0.15rem;
+  margin-bottom: 6px;
+  font-weight: normal;
+}
+
+.suggest-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.suggest-chip {
+  background: rgba(30, 24, 18, 0.7);
+  border: 1px solid rgba(139, 115, 85, 0.25);
+  color: #a89878;
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: 'SimSun', 'STSong', serif;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.suggest-chip:hover {
+  border-color: rgba(201, 162, 39, 0.5);
+  color: #c9a227;
+  background: rgba(201, 162, 39, 0.08);
+}
+
+.suggest-chip.active {
+  border-color: #c9a227;
+  color: #c9a227;
+  background: rgba(201, 162, 39, 0.15);
+}
+
+@media (max-width: 768px) {
+  .suggest-chip {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+}

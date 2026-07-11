@@ -1,0 +1,372 @@
+/* ============================================================
+   App.css · 标题屏 / 设置屏
+   主菜单完全照搬参考站 https://wtd85afh.mule.page/ 风格
+   ============================================================ */
+
+.app {
+  min-height: 100vh;
+}
+
+/* ============================================================
+   标题屏 容器
+   ============================================================ */
+.title-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 60px 40px;
+  overflow: hidden;
+  animation: fadeIn 0.8s ease;
+}
+
+/* 标题框 - 双层边框 + 暗背景 + 模糊 */
+.title-frame {
+  padding: 36px 72px;
+  position: relative;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 7px, rgba(197,165,90,0.035) 7px, rgba(197,165,90,0.035) 8px),
+    repeating-linear-gradient(90deg, transparent, transparent 7px, rgba(197,165,90,0.035) 7px, rgba(197,165,90,0.035) 8px),
+    linear-gradient(160deg, rgba(24,18,10,0.85), rgba(16,12,8,0.9));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2;
+  box-shadow:
+    0 0 120px rgba(0,0,0,0.5),
+    0 0 40px rgba(139,50,0,0.06),
+    inset 0 0 80px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(197,165,90,0.05);
+  min-width: 780px;
+  max-width: 92vw;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInScale 0.8s ease 0.2s both;
+}
+.title-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid rgba(197,165,90,0.2);
+  pointer-events: none;
+}
+.title-frame::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(197,165,90,0.08);
+  pointer-events: none;
+}
+
+/* 印章 */
+.title-seal {
+  width: 52px;
+  height: 52px;
+  border: 2px solid rgba(92,58,30,0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  color: rgba(92,58,30,0.6);
+  margin: 0 auto 20px;
+  transform: rotate(-8deg);
+  box-shadow: 0 0 20px rgba(92,58,30,0.1);
+  animation: sealStamp 0.8s ease 0.3s both;
+}
+@keyframes sealStamp {
+  0%   { opacity: 0; transform: rotate(-8deg) scale(2); }
+  60%  { opacity: 1; transform: rotate(-8deg) scale(0.9); }
+  100% { opacity: 1; transform: rotate(-8deg) scale(1); }
+}
+
+/* 主标题 - 金色发光大字 */
+.title-main {
+  font-family: var(--font-heading);
+  font-size: 4.8rem;
+  color: var(--gold);
+  text-shadow:
+    0 0 80px rgba(197,165,90,0.2),
+    0 0 40px rgba(197,165,90,0.1),
+    0 2px 6px rgba(0,0,0,0.7);
+  letter-spacing: 0.45em;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  position: relative;
+  animation: titleGlow 4s ease-in-out infinite;
+}
+@keyframes titleGlow {
+  0%,100% { text-shadow: 0 0 80px rgba(197,165,90,0.2), 0 0 40px rgba(197,165,90,0.1), 0 2px 6px rgba(0,0,0,0.7); }
+  50%     { text-shadow: 0 0 100px rgba(197,165,90,0.3), 0 0 50px rgba(197,165,90,0.15), 0 2px 6px rgba(0,0,0,0.7); }
+}
+.title-main::after {
+  content: '';
+  display: block;
+  width: 80px; height: 1px;
+  margin: 18px auto 0;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.35;
+}
+
+/* 副标题 */
+.title-sub {
+  font-size: 0.88rem;
+  color: rgba(197,165,90,0.5);
+  letter-spacing: 0.6em;
+  margin-bottom: 32px;
+  font-weight: 400;
+  font-family: var(--font-body);
+  animation: fadeInUp 0.6s ease 0.5s both;
+}
+
+/* 标签语 */
+.title-tagline {
+  font-size: 0.82rem;
+  color: rgba(235,230,220,0.55);
+  line-height: 2;
+  margin-bottom: 18px;
+  max-width: 520px;
+  letter-spacing: 0.1em;
+  font-family: var(--font-body);
+  animation: fadeInUp 0.6s ease 0.6s both;
+}
+
+/* 旧 quote - 副引语（参考站原有的那条主 tagline 之后附加） */
+.title-quote {
+  font-size: 0.78rem;
+  color: rgba(197,165,90,0.45);
+  line-height: 1.9;
+  margin-bottom: 36px;
+  max-width: 520px;
+  letter-spacing: 0.05em;
+  font-style: italic;
+  font-family: var(--font-body);
+  padding: 0 12px;
+  border-left: 1px solid rgba(197,165,90,0.18);
+}
+
+/* 背景介绍 - 崇祯元年那段 */
+.title-desc {
+  font-size: 0.78rem;
+  color: rgba(245,230,200,0.45);
+  line-height: 2;
+  margin-bottom: 24px;
+  max-width: 480px;
+  letter-spacing: 0.08em;
+  font-family: var(--font-body);
+}
+
+/* 旧版引语 - "漏水的船" */
+.title-quote {
+  font-size: 0.8rem;
+  color: rgba(197,165,90,0.45);
+  line-height: 2;
+  margin-bottom: 44px;
+  max-width: 500px;
+  letter-spacing: 0.08em;
+  font-style: italic;
+  font-family: var(--font-body);
+  position: relative;
+  padding: 0 12px;
+}
+.title-quote::before,
+.title-quote::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 1px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(197,165,90,0.25), transparent);
+}
+.title-quote::before { margin-bottom: 14px; }
+.title-quote::after { margin-top: 14px; }
+
+/* 标题屏按钮组 - 横向并排 */
+.title-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease 0.8s both;
+}
+
+/* 主按钮 - 仿参考站 */
+.title-btn {
+  background: linear-gradient(180deg, rgba(30,22,14,0.6), rgba(20,14,8,0.8));
+  color: var(--gold);
+  font-size: 1rem;
+  padding: 14px 52px;
+  letter-spacing: 0.4em;
+  border: 1px solid rgba(197,165,90,0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  min-width: 220px;
+  text-align: center;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+.title-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(197,165,90,0.06), transparent);
+  transition: left 0.5s ease;
+}
+.title-btn:hover::before {
+  left: 100%;
+}
+.title-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, rgba(80,30,10,0.3), rgba(60,20,5,0.4));
+  box-shadow: 0 6px 40px rgba(139,50,0,0.2), 0 0 1px rgba(197,165,90,0.4);
+  border-color: rgba(197,165,90,0.5);
+}
+.title-btn:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+/* 自动存档按钮变体（在 frame 内跟其他 title-btn 并排） */
+.title-btn--autosave {
+  border-color: rgba(106,170,58,0.35);
+  color: #8aac6a;
+}
+.title-btn--autosave:hover {
+  border-color: rgba(106,170,58,0.6);
+  background: linear-gradient(180deg, rgba(60,90,30,0.18), rgba(40,60,20,0.25));
+  box-shadow: 0 6px 40px rgba(60,90,30,0.18), 0 0 1px rgba(106,170,58,0.4);
+  color: #a8d680;
+}
+.title-btn--autosave .btn-icon {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+}
+
+/* 右下角 - 成就 / 帮助 */
+.title-corner-buttons {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 5;
+  animation: fadeInUp 0.5s ease 1s both;
+}
+.title-follow-btn {
+  background: none;
+  border: 1px solid rgba(197,165,90,0.15);
+  color: rgba(197,165,90,0.5);
+  font-size: 0.7rem;
+  padding: 5px 14px;
+  letter-spacing: 0.1em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: var(--font-body);
+}
+.title-follow-btn:hover {
+  color: rgba(197,165,90,0.85);
+  border-color: rgba(197,165,90,0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(197,165,90,0.1);
+}
+
+/* 左上角版本号 */
+.title-version-topleft {
+  position: absolute;
+  top: 60px;
+  left: 24px;
+  z-index: 2;
+  font-size: 0.65rem;
+  color: rgba(197,165,90,0.25);
+  letter-spacing: 0.1em;
+  font-family: var(--font-body);
+}
+
+/* ============================================================
+   设置屏 (姓名输入 / 出身选择)
+   ============================================================ */
+.setup-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 28px 20px 18px;
+  position: relative;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 9px, rgba(197,165,90,0.06) 9px, rgba(197,165,90,0.06) 10px),
+    repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(197,165,90,0.06) 9px, rgba(197,165,90,0.06) 10px),
+    linear-gradient(160deg, #0A0807 0%, #1C1610 20%, #2A1E14 45%, #321C12 55%, #1C1610 80%, #0A0807 100%);
+}
+
+.setup-actions {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+}
+
+.back-btn {
+  padding: 10px 30px;
+  font-size: 0.92rem;
+  background: transparent;
+  color: rgba(197,165,90,0.5);
+  border: 1px solid rgba(197,165,90,0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 4px;
+  font-family: var(--font-body);
+}
+.back-btn:hover {
+  color: rgba(197,165,90,0.85);
+  border-color: rgba(197,165,90,0.5);
+  background: rgba(197,165,90,0.05);
+}
+
+/* ============================================================
+   旧类名兼容 - 部分子组件可能仍引用 .game-title 等
+   ============================================================ */
+.game-title,
+.game-subtitle,
+.game-quote,
+.game-desc,
+.version,
+.start-btn,
+.achievement-btn,
+.help-btn {
+  /* 让这些主菜单旧类名失效（不再使用），新样式统一切到 title-* / title-frame
+     注意：.continue-btn 是事件结果页的"继续"按钮，绝对不能加进这个列表！ */
+  display: none;
+}
+
+/* ============================================================
+   移动端适配
+   ============================================================ */
+@media (max-width: 720px) {
+  .title-frame {
+    padding: 48px 32px;
+    min-width: 0;
+    width: 100%;
+  }
+  .title-main { font-size: 3rem; letter-spacing: 0.3em; }
+  .title-sub  { font-size: 0.7rem; letter-spacing: 0.4em; }
+  .title-tagline { font-size: 0.75rem; }
+  .title-btn { padding: 12px 30px; min-width: 180px; font-size: 0.9rem; letter-spacing: 0.3em; }
+  .title-buttons { flex-direction: column; gap: 12px; }
+  .title-version-topleft { top: 80px; left: 16px; }
+}

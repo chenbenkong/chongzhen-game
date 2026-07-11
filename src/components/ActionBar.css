@@ -1,0 +1,160 @@
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: linear-gradient(180deg, #18130d 0%, #12100c 100%);
+  border: 1px solid #2a2015;
+  border-radius: 3px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-left,
+.action-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.turn-info {
+  font-size: 0.8rem;
+  color: #4a3820;
+  letter-spacing: 2px;
+}
+
+.action-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
+  border: 1px solid #2a2015;
+  border-radius: 3px;
+  color: #8b7540;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #251c12 0%, #1a150f 100%);
+  border-color: #3d3020;
+  color: #c9b896;
+}
+
+.action-btn.primary {
+  padding: 12px 40px;
+  font-size: 0.95rem;
+  letter-spacing: 6px;
+  border-color: #4a3820;
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  border-color: #6b5520;
+  color: #d4a520;
+  box-shadow: 0 4px 16px rgba(107, 85, 32, 0.15);
+}
+
+.action-btn.primary.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  font-size: 0.85rem;
+}
+
+/* 平板 */
+@media (max-width: 900px) {
+  .action-bar {
+    padding: 12px 16px;
+  }
+  
+  .action-btn {
+    padding: 8px 18px;
+    font-size: 0.82rem;
+  }
+  
+  .action-btn.primary {
+    padding: 10px 30px;
+    font-size: 0.88rem;
+    letter-spacing: 4px;
+  }
+}
+
+/* 手机横屏 */
+@media (max-width: 768px) {
+  .action-bar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  
+  .action-left,
+  .action-right {
+    gap: 8px;
+  }
+  
+  .action-btn {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+  }
+  
+  .action-btn.primary {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+  }
+  
+  .turn-info {
+    font-size: 0.72rem;
+  }
+}
+
+/* 手机竖屏 */
+@media (max-width: 480px) {
+  .action-bar {
+    padding: 8px 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .action-left,
+  .action-right {
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .action-center {
+    order: -1;
+    margin-bottom: 4px;
+  }
+  
+  .action-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .action-btn.primary {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    width: 100%;
+  }
+  
+  .btn-icon {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,75 @@
+/* ============================================================
+   变体 1: 主菜单 fixed 定位（独立浮在屏幕右上）
+   ============================================================ */
+.bgm-toggle--fixed {
+  position: fixed;
+  top: 24px;
+  right: 30px;
+  z-index: 100;
+  background: none;
+  color: rgba(197, 165, 90, 0.5);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border: 1px solid rgba(197, 165, 90, 0.2);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-body, 'Noto Serif SC', serif);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 2px;
+}
+.bgm-toggle--fixed:hover {
+  color: rgba(197, 165, 90, 0.85);
+  border-color: rgba(197, 165, 90, 0.45);
+}
+
+/* ============================================================
+   变体 2: 内联（在 StatusBar 幽灵模式按钮左边）
+   样式对齐 cheat-button，但更小一些
+   ============================================================ */
+.bgm-toggle--inline {
+  background: transparent;
+  color: rgba(197, 165, 90, 0.6);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border: 1px solid rgba(197, 165, 90, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body, 'Noto Serif SC', serif);
+  line-height: 1.4;
+}
+.bgm-toggle--inline:hover {
+  color: var(--gold);
+  border-color: rgba(197, 165, 90, 0.5);
+  background: rgba(197, 165, 90, 0.06);
+}
+
+.bgm-icon { font-size: 0.9rem; line-height: 1; }
+.bgm-label { font-size: 0.75rem; }
+
+/* ============================================================
+   移动端
+   ============================================================ */
+@media (max-width: 600px) {
+  .bgm-toggle--fixed {
+    top: 12px;
+    right: 12px;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+  }
+  .bgm-toggle--fixed .bgm-label { display: none; }
+
+  .bgm-toggle--inline {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+  .bgm-toggle--inline .bgm-label { display: none; }
+  .bgm-toggle--inline .bgm-icon { font-size: 0.95rem; }
+}

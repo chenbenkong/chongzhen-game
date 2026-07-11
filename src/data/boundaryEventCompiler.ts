@@ -1,0 +1,217 @@
+// 把 GameEvent.conditions 编译成 BoundaryEvent.check 函数的工具
+// 用于把"叙事性结局"包装成"可触发的边界事件"
+
+import { GameEvent, EventConditions, LegacyAttributeConditions, LegacyGameStateConditions } from '../types/event'
+import { BoundaryEvent, BoundaryEventCheckParams } from '../types/boundaryEvent'
+
+/**
+ * 编译结局的 conditions 为边界事件 check 函数
+ * 全部 GameState 字段都查 ctx.gameState
+ * 全部 Attributes 字段都查 ctx.attributes
+ * 全部 HiddenAttributes 字段都查 ctx.hidden
+ * 阵营字段查 ctx.faction
+ * 标记查 ctx.flags
+ *
+ * 如果 conditions 为空（{}），默认永真。
+ */
+function compileConditions(conditions: EventConditions | undefined) {
+  return (params: BoundaryEventCheckParams): boolean => {
+    if (!conditions) return true
+
+    // 1) 年份 — 必须拿到 currentYear 才能继续判定
+    if (conditions.year) {
+      const cur = (params as any).currentYear
+      if (typeof cur !== 'number') {
+        return false
+      }
+      if (conditions.year.min !== undefined && cur < conditions.year.min) return false
+      if (conditions.year.max !== undefined && cur > conditions.year.max) return false
+    }
+
+    // 2) 月份
+    if (conditions.month) {
+      const cur = (params as any).currentMonth
+      if (typeof cur !== 'number') {
+        return false
+      }
+      if (conditions.month.min !== undefined && cur < conditions.month.min) return false
+      if (conditions.month.max !== undefined && cur > conditions.month.max) return false
+    }
+
+    // 3) 出身
+    if (conditions.origin) {
+      const origins = Array.isArray(conditions.origin) ? conditions.origin : [conditions.origin]
+      const charOrigin = (params as any).characterOrigin
+      if (charOrigin && !origins.includes(charOrigin)) return false
+    }
+
+    // 4) 官阶
+    if (conditions.rank) {
+      const ranks = Array.isArray(conditions.rank) ? conditions.rank : [conditions.rank]
+      const charRank = (params as any).characterRank
+      if (charRank && !ranks.includes(charRank)) return false
+    }
+
+    // 5) 属性 attributes
+    if (conditions.attributes) {
+      if (!checkLegacyObj(conditions.attributes as LegacyAttributeConditions, params.attributes)) {
+        return false
+      }
+    }
+
+    // 6) 隐藏属性 hidden
+    if (conditions.hidden) {
+      if (!checkLegacyObj(conditions.hidden as any, params.hidden || {})) {
+        return false
+      }
+    }
+
+    // 7) 国势类 gameState
+    if (conditions.gameState) {
+      if (!checkLegacyObj(conditions.gameState as LegacyGameStateConditions, params.gameState || {})) {
+        return false
+      }
+    }
+
+    // 8) 标记 flags
+    if (conditions.flags) {
+      const flags = params.flags || []
+      if (conditions.flags.has) {
+        for (const f of conditions.flags.has) {
+          if (!flags.includes(f)) return false
+        }
+      }
+      if (conditions.flags.notHas) {
+        for (const f of conditions.flags.notHas) {
+          if (flags.includes(f)) return false
+        }
+      }
+      if (conditions.flags.all) {
+        for (const f of conditions.flags.all) {
+          if (!flags.includes(f)) return false
+        }
+      }
+      if (conditions.flags.any || conditions.flags.some) {
+        const anyList = conditions.flags.any || conditions.flags.some || []
+        if (anyList.length > 0 && !anyList.some(f => flags.includes(f))) {
+          return false
+        }
+      }
+      if (conditions.flags.none) {
+        for (const f of conditions.flags.none) {
+          if (flags.includes(f)) return false
+        }
+      }
+    }
+
+    // 9) 随机数（用 Math.random 模拟）
+    if (typeof conditions.random === 'number') {
+      if (Math.random() * 100 > conditions.random) return false
+    }
+
+    // 10) custom 函数
+    if (conditions.custom) {
+      try {
+        if (!conditions.custom(params)) return false
+      } catch (e) {
+        return false
+      }
+    }
+
+    return true
+  }
+}
+
+function checkLegacyObj(
+  obj: Record<string, { min?: number; max?: number } | undefined>,
+  src: Record<string, number>
+): boolean {
+  for (const key of Object.keys(obj)) {
+    const range = obj[key]
+    if (!range) continue
+    const val = src[key] ?? 0
+    if (range.min !== undefined && val < range.min) return false
+    if (range.max !== undefined && val > range.max) return false
+  }
+  return true
+}
+
+/**
+ * 把 GameEvent 包装成 BoundaryEvent
+ * @param event GameEvent（必须为 ending 类型）
+ * @param priority 优先级（数字越小越先匹配）
+ * @param idSuffix 可选后缀，避免与已有 boundary id 冲突
+ */
+export function wrapAsBoundaryEvent(
+  event: GameEvent,
+  priority: number,
+  idSuffix?: string
+): BoundaryEvent {
+  const eventId = event.id
+  const check = compileConditions(event.conditions)
+  return {
+    id: idSuffix ? `${eventId}__${idSuffix}` : eventId,
+    priority,
+    type: 'ending',
+    check,
+    event
+  }
+}
+
+// 兜底参数：narrative 结局至少满足以下全部条件才可触发
+//  1. 崇祯八年（1635）后（开局至少 7 年，让"名臣/殉国/归隐"等叙事性结局有时间沉淀）
+//  2. 游戏 turn ≥ 36（开局 3 年后，宦海须有"沉浮"才有结局）
+const NARRATIVE_MIN_YEAR = 1635
+const NARRATIVE_MIN_TURN = 36
+
+/**
+ * 批量把结局事件包装成 BoundaryEvent
+ * 自动分配 priority（从 100 开始递增）
+ *
+ * 强制兜底（避免"开局秒结束"）：
+ *  1. 没有 conditions 或没 year 限制 → 强制 year >= 1635
+ *  2. 有 conditions 且 year.min < 1635 → 提升到 1635
+ *  3. max 年份保留（避免错过"甲申之变"类有历史窗口的结局）
+ *  4. turn 兜底 ≥ 36（玩家须"宦海沉浮"满 3 年才能触发叙事性结局）
+ *  5. user 自带的 gameState 条件与 turn 兜底合并（不覆盖 user 设置）
+ */
+export function wrapBatchAsBoundaryEvents(
+  events: GameEvent[],
+  startPriority = 100
+): BoundaryEvent[] {
+  return events.map((e, i) => {
+    const conds = e.conditions || {}
+
+    let minYear = NARRATIVE_MIN_YEAR
+    let maxYear: number | undefined
+
+    if (conds.year) {
+      if (typeof conds.year.min === 'number') {
+        minYear = Math.max(NARRATIVE_MIN_YEAR, conds.year.min)
+      }
+      if (typeof conds.year.max === 'number') {
+        maxYear = conds.year.max
+      }
+    }
+
+    // 合并 user gameState 与 turn 兜底（user 自带 turn 条件则取较大值）
+    const userGameState = (conds.gameState || {}) as Record<string, { min?: number; max?: number } | undefined>
+    const userTurnMin = userGameState.turn?.min
+    const turnMin = Math.max(NARRATIVE_MIN_TURN, userTurnMin ?? 0)
+
+    const safeConditions: EventConditions = {
+      ...conds,
+      year: {
+        min: minYear,
+        ...(maxYear !== undefined ? { max: maxYear } : {})
+      },
+      gameState: {
+        ...userGameState,
+        turn: { min: turnMin }
+      }
+    }
+
+    const wrappedEvent: GameEvent = { ...e, conditions: safeConditions }
+    return wrapAsBoundaryEvent(wrappedEvent, startPriority + i)
+  })
+}

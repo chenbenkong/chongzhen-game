@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Token 消耗可视化 · chongzhen-game</title>
+<style>
+  :root {
+    --bg: #0d0a07;
+    --panel: #161210;
+    --panel2: #1f1810;
+    --border: #2a2015;
+    --gold: #c9a227;
+    --gold-dim: #8b7540;
+    --text: #d4c4a0;
+    --text-dim: #6b5a3a;
+    --bar: #c9a227;
+    --bar-line: #6aaa3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    min-height: 100vh;
+  }
+  h1 {
+    color: var(--gold);
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    letter-spacing: 4px;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+  }
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+  .card-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .card-value {
+    font-size: 1.6rem;
+    color: var(--gold);
+    font-weight: bold;
+    font-family: 'Consolas', monospace;
+  }
+  .card-unit {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+  .chart-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .chart-title {
+    font-size: 0.95rem;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 18px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .dot-token { background: var(--bar); }
+  .dot-duration { background: var(--bar-line); }
+  canvas {
+    width: 100%;
+    height: 360px;
+    display: block;
+    background: var(--panel2);
+    border-radius: 3px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 0.85rem;
+  }
+  thead th {
+    background: var(--panel2);
+    color: var(--gold-dim);
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(42, 32, 21, 0.4);
+    color: var(--text);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(201, 162, 39, 0.05); }
+  .num { font-family: 'Consolas', monospace; text-align: right; }
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+  }
+  .empty code {
+    background: var(--panel2);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--gold);
+    font-size: 0.85rem;
+  }
+  .reload-btn {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    padding: 6px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 12px;
+  }
+  .reload-btn:hover { background: var(--border); }
+  .meta {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>📊 Token 消耗可视化</h1>
+<div class="subtitle">
+  数据源：<code>../.trae/token-usage.json</code> · 刷新页面 / 点右侧按钮重新拉取
+  <button class="reload-btn" onclick="loadData()">🔄 刷新</button>
+  <div class="meta" id="meta">正在加载…</div>
+</div>
+
+<div class="summary">
+  <div class="card">
+    <div class="card-label">累计 Token</div>
+    <div class="card-value" id="totalTokens">—<span class="card-unit">tokens</span></div>
+  </div>
+  <div class="card">
+    <div class="card-label">输入 Token</div>
+    <div class="card-value" id="totalInput">—<span class="card-unit">tokens</span></div>
+  </div>
+  <div class="card">
+    <div class="card-label">输出 Token</div>
+    <div class="card-value" id="totalOutput">—<span class="card-unit">tokens</span></div>
+  </div>
+  <div class="card">
+    <div class="card-label">总会话数</div>
+    <div class="card-value" id="sessionCount">—</div>
+  </div>
+</div>
+
+<div class="chart-panel">
+  <div class="chart-title">每次任务：Token（柱）+ 耗时（线）</div>
+  <div class="chart-legend">
+    <span><span class="legend-dot dot-token"></span>Token</span>
+    <span><span class="legend-dot dot-duration"></span>耗时（秒）</span>
+  </div>
+  <canvas id="chart"></canvas>
+</div>
+
+<div class="chart-panel">
+  <div class="chart-title">详细记录</div>
+  <table id="recordsTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>时间</th>
+        <th>任务</th>
+        <th class="num">输入</th>
+        <th class="num">输出</th>
+        <th class="num">合计</th>
+        <th class="num">耗时</th>
+      </tr>
+    </thead>
+    <tbody id="recordsBody"></tbody>
+  </table>
+</div>
+
+<script>
+  // 1. 尝试直接 fetch（如果通过 http server 打开）
+  // 2. 失败则提示用户用 file:// 不行（CORS），用 http server
+  async function loadData() {
+    const meta = document.getElementById('meta');
+    try {
+      const r = await fetch('./token-usage.json', { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      render(data);
+      meta.textContent = '加载成功 · ' + new Date().toLocaleString() + ' · 记录数: ' + data.records.length;
+    } catch (e) {
+      meta.innerHTML = '❌ 加载失败：' + e.message +
+        '<br>说明：浏览器 file:// 协议不允许 fetch 本地文件。需要在 chongzhen-game 目录起一个静态服务器：' +
+        '<br><code>npx serve</code> 或 <code>python -m http.server 8000</code>，然后访问 <code>http://localhost:8000/token-stats.html</code>';
+      document.getElementById('recordsBody').innerHTML =
+        '<tr><td colspan="7" class="empty">暂无数据<br><br>' +
+        '需要先调用 record-token.ps1 写入一条记录，<br>示例：<br>' +
+        '<code>pwsh -File record-token.ps1 -Summary "修自动存档 bug" -InputTokens 6000 -OutputTokens 1200 -DurationSeconds 48</code>' +
+        '</td></tr>';
+    }
+  }
+
+  function render(data) {
+    const r = data.records || [];
+    document.getElementById('totalTokens').innerHTML = fmt(data.total_tokens || 0) + '<span class="card-unit">tokens</span>';
+    document.getElementById('totalInput').innerHTML  = fmt(data.total_input_tokens || 0) + '<span class="card-unit">tokens</span>';
+    document.getElementById('totalOutput').innerHTML = fmt(data.total_output_tokens || 0) + '<span class="card-unit">tokens</span>';
+    document.getElementById('sessionCount').textContent = data.session_count || (r.length > 0 ? 1 : 0);
+
+    drawChart(r);
+    renderTable(r);
+  }
+
+  function fmt(n) {
+    if (n >= 100000) return (n / 1000).toFixed(1) + 'k';
+    return n.toLocaleString();
+  }
+
+  function drawChart(records) {
+    const canvas = document.getElementById('chart');
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.clientWidth;
+    const H = 360;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, W, H);
+
+    if (records.length === 0) {
+      ctx.fillStyle = '#6b5a3a';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('暂无记录', W / 2, H / 2);
+      return;
+    }
+
+    // 倒序展示（最近的在最右）
+    const data = records.slice().reverse();
+    const pad = { l: 50, r: 50, t: 20, b: 60 };
+    const cw = W - pad.l - pad.r;
+    const ch = H - pad.t - pad.b;
+
+    const maxToken = Math.max(...data.map(r => r.total_tokens || 0), 1);
+    const maxDuration = Math.max(...data.map(r => r.duration_seconds || 0), 1);
+
+    // 网格
+    ctx.strokeStyle = 'rgba(42, 32, 21, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#6b5a3a';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + (ch / 4) * i;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, y);
+      ctx.lineTo(W - pad.r, y);
+      ctx.stroke();
+      const v = Math.round(maxToken * (1 - i / 4));
+      ctx.fillText(fmt(v), pad.l - 6, y + 3);
+    }
+    // 右侧 Y 轴（耗时）
+    ctx.textAlign = 'left';
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + (ch / 4) * i;
+      const v = Math.round(maxDuration * (1 - i / 4));
+      ctx.fillText(v + 's', W - pad.r + 6, y + 3);
+    }
+
+    // 柱状图（token）
+    const barW = Math.min(40, cw / data.length * 0.6);
+    const stepX = cw / data.length;
+    ctx.fillStyle = '#c9a227';
+    data.forEach((r, i) => {
+      const x = pad.l + stepX * i + (stepX - barW) / 2;
+      const h = (r.total_tokens / maxToken) * ch;
+      const y = pad.t + ch - h;
+      ctx.fillRect(x, y, barW, h);
+    });
+
+    // 折线（耗时）
+    ctx.strokeStyle = '#6aaa3a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    data.forEach((r, i) => {
+      const x = pad.l + stepX * i + stepX / 2;
+      const y = pad.t + ch - ((r.duration_seconds || 0) / maxDuration) * ch;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    // 点
+    data.forEach((r, i) => {
+      const x = pad.l + stepX * i + stepX / 2;
+      const y = pad.t + ch - ((r.duration_seconds || 0) / maxDuration) * ch;
+      ctx.fillStyle = '#6aaa3a';
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // X 轴标签（turn id 简写）
+    ctx.fillStyle = '#6b5a3a';
+    ctx.textAlign = 'center';
+    data.forEach((r, i) => {
+      const x = pad.l + stepX * i + stepX / 2;
+      const short = (r.turn_id || '').slice(-4);
+      ctx.fillText('#' + short, x, H - pad.b + 14);
+      // 摘要（首 6 字）
+      const s = (r.summary || '').slice(0, 6);
+      ctx.fillText(s, x, H - pad.b + 30);
+    });
+  }
+
+  function renderTable(records) {
+    const body = document.getElementById('recordsBody');
+    if (records.length === 0) {
+      body.innerHTML = '<tr><td colspan="7" class="empty">暂无数据</td></tr>';
+      return;
+    }
+    body.innerHTML = records.slice().reverse().map((r, i) => {
+      const t = r.timestamp ? new Date(r.timestamp).toLocaleString() : '—';
+      return `<tr>
+        <td>${records.length - i}</td>
+        <td>${t}</td>
+        <td>${escapeHtml(r.summary || '')}</td>
+        <td class="num">${fmt(r.input_tokens || 0)}</td>
+        <td class="num">${fmt(r.output_tokens || 0)}</td>
+        <td class="num"><b>${fmt(r.total_tokens || 0)}</b></td>
+        <td class="num">${r.duration_seconds || 0}s</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  loadData();
+  setInterval(loadData, 10000); // 10s 自动刷新
+</script>
+</body>
+</html>

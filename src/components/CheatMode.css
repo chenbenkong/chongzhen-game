@@ -1,0 +1,1069 @@
+/* 作弊按钮 */
+.cheat-button {
+  padding: 4px 10px;
+  background: linear-gradient(180deg, #2a1a10 0%, #1a1008 100%);
+  border: 1px solid #5a3020;
+  border-radius: 3px;
+  color: #8b5040;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 1px;
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 8px;
+}
+
+.cheat-button:hover {
+  background: linear-gradient(180deg, #3a2015 0%, #2a1510 100%);
+  border-color: #8b4030;
+  color: #a04030;
+}
+
+/* 作弊模式弹窗 */
+.cheat-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.cheat-modal {
+  background: linear-gradient(165deg, #161210 0%, #0d0a08 100%);
+  border: 1px solid #3a3020;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cheat-detail-modal {
+  max-width: 900px;
+}
+
+.cheat-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #2a2015;
+  background: rgba(26, 21, 15, 0.5);
+}
+
+.cheat-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cheat-modal-title {
+  font-size: 1.1rem;
+  color: #d4a520;
+  letter-spacing: 4px;
+  font-family: 'LiSu', 'STLiti', 'SimLi', '隶书', serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cheat-mode-badge {
+  font-size: 0.7rem;
+  color: #8b5040;
+  padding: 2px 8px;
+  background: rgba(139, 80, 64, 0.15);
+  border: 1px solid #5a3020;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}
+
+.cheat-close-btn {
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid #5a4030;
+  border-radius: 3px;
+  color: #8b6a40;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.cheat-close-btn:hover {
+  border-color: #c9a227;
+  color: #c9a227;
+}
+
+.cheat-back-btn {
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid #3a5030;
+  border-radius: 3px;
+  color: #6a8b40;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.cheat-back-btn:hover {
+  border-color: #a0c960;
+  color: #a0c960;
+}
+
+.cheat-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.cheat-section {
+  margin-bottom: 20px;
+}
+
+.cheat-section-title {
+  font-size: 0.9rem;
+  color: #b0a080;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2015;
+}
+
+.cheat-event-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.cheat-event-item {
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+}
+
+.cheat-event-item:hover {
+  border-color: #5a4830;
+  background: linear-gradient(180deg, #201810 0%, #161210 100%);
+}
+
+.cheat-event-title {
+  font-size: 0.85rem;
+  color: #c9b896;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.cheat-event-time {
+  font-size: 0.7rem;
+  color: #6b5a3a;
+  letter-spacing: 0.5px;
+}
+
+/* 事件详情样式 */
+.cheat-event-detail-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a2015;
+}
+
+.cheat-event-detail-title {
+  font-size: 1.6rem;
+  color: #d4a520;
+  letter-spacing: 6px;
+  font-weight: 600;
+  font-family: 'LiSu', 'STLiti', 'SimLi', '隶书', serif;
+  margin-bottom: 8px;
+  text-shadow: 0 0 20px rgba(201, 162, 39, 0.2), 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cheat-event-detail-time {
+  font-size: 0.85rem;
+  color: #8b7540;
+  letter-spacing: 2px;
+}
+
+/* 叙事区样式 */
+.cheat-narrative-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.cheat-speaker-quote-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(26, 21, 15, 0.5);
+  border: 1px solid #2a2015;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.cheat-speaker-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-right: 12px;
+  border-right: 1px solid #3a3020;
+}
+
+.cheat-speaker-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5a4520 0%, #3a2510 100%);
+  border: 1px solid #7a6030;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9a227;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: 'Noto Serif SC', serif;
+}
+
+.cheat-speaker-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cheat-speaker-name {
+  font-size: 0.9rem;
+  color: #d4b070;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.cheat-speaker-title {
+  font-size: 0.75rem;
+  color: #6b5a3a;
+  letter-spacing: 0.5px;
+}
+
+.cheat-quote-box {
+  position: relative;
+  flex: 1;
+  padding: 0 16px;
+}
+
+.cheat-quote-mark {
+  position: absolute;
+  top: -4px;
+  left: 4px;
+  font-size: 1.4rem;
+  color: #5a4830;
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+
+.cheat-quote-end {
+  position: absolute;
+  bottom: -8px;
+  right: 4px;
+  font-size: 1.4rem;
+  color: #5a4830;
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+
+.cheat-quote-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #9a8870;
+  margin: 0;
+  padding: 0 4px;
+  font-style: italic;
+}
+
+.cheat-narrative-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cheat-narrative-paragraph {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: #9a8870;
+  text-align: justify;
+  margin: 0;
+  letter-spacing: 0.3px;
+  text-indent: 2em;
+}
+
+.cheat-situation-prompt {
+  font-size: 0.9rem;
+  color: #b0a080;
+  letter-spacing: 0.5px;
+  padding-top: 12px;
+  border-top: 1px solid #2a2015;
+}
+
+/* 选项区样式 */
+.cheat-choices-section {
+  margin-top: 16px;
+}
+
+.cheat-choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cheat-choice-card {
+  width: 100%;
+  padding: 14px 18px;
+  background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  text-align: left;
+}
+
+.cheat-choice-card:hover {
+  border-color: #5a4830;
+  background: linear-gradient(180deg, #201810 0%, #161210 100%);
+  transform: translateX(4px);
+}
+
+.cheat-choice-title {
+  font-size: 0.95rem;
+  color: #c9b896;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.cheat-choice-description {
+  font-size: 0.8rem;
+  color: #7a6850;
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+}
+
+/* 结果区样式 */
+.cheat-result-section {
+  margin-top: 16px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cheat-selected-choice {
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #201810 0%, #161210 100%);
+  border: 1px solid #4a3820;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.cheat-selected-choice-title {
+  font-size: 0.95rem;
+  color: #d4b870;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.cheat-selected-choice-desc {
+  font-size: 0.8rem;
+  color: #8a7860;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.cheat-settlement-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(26, 21, 15, 0.4);
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.cheat-settlement-title {
+  font-size: 1rem;
+  color: #b0a070;
+  letter-spacing: 4px;
+  font-weight: normal;
+  font-family: 'Noto Serif SC', serif;
+}
+
+.cheat-effects-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cheat-effect-tag {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+
+.cheat-effect-tag.positive {
+  color: #7cb342;
+  background: rgba(124, 179, 66, 0.1);
+  border-color: rgba(124, 179, 66, 0.3);
+}
+
+.cheat-effect-tag.negative {
+  color: #c95050;
+  background: rgba(201, 80, 80, 0.1);
+  border-color: rgba(201, 80, 80, 0.3);
+}
+
+.cheat-ending-trigger-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+}
+
+.cheat-ending-final-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(18, 16, 12, 0.5);
+  border-radius: 4px;
+  width: 100%;
+}
+
+.cheat-final-stats-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cheat-final-stat {
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(90, 72, 48, 0.4);
+  color: #b0a070;
+  background: rgba(40, 32, 22, 0.4);
+}
+
+.cheat-final-stat.critical {
+  color: #d05050;
+  background: rgba(160, 40, 40, 0.2);
+  border-color: rgba(200, 60, 60, 0.4);
+  font-weight: 700;
+}
+
+.cheat-final-stat.warning {
+  color: #c9a030;
+  background: rgba(120, 100, 20, 0.15);
+  border-color: rgba(180, 150, 30, 0.35);
+}
+
+.cheat-ending-tags-inline {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cheat-echo-box {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(18, 16, 12, 0.6);
+  border-left: 2px solid #5a4830;
+  border-radius: 0 4px 4px 0;
+}
+
+.cheat-echo-label {
+  font-size: 0.78rem;
+  color: #6b5a3a;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.cheat-echo-text {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #9a8870;
+  margin: 0;
+  text-indent: 2em;
+}
+
+.cheat-result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.cheat-undo-btn {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid rgba(139, 90, 50, 0.35);
+  border-radius: 3px;
+  color: #8b6a40;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.cheat-undo-btn:hover {
+  border-color: #c9a227;
+  color: #c9a227;
+  background: rgba(201, 162, 39, 0.06);
+}
+
+.cheat-ghost-notice {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: rgba(139, 80, 64, 0.1);
+  border: 1px dashed #5a4030;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #8b6a50;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* 筛选区域样式 */
+.cheat-filter-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(26, 21, 15, 0.5);
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+}
+
+.cheat-filter-label {
+  font-size: 0.85rem;
+  color: #b0a080;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.cheat-filter-select {
+  flex: 1;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
+  border: 1px solid #3a3020;
+  border-radius: 4px;
+  color: #c9b896;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+}
+
+.cheat-filter-select:hover {
+  border-color: #5a4830;
+}
+
+.cheat-filter-select:focus {
+  border-color: #7a6030;
+  box-shadow: 0 0 0 2px rgba(122, 96, 48, 0.2);
+}
+
+.cheat-filter-select option {
+  background: #1a1510;
+  color: #c9b896;
+  padding: 8px;
+}
+
+/* 事件列表项样式优化 */
+.cheat-event-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+}
+
+.cheat-event-item:hover {
+  border-color: #5a4830;
+  background: linear-gradient(180deg, #201810 0%, #161210 100%);
+}
+
+.cheat-event-item.historical {
+  border-left: 3px solid #d4a520;
+}
+
+.cheat-event-item.transition {
+  border-left: 3px solid #6b8e6b;
+}
+
+.cheat-event-item.gray {
+  border-left: 3px solid #c9a227;
+}
+
+.cheat-event-item.chain {
+  border-left: 3px solid #8b6bb5;
+}
+
+.cheat-event-type-badge {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.cheat-event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.cheat-event-title {
+  font-size: 0.85rem;
+  color: #c9b896;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cheat-event-time {
+  font-size: 0.7rem;
+  color: #6b5a3a;
+  letter-spacing: 0.5px;
+}
+
+.cheat-event-type-tag {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.cheat-event-item.historical .cheat-event-type-tag {
+  background: rgba(212, 165, 32, 0.15);
+  color: #d4a520;
+  border: 1px solid rgba(212, 165, 32, 0.3);
+}
+
+.cheat-event-item.transition .cheat-event-type-tag {
+  background: rgba(107, 142, 107, 0.15);
+  color: #6b8e6b;
+  border: 1px solid rgba(107, 142, 107, 0.3);
+}
+
+.cheat-event-item.gray .cheat-event-type-tag {
+  background: rgba(201, 162, 39, 0.15);
+  color: #c9a227;
+  border: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.cheat-event-item.chain .cheat-event-type-tag {
+  background: rgba(139, 107, 181, 0.15);
+  color: #8b6bb5;
+  border: 1px solid rgba(139, 107, 181, 0.3);
+}
+
+/* 情感线事件 - 粉色 */
+.cheat-event-item.emotion {
+  border-left: 3px solid #e87daa;
+}
+
+.cheat-event-item.emotion .cheat-event-type-tag {
+  background: rgba(232, 125, 170, 0.15);
+  color: #e87daa;
+  border: 1px solid rgba(232, 125, 170, 0.3);
+}
+
+/* 结局事件 - 金色 */
+.cheat-event-item.ending {
+  border-left: 3px solid #d4a84b;
+}
+
+.cheat-event-item.ending .cheat-event-type-tag {
+  background: rgba(212, 168, 75, 0.15);
+  color: #d4a84b;
+  border: 1px solid rgba(212, 168, 75, 0.3);
+}
+
+/* 国势系统 - 青铜色 */
+.cheat-event-item.national {
+  border-left: 3px solid #6baaaa;
+}
+
+.cheat-event-item.national .cheat-event-type-tag {
+  background: rgba(107, 170, 170, 0.15);
+  color: #6baaaa;
+  border: 1px solid rgba(107, 170, 170, 0.3);
+}
+
+/* 滚动条样式 */
+.cheat-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cheat-modal-body::-webkit-scrollbar-track {
+  background: #0d0a08;
+}
+
+.cheat-modal-body::-webkit-scrollbar-thumb {
+  background: #3a3020;
+  border-radius: 3px;
+}
+
+.cheat-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #5a4830;
+}
+
+/* ========== 视图切换标签页 ========== */
+.cheat-view-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.cheat-view-tab {
+  padding: 6px 16px;
+  background: rgba(60, 40, 20, 0.4);
+  border: 1px solid #4a3020;
+  border-radius: 4px;
+  color: #9a7860;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.2s ease;
+}
+
+.cheat-view-tab:hover {
+  background: rgba(80, 55, 30, 0.5);
+  border-color: #6a4830;
+  color: #ba9878;
+}
+
+.cheat-view-tab.active {
+  background: linear-gradient(180deg, #3a2818 0%, #2a1810 100%);
+  border-color: #8a6848;
+  color: #e8c8a8;
+  box-shadow: 0 2px 8px rgba(138, 104, 72, 0.3);
+}
+
+/* ========== 结局图鉴 ========== */
+.cheat-ending-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.cheat-ending-card {
+  background: linear-gradient(135deg, #1a1410 0%, #12100c 100%);
+  border: 1px solid #3a2820;
+  border-radius: 6px;
+  padding: 12px;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.2s ease;
+  cursor: pointer;
+}
+
+
+.cheat-ending-card:hover {
+  border-color: #6a5038;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.cheat-ending-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.cheat-ending-category {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.cat-personal_fate { background: rgba(100, 160, 220, 0.15); color: #64a0dc; }
+.cat-ming_fate { background: rgba(220, 80, 60, 0.15); color: #dc503c; }
+.cat-special { background: rgba(180, 140, 60, 0.15); color: #b48c3c; }
+
+.cheat-ending-tier {
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  opacity: 0.85;
+}
+.tier-legendary { background: rgba(255, 200, 60, 0.2); color: #ffc83c; font-weight: bold; }
+.tier-epic { background: rgba(180, 130, 255, 0.2); color: #b482ff; }
+.tier-rare { background: rgba(160, 100, 220, 0.2); color: #a064dc; }
+.tier-historical { background: rgba(120, 180, 140, 0.2); color: #78b48c; }
+.tier-bittersweet { background: rgba(200, 160, 80, 0.2); color: #c8a050; }
+.tier-tragic { background: rgba(160, 80, 100, 0.2); color: #a05064; }
+.tier-dark { background: rgba(80, 60, 80, 0.25); color: #907090; }
+.tier-controversial { background: rgba(200, 120, 60, 0.2); color: #c87c3c; }
+.tier-peaceful { background: rgba(100, 180, 140, 0.15); color: #64b48c; }
+.tier-transcendent { background: rgba(200, 180, 255, 0.15); color: #c8b4ff; }
+.tier-saintly { background: rgba(255, 230, 150, 0.2); color: #ffe696; }
+.tier-heartwarming { background: rgba(255, 120, 140, 0.2); color: #ff788c; }
+.tier-mysterious { background: rgba(140, 100, 200, 0.2); color: #8c64c8; }
+.tier-miracle { background: rgba(255, 220, 100, 0.25); color: #ffdc64; }
+
+.cheat-ending-card-title {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #e8d8c8;
+  margin-bottom: 6px;
+}
+
+.cheat-ending-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.cheat-ending-tag {
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  background: rgba(80, 60, 40, 0.3);
+  border: 1px solid rgba(120, 90, 60, 0.3);
+  border-radius: 8px;
+  color: #b8a088;
+}
+
+.cheat-ending-card-echo-preview {
+  background: rgba(20, 16, 12, 0.6);
+  border: 1px solid #2a2018;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+  max-height: 90px;
+  overflow: hidden;
+}
+
+.cheat-ending-card-echo-preview pre {
+  margin: 0;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #a89888;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.cheat-ending-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  color: #706058;
+  border-top: 1px solid #2a2018;
+  padding-top: 6px;
+  margin-top: 4px;
+}
+
+.cheat-ending-id {
+  font-family: monospace;
+  opacity: 0.6;
+}
+
+.cheat-ending-trigger {
+  opacity: 0.7;
+}
+
+/* ========== 结局卡片双击提示 ========== */
+.cheat-ending-card {
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.2s ease;
+}
+.cheat-ending-card:hover {
+  border-color: #8a6848;
+}
+.cheat-ending-card:active {
+  transform: scale(0.98);
+}
+
+
+/* ============================================================
+   剧情线徽章（与 StorylineBar 配套：在幽灵模式中也显示当前事件所属剧情线）
+   ============================================================ */
+.cheat-event-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cheat-storyline-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 0.62rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  border: 1px solid rgba(197, 165, 90, 0.25);
+  background: rgba(24, 18, 10, 0.6);
+  font-family: 'Noto Serif SC', serif;
+}
+
+.cheat-storyline-badge svg {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.cheat-storyline-badge__name {
+  line-height: 1;
+}
+
+/* tone 配色（与 StorylineBar 一致） */
+.cheat-storyline-badge--gold { border-color: rgba(201, 162, 39, 0.45); color: #c9a227; }
+.cheat-storyline-badge--red  { border-color: rgba(184, 90, 58, 0.5);   color: #b85a3a; }
+.cheat-storyline-badge--blue { border-color: rgba(90, 138, 174, 0.5);  color: #5a8aae; }
+.cheat-storyline-badge--green { border-color: rgba(90, 138, 106, 0.5); color: #5a8a6a; }
+.cheat-storyline-badge--purple { border-color: rgba(154, 122, 178, 0.5); color: #9a7ab2; }
+.cheat-storyline-badge--pink { border-color: rgba(184, 122, 138, 0.5); color: #b87a8a; }
+.cheat-storyline-badge--gray { border-color: rgba(154, 154, 154, 0.4); color: #9a9a9a; }
+.cheat-storyline-badge--dark { border-color: rgba(184, 122, 138, 0.5); color: #b87a8a; background: rgba(36, 18, 26, 0.7); }
+.cheat-storyline-badge--cyan { border-color: rgba(90, 162, 178, 0.5);  color: #5aa2b2; }
+
+/* 详情页头部 title 行（横向排开：标题 + storyline 徽章 + type 标签） */
+.cheat-event-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cheat-event-detail-title-row .cheat-event-detail-title {
+  margin: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.cheat-event-detail-title-row .cheat-storyline-badge {
+  flex-shrink: 0;
+}
+
+.cheat-event-detail-title-row .cheat-event-type-tag {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+}
+
+/* 结局图鉴：storyline 徽章单独一行（在 title 下方） */
+.cheat-ending-card-storyline {
+  margin: 6px 0;
+}
+
+
+/* ============================================================
+   列表卡片 v2：title 不被 storyline 徽章挤占
+   - title-row：title + type 标签同行（type 缩到迷你）
+   - storyline-row：徽章独占一行（不挤 title 宽度）
+   ============================================================ */
+.cheat-event-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cheat-event-title-row .cheat-event-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #e8d8a8;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+.cheat-event-type-tag--inline {
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  background: rgba(197, 165, 90, 0.08);
+  color: rgba(197, 165, 90, 0.65);
+  border: 1px solid rgba(197, 165, 90, 0.15);
+}
+
+.cheat-event-item.historical .cheat-event-type-tag--inline {
+  background: rgba(212, 165, 32, 0.15);
+  color: #d4a520;
+  border-color: rgba(212, 165, 32, 0.3);
+}
+.cheat-event-item.transition .cheat-event-type-tag--inline {
+  background: rgba(165, 130, 90, 0.12);
+  color: #a5825a;
+  border-color: rgba(165, 130, 90, 0.25);
+}
+.cheat-event-item.emotion .cheat-event-type-tag--inline {
+  background: rgba(184, 122, 138, 0.15);
+  color: #b87a8a;
+  border-color: rgba(184, 122, 138, 0.3);
+}
+.cheat-event-item.gray .cheat-event-type-tag--inline {
+  background: rgba(154, 154, 154, 0.12);
+  color: #9a9a9a;
+  border-color: rgba(154, 154, 154, 0.25);
+}
+.cheat-event-item.origin .cheat-event-type-tag--inline {
+  background: rgba(90, 162, 178, 0.15);
+  color: #5aa2b2;
+  border-color: rgba(90, 162, 178, 0.3);
+}
+.cheat-event-item.faction .cheat-event-type-tag--inline {
+  background: rgba(122, 90, 106, 0.18);
+  color: #b87a8a;
+  border-color: rgba(122, 90, 106, 0.3);
+}
+.cheat-event-item.ending .cheat-event-type-tag--inline {
+  background: rgba(201, 162, 39, 0.18);
+  color: #c9a227;
+  border-color: rgba(201, 162, 39, 0.35);
+}
+
+.cheat-event-storyline-row {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}

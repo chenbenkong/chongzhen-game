@@ -1,0 +1,109 @@
+.save-notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.save-notification {
+  background: linear-gradient(145deg, #2a2015 0%, #1a1510 100%);
+  border: 2px solid #c9a227;
+  border-radius: 8px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 
+    0 0 30px rgba(201, 162, 39, 0.3),
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideIn 0.3s ease-out;
+  min-width: 280px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.save-icon {
+  font-size: 2rem;
+  animation: iconPulse 0.5s ease-in-out;
+}
+
+@keyframes iconPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.save-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.save-title {
+  color: #c9a227;
+  font-size: 1.1rem;
+  font-weight: bold;
+  font-family: 'Noto Serif SC', serif;
+  text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+.save-subtitle {
+  color: #a09070;
+  font-size: 0.9rem;
+  font-family: 'Noto Serif SC', serif;
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .save-notification {
+    padding: 20px 24px;
+    margin: 0 20px;
+    min-width: auto;
+  }
+  
+  .save-icon {
+    font-size: 1.6rem;
+  }
+  
+  .save-title {
+    font-size: 1rem;
+  }
+  
+  .save-subtitle {
+    font-size: 0.85rem;
+  }
+}

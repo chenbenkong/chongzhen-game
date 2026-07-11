@@ -1,0 +1,447 @@
+.game-screen {
+  padding: 4px 20px 20px;
+  min-height: 100vh;
+}
+
+.game-main {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+
+/* 平板 */
+@media (max-width: 1100px) {
+  .game-main {
+    grid-template-columns: 200px 1fr 200px;
+    gap: 12px;
+  }
+}
+
+/* 小平板 */
+@media (max-width: 900px) {
+  .game-main {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar,
+  .right-sidebar {
+    order: 2;
+  }
+  
+  .main-content {
+    order: 1;
+  }
+}
+
+/* 手机横屏 */
+@media (max-width: 768px) {
+  .game-screen {
+    padding: 10px;
+  }
+  
+  .game-main {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+}
+
+/* 手机竖屏 */
+@media (max-width: 480px) {
+  .game-screen {
+    padding: 6px;
+  }
+  
+  .game-main {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-panel {
+  background: linear-gradient(165deg, rgba(24,18,10,0.85) 0%, rgba(13,10,8,0.9) 100%);
+  border: 1px solid rgba(197,165,90,0.15);
+  border-radius: 4px;
+  padding: 16px;
+  font-family: var(--font-body);
+  /* 性能: 列表很长时，离屏 li 跳过渲染，滚动顺畅 */
+  contain: layout style;
+}
+
+.history-panel h4 {
+  font-size: 0.85rem;
+  color: rgba(197,165,90,0.6);
+  letter-spacing: 4px;
+  margin-bottom: 12px;
+  font-weight: normal;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(197,165,90,0.1);
+  font-family: var(--font-heading);
+}
+
+.history-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* 性能: 离屏列表项跳过布局 + 渲染 */
+  content-visibility: auto;
+  /* 每个 li 估计 ~32px，N 行就 N*32，告诉浏览器"占位高度"避免滚动条抖动 */
+  contain-intrinsic-size: auto 320px;
+}
+
+.history-panel li {
+  font-size: 0.78rem;
+  color: rgba(245,230,200,0.55);
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(197,165,90,0.06);
+  letter-spacing: 1px;
+  /* 性能: 离屏 li 跳过布局 + 渲染，滚动顺畅 */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 28px;
+  /* 性能: 提示浏览器这些项可以独立 layer 渲染 */
+  contain: layout style;
+}
+
+.history-panel li:last-child {
+  border-bottom: none;
+}
+
+.history-panel li.empty {
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.main-content {
+  min-height: auto;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    min-height: auto;
+  }
+}
+
+/* 弹窗遮罩层 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 10px;
+    align-items: flex-end;
+  }
+}
+
+/* 弹窗内容 */
+.modal-content {
+  background: linear-gradient(165deg, #1a1510 0%, #0d0a08 100%);
+  border: 2px solid #2a2015;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-height: 90vh;
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(197,165,90,0.15);
+}
+
+.modal-header h2 {
+  color: var(--gold);
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+  margin: 0;
+  font-family: var(--font-heading);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: rgba(197,165,90,0.5);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: var(--gold);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+@media (max-width: 480px) {
+  .modal-body {
+    padding: 16px;
+  }
+}
+
+/* 辞官确认弹窗特殊样式 */
+.resign-confirm-modal {
+  max-width: 450px;
+}
+
+.resign-confirm-modal .modal-header {
+  justify-content: center;
+  border-bottom-color: rgba(197,165,90,0.4);
+}
+
+.resign-confirm-modal .modal-header h2 {
+  color: var(--gold);
+}
+
+.resign-warning {
+  color: var(--parchment);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.resign-quote {
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-style: italic;
+  text-align: center;
+  padding: 15px;
+  background: rgba(197,165,90,0.08);
+  border-left: 3px solid var(--gold);
+  margin-bottom: 15px;
+}
+
+.resign-hint {
+  color: rgba(197,165,90,0.5);
+  font-size: 0.85rem;
+  text-align: center;
+  font-style: italic;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  padding: 0 20px 20px;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 16px 16px;
+  }
+  
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+.confirm-resign-btn,
+.cancel-resign-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
+}
+
+.confirm-resign-btn {
+  background: linear-gradient(135deg, #8a2a2a 0%, #a03030 100%);
+  color: #e8d4d4;
+  border: 1px solid #c05050;
+}
+
+.confirm-resign-btn:hover {
+  background: linear-gradient(135deg, #9a3a3a 0%, #b04040 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(160, 48, 48, 0.3);
+}
+
+.cancel-resign-btn {
+  background: linear-gradient(135deg, #2a5a2a 0%, #3a7a3a 100%);
+  color: #d4e8d4;
+  border: 1px solid #4a9a4a;
+}
+
+.cancel-resign-btn:hover {
+  background: linear-gradient(135deg, #3a6a3a 0%, #4a8a4a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 154, 74, 0.3);
+}
+
+/* ============================================================
+   身份面板（替代 inline style）
+   ============================================================ */
+.identity-panel {
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 12px;
+  transition: border-color 0.3s ease;
+  animation: fadeInUp 0.5s ease both;
+}
+.identity-panel--official {
+  background: #161210;
+  border: 1px solid #2a2015;
+}
+.identity-panel--rebel {
+  background: #2a1510;
+  border: 1px solid #5a2a1a;
+}
+.identity-panel--exiled {
+  background: #1a1518;
+  border: 1px solid #3a1a2a;
+}
+.identity-panel--other {
+  background: #101a15;
+  border: 1px solid #1a3a2a;
+}
+.identity-panel h4 {
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.identity-panel--official h4 { color: #8b7540; }
+.identity-panel--rebel h4 { color: #b85a3a; }
+.identity-panel--exiled h4 { color: #8a5a7a; }
+.identity-panel--other h4 { color: #5a8a6a; }
+.identity-rank {
+  color: #c9a227;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.identity-desc {
+  font-size: 0.75rem;
+  color: #6b5a3a;
+}
+
+/* ============================================================
+   政绩面板（替代 inline style）
+   ============================================================ */
+.merit-panel {
+  background: #161210;
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  padding: 12px;
+  animation: fadeInUp 0.5s ease 0.15s both;
+}
+.merit-panel h4 {
+  color: #8b7540;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.merit-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.merit-score-label {
+  color: #6b5a3a;
+  font-size: 0.8rem;
+}
+.merit-score-value {
+  color: #c9a227;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.merit-bar-track {
+  width: 100%;
+  height: 6px;
+  background: #1a1510;
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.merit-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a8c3a, #c9a227);
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.merit-next {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #5a4830;
+}
+
+/* ============================================================
+   升官/贬官 Toast 动画
+   ============================================================ */
+.promotion-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  color: #d4c8a8;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  animation: slideDown 0.5s ease both;
+}
+.promotion-toast--promote {
+  background: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%);
+  border: 2px solid #4a9a4a;
+}
+.promotion-toast--demote {
+  background: linear-gradient(135deg, #3a1a1a 0%, #5a2d2d 100%);
+  border: 2px solid #9a4a4a;
+}
+
+/* ============================================================
+   游戏屏幕入场动画
+   ============================================================ */
+.game-screen {
+  animation: fadeIn 0.3s ease;
+}
+.sidebar {
+  animation: slideInLeft 0.4s ease both;
+}
+.right-sidebar {
+  animation: slideInRight 0.4s ease 0.1s both;
+}
+.main-content {
+  animation: fadeInUp 0.4s ease 0.15s both;
+}

@@ -1,0 +1,241 @@
+/* ============================================================
+   崇祯·宦海浮沉 全局主题
+   配色 / 字体来自参考站 https://wtd85afh.mule.page/
+   ============================================================ */
+
+:root {
+  /* —— 主题色板 —— */
+  --red: #5C3A1E;
+  --red-light: #7A5030;
+  --gold: #C5A55A;
+  --gold-dark: #9A7B3A;
+  --ink: #1A1A1A;
+  --ink-light: #2D2D2D;
+  --parchment: #F5E6C8;
+  --parchment-dark: #E8D5A8;
+  --jade: #2E8B57;
+  --jade-dark: #1D6B3F;
+  --blood: #4A2A12;
+  --bg-deep: #0A0807;
+
+  /* —— 字体 —— */
+  --font-heading: 'Ma Shan Zheng', 'Songti SC', 'STSong', 'SimSun', 'FangSong', serif;
+  --font-body: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-fun: 'ZCOOL KuaiLe', cursive;
+
+  /* —— 通用别名 —— */
+  --color-text: var(--parchment);
+  --color-text-dim: rgba(245, 230, 200, 0.55);
+  --color-text-faint: rgba(245, 230, 200, 0.35);
+  --color-border: rgba(197, 165, 90, 0.15);
+  --color-border-strong: rgba(197, 165, 90, 0.4);
+  --color-panel: rgba(42, 35, 24, 0.8);
+  --color-panel-deep: rgba(24, 18, 10, 0.85);
+}
+
+/* ============================================================
+   滚动条 - 仿古铜色（全局唯一定义）
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 165, 90, 0.25);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(197, 165, 90, 0.45); }
+::-webkit-scrollbar-corner { background: var(--bg-deep); }
+* { scrollbar-width: thin; scrollbar-color: rgba(197,165,90,0.25) var(--bg-deep); }
+
+/* ============================================================
+   文本选区（全局唯一定义）
+   ============================================================ */
+::selection { background: rgba(197, 165, 90, 0.35); color: var(--parchment); }
+::-moz-selection { background: rgba(197, 165, 90, 0.35); color: var(--parchment); }
+
+/* ============================================================
+   全局动画系统
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(197,165,90,0.15); }
+  50% { border-color: rgba(197,165,90,0.35); }
+}
+@keyframes barFill {
+  from { width: 0; }
+}
+
+/* 动画延迟工具类 */
+.anim-delay-1 { animation-delay: 0.1s; }
+.anim-delay-2 { animation-delay: 0.2s; }
+.anim-delay-3 { animation-delay: 0.3s; }
+.anim-delay-4 { animation-delay: 0.4s; }
+.anim-delay-5 { animation-delay: 0.5s; }
+
+/* 通用入场动画类 */
+.anim-fade-in { animation: fadeIn 0.4s ease both; }
+.anim-fade-in-up { animation: fadeInUp 0.5s ease both; }
+.anim-fade-in-scale { animation: fadeInScale 0.4s ease both; }
+.anim-slide-in-right { animation: slideInRight 0.4s ease both; }
+
+/* ============================================================
+   标题屏 6 层背景容器
+   .title-screen 里加 5 个子 div 渲染 gradient / texture / ink / image / mountains / vignette
+   ============================================================ */
+.paper-bg {
+  position: relative;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 9px, rgba(197,165,90,0.06) 9px, rgba(197,165,90,0.06) 10px),
+    repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(197,165,90,0.06) 9px, rgba(197,165,90,0.06) 10px),
+    linear-gradient(160deg, #0A0807 0%, #1C1610 20%, #2A1E14 45%, #321C12 55%, #1C1610 80%, #0A0807 100%);
+}
+
+/* 标题屏 6 层背景 - 用绝对定位子 div */
+.title-bg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.title-bg-gradient {
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 40%, rgba(90,50,18,0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 30% 60%, rgba(139,60,15,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 90% at 70% 30%, rgba(120,75,30,0.14) 0%, transparent 50%),
+    linear-gradient(180deg, #0E0B08 0%, #201810 30%, #2E2218 50%, #201810 70%, #0E0B08 100%);
+}
+/* SVG 噪点纹理 - 用 background-blend-mode 替代 mix-blend-mode（性能更优） */
+.title-bg-texture {
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+/* 墨色晕染 */
+.title-bg-ink {
+  background:
+    radial-gradient(ellipse 55% 28% at 8% 88%, rgba(160,110,50,0.18) 0%, rgba(120,80,30,0.08) 40%, transparent 100%),
+    radial-gradient(ellipse 45% 30% at 92% 82%, rgba(150,100,40,0.16) 0%, rgba(100,65,25,0.06) 45%, transparent 100%),
+    radial-gradient(ellipse 80% 22% at 50% 96%, rgba(140,95,35,0.22) 0%, rgba(100,65,20,0.08) 50%, transparent 100%),
+    radial-gradient(ellipse 40% 35% at 12% 15%, rgba(130,90,40,0.12) 0%, rgba(90,60,25,0.04) 50%, transparent 100%),
+    radial-gradient(ellipse 35% 30% at 88% 12%, rgba(120,85,35,0.1) 0%, rgba(80,55,20,0.03) 50%, transparent 100%),
+    radial-gradient(ellipse 80% 50% at 50% 55%, rgba(120,80,30,0.08) 0%, transparent 70%);
+}
+/* 主背景图 - 参考站用的 cover-landscape.webp */
+.title-bg-image {
+  background: url('/cover-landscape.webp') center center / cover no-repeat;
+  opacity: 0.10;
+}
+/* 远山剪影 - 用 SVG */
+.title-bg-mountains {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300'%3E%3Cpath d='M0,300 L0,210 Q60,140 130,180 Q200,120 280,165 Q350,90 430,140 Q500,70 580,120 Q650,55 730,100 Q800,40 880,90 Q940,50 1020,100 Q1080,65 1140,110 L1200,85 L1200,300Z' fill='%23483828' opacity='0.4'/%3E%3Cpath d='M0,300 L0,240 Q100,170 210,210 Q310,140 400,185 Q490,110 580,160 Q660,95 750,145 Q830,80 920,130 Q1000,100 1080,140 L1200,115 L1200,300Z' fill='%23382a1e' opacity='0.55'/%3E%3Cpath d='M0,300 L0,265 Q80,220 180,248 Q280,200 380,235 Q480,190 560,225 Q660,185 760,218 Q860,190 960,220 Q1060,198 1140,230 L1200,210 L1200,300Z' fill='%23281e14' opacity='0.7'/%3E%3C/svg%3E") no-repeat bottom center / 100% auto;
+}
+/* 暗角 */
+.title-bg-vignette {
+  background: radial-gradient(ellipse 75% 70% at center, transparent 35%, rgba(0,0,0,0.5) 100%);
+}
+/* 中央金色光晕 */
+.title-ambient-glow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197,165,90,0.04) 0%, transparent 70%);
+  top: 30%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ambientPulse 8s ease-in-out infinite;
+}
+@keyframes ambientPulse {
+  0%,100% { opacity: 0.4; transform: translate(-50%,-50%) scale(1); }
+  50%     { opacity: 0.8; transform: translate(-50%,-50%) scale(1.15); }
+}
+/* 顶部 / 底部装饰笔触 */
+.title-ink-stroke-top, .title-ink-stroke-bot {
+  position: absolute; left: 0; right: 0; height: 120px;
+  pointer-events: none; z-index: 1; opacity: 0.12;
+}
+.title-ink-stroke-top { top: 0; }
+.title-ink-stroke-bot { bottom: 0; }
+.title-ink-stroke-top {
+  background:
+    linear-gradient(180deg, rgba(197,165,90,0.2) 0%, transparent 100%) no-repeat 20% 0/1px 80px,
+    linear-gradient(180deg, rgba(197,165,90,0.15) 0%, transparent 100%) no-repeat 80% 0/1px 60px,
+    linear-gradient(90deg, transparent, rgba(197,165,90,0.08), transparent) no-repeat 50% 1px/40% 1px;
+}
+.title-ink-stroke-bot {
+  background:
+    linear-gradient(0deg, rgba(197,165,90,0.2) 0%, transparent 100%) no-repeat 35% 100%/1px 80px,
+    linear-gradient(0deg, rgba(197,165,90,0.15) 0%, transparent 100%) no-repeat 65% 100%/1px 60px,
+    linear-gradient(90deg, transparent, rgba(197,165,90,0.08), transparent) no-repeat 50% calc(100% - 1px)/40% 1px;
+}
+
+/* ============================================================
+   通用 UI 元素
+   ============================================================ */
+button { font-family: var(--font-body); }
+h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--gold); }
+
+/* 金色文字辅助类 */
+.text-gold { color: var(--gold); }
+.text-parchment { color: var(--parchment); }
+
+/* 通用按钮基础 */
+.btn {
+  background: linear-gradient(180deg, rgba(30,22,14,0.6), rgba(20,14,8,0.8));
+  color: var(--gold);
+  font-size: 1rem;
+  padding: 14px 52px;
+  letter-spacing: 0.4em;
+  border: 1px solid rgba(197,165,90,0.2);
+  transition: all 0.4s ease;
+  display: inline-block;
+  min-width: 220px;
+  text-align: center;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, rgba(80,30,10,0.3), rgba(60,20,5,0.4));
+  box-shadow: 0 6px 40px rgba(139,50,0,0.2), 0 0 1px rgba(197,165,90,0.4);
+  border-color: rgba(197,165,90,0.5);
+}

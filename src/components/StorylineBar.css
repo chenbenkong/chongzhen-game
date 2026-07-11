@@ -1,0 +1,191 @@
+/* ============================================================
+   剧情线进度条
+   展示当前剧情线分组（用于在 UI 上"同步体现分支"）
+   tone 决定配色：gold/red/blue/green/purple/pink/gray/dark/cyan
+   ============================================================ */
+
+.storyline-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(197, 165, 90, 0.18);
+  background: linear-gradient(165deg, rgba(24, 18, 10, 0.85) 0%, rgba(13, 10, 8, 0.92) 100%);
+  font-family: var(--font-body);
+  /* 入场动画：跟 StatusBar 错开 */
+  animation: fadeInUp 0.4s ease 0.05s both;
+  /* 性能: 独立 layer，状态条变化不重排主区 */
+  contain: layout style;
+}
+
+.storyline-bar__lead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-right: 12px;
+  border-right: 1px solid rgba(197, 165, 90, 0.12);
+}
+
+.storyline-bar__caption {
+  font-size: 0.72rem;
+  color: rgba(197, 165, 90, 0.55);
+  letter-spacing: 3px;
+  font-family: var(--font-heading);
+  white-space: nowrap;
+}
+
+.storyline-bar__main {
+  flex: 1 1 auto;
+  min-width: 0;          /* 允许 ellipsis */
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.storyline-bar__name {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.storyline-bar__intro {
+  font-size: 0.78rem;
+  color: rgba(245, 230, 200, 0.55);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.storyline-bar__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: rgba(197, 165, 90, 0.45);
+  letter-spacing: 1px;
+  font-family: var(--font-heading);
+}
+
+.storyline-bar__divider {
+  opacity: 0.4;
+}
+
+/* ============================================================
+   tone 配色：每个剧情线主题用对应的主色
+   主色用于：边框、图标色、name 文字色
+   ============================================================ */
+
+/* gold — 中兴 / 商海 */
+.storyline-bar--gold {
+  border-color: rgba(201, 162, 39, 0.35);
+}
+.storyline-bar--gold .storyline-bar__name,
+.storyline-bar--gold .storyline-bar__lead {
+  color: #c9a227;
+}
+
+/* red — 边关 / 忠烈 / 天崩 */
+.storyline-bar--red {
+  border-color: rgba(184, 90, 58, 0.4);
+}
+.storyline-bar--red .storyline-bar__name,
+.storyline-bar--red .storyline-bar__lead {
+  color: #b85a3a;
+}
+
+/* blue — 东林 */
+.storyline-bar--blue {
+  border-color: rgba(90, 138, 174, 0.4);
+}
+.storyline-bar--blue .storyline-bar__name,
+.storyline-bar--blue .storyline-bar__lead {
+  color: #5a8aae;
+}
+
+/* green — 林泉 / 悬壶 */
+.storyline-bar--green {
+  border-color: rgba(90, 138, 106, 0.4);
+}
+.storyline-bar--green .storyline-bar__name,
+.storyline-bar--green .storyline-bar__lead {
+  color: #5a8a6a;
+}
+
+/* purple — 异闻 */
+.storyline-bar--purple {
+  border-color: rgba(154, 122, 178, 0.4);
+}
+.storyline-bar--purple .storyline-bar__name,
+.storyline-bar--purple .storyline-bar__lead {
+  color: #9a7ab2;
+}
+
+/* pink — 红颜 */
+.storyline-bar--pink {
+  border-color: rgba(184, 122, 138, 0.4);
+}
+.storyline-bar--pink .storyline-bar__name,
+.storyline-bar--pink .storyline-bar__lead {
+  color: #b87a8a;
+}
+
+/* gray — 烟火 / 灰色地带 */
+.storyline-bar--gray {
+  border-color: rgba(154, 154, 154, 0.3);
+}
+.storyline-bar--gray .storyline-bar__name,
+.storyline-bar--gray .storyline-bar__lead {
+  color: #9a9a9a;
+}
+
+/* dark — 权谋 / 贪墨 */
+.storyline-bar--dark {
+  border-color: rgba(122, 90, 106, 0.45);
+  background: linear-gradient(165deg, rgba(36, 18, 26, 0.9) 0%, rgba(18, 10, 14, 0.95) 100%);
+}
+.storyline-bar--dark .storyline-bar__name,
+.storyline-bar--dark .storyline-bar__lead {
+  color: #b87a8a;
+}
+
+/* cyan — 家业 */
+.storyline-bar--cyan {
+  border-color: rgba(90, 162, 178, 0.4);
+}
+.storyline-bar--cyan .storyline-bar__name,
+.storyline-bar--cyan .storyline-bar__lead {
+  color: #5aa2b2;
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .storyline-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .storyline-bar__lead {
+    padding-right: 8px;
+  }
+  .storyline-bar__main {
+    flex: 1 1 100%;
+    order: 3;
+  }
+  .storyline-bar__intro {
+    font-size: 0.72rem;
+  }
+  .storyline-bar__meta {
+    font-size: 0.65rem;
+  }
+}

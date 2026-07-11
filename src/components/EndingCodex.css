@@ -1,0 +1,527 @@
+/* ============ 结局图鉴 ============ */
+.ending-codex-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  backdrop-filter: blur(3px);
+  padding: 20px;
+}
+.ending-codex-modal {
+  width: 100%;
+  max-width: 1100px;
+  max-height: 90vh;
+  background: linear-gradient(180deg, #1a1208 0%, #0d0804 100%);
+  border: 1px solid rgba(180, 140, 80, 0.4);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 111, 0.15);
+  overflow: hidden;
+}
+
+/* 顶栏 */
+.codex-topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: linear-gradient(90deg, rgba(45, 30, 18, 0.7) 0%, rgba(30, 20, 10, 0.7) 100%);
+  border-bottom: 1px solid rgba(180, 140, 80, 0.3);
+}
+.codex-title-area { flex-shrink: 0; }
+.codex-title {
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 1.35rem;
+  color: #d4af6f;
+  letter-spacing: 6px;
+}
+.codex-subtitle {
+  font-size: 0.7rem;
+  color: rgba(212, 175, 111, 0.6);
+  letter-spacing: 3px;
+  margin-top: 2px;
+}
+.codex-progress { flex: 1; max-width: 280px; }
+.codex-progress-numbers {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  color: #d4af6f;
+  font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+}
+.codex-progress-cur { font-size: 1.4rem; font-weight: 700; }
+.codex-progress-sep { color: rgba(212, 175, 111, 0.5); }
+.codex-progress-total { font-size: 0.95rem; color: rgba(212, 175, 111, 0.7); }
+.codex-progress-bar {
+  margin-top: 4px;
+  height: 5px;
+  background: rgba(60, 40, 20, 0.6);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.codex-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b6f3f 0%, #d4af6f 100%);
+  transition: width 0.3s;
+}
+.codex-progress-label {
+  font-size: 0.7rem;
+  color: rgba(212, 175, 111, 0.6);
+  margin-top: 2px;
+  text-align: right;
+}
+.codex-close-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(180, 140, 80, 0.3);
+  color: rgba(212, 175, 111, 0.7);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.codex-close-btn:hover {
+  border-color: rgba(212, 175, 111, 0.6);
+  color: #d4af6f;
+  background: rgba(180, 140, 80, 0.1);
+}
+
+/* 类别 tab */
+.codex-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  background: rgba(20, 14, 8, 0.5);
+  border-bottom: 1px solid rgba(180, 140, 80, 0.2);
+  overflow-x: auto;
+  min-height: 64px;
+  align-items: stretch;
+}
+.codex-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(212, 175, 111, 0.6);
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.codex-tab:hover { color: rgba(212, 175, 111, 0.85); }
+.codex-tab.active {
+  color: #d4af6f;
+  border-bottom-color: #d4af6f;
+  background: rgba(180, 140, 80, 0.05);
+}
+.codex-tab-icon { font-size: 1.1rem; }
+.codex-tab-count {
+  font-size: 0.7rem;
+  color: rgba(212, 175, 111, 0.5);
+  margin-left: 2px;
+}
+
+/* 内容区 */
+.codex-content {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+.codex-content::-webkit-scrollbar { width: 6px; }
+.codex-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+.codex-content::-webkit-scrollbar-thumb { background: rgba(212, 175, 111, 0.3); border-radius: 3px; }
+
+.codex-cat-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(180, 140, 80, 0.25);
+}
+.codex-cat-icon { font-size: 1.4rem; }
+.codex-cat-label {
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 1.2rem;
+  color: #d4af6f;
+  letter-spacing: 4px;
+}
+.codex-cat-sub {
+  font-size: 0.85rem;
+  color: rgba(212, 175, 111, 0.5);
+  letter-spacing: 2px;
+}
+
+/* tier block */
+.codex-tier-block { margin-bottom: 20px; }
+.codex-tier-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.codex-tier-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+  letter-spacing: 2px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.codex-tier-count {
+  font-size: 0.75rem;
+  color: rgba(212, 175, 111, 0.5);
+}
+
+/* 卡片网格 */
+.codex-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+.codex-card {
+  position: relative;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 3px;
+  background: rgba(30, 20, 12, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.codex-card:hover { transform: translateY(-2px); }
+.codex-card.unlocked { box-shadow: 0 2px 8px rgba(212, 175, 111, 0.15); }
+.codex-card.locked {
+  background: rgba(20, 14, 8, 0.5);
+  opacity: 0.6;
+  filter: grayscale(0.6);
+}
+.codex-card-name {
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 1rem;
+  color: #d4af6f;
+  letter-spacing: 2px;
+}
+.codex-card.locked .codex-card-name {
+  color: rgba(212, 175, 111, 0.5);
+  letter-spacing: 4px;
+  font-size: 0.95rem;
+}
+.codex-card-sub {
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: rgba(212, 175, 111, 0.65);
+  letter-spacing: 0.5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 1.5em;
+}
+.codex-card.locked .codex-card-sub {
+  color: rgba(212, 175, 111, 0.32);
+  font-style: italic;
+}
+.codex-card-id {
+  font-size: 0.65rem;
+  color: rgba(212, 175, 111, 0.35);
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+.codex-card-time {
+  font-size: 0.7rem;
+  color: rgba(212, 175, 111, 0.55);
+  margin-top: 2px;
+}
+.codex-card-seal {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.6rem;
+  color: rgba(212, 175, 111, 0.4);
+  border: 1px solid rgba(180, 140, 80, 0.2);
+  padding: 1px 4px;
+  border-radius: 1px;
+  letter-spacing: 1px;
+}
+
+/* Tier 颜色 */
+.tone-legendary { border-color: rgba(212, 175, 111, 0.5); color: #d4af6f; background: linear-gradient(135deg, rgba(80, 50, 20, 0.4) 0%, rgba(40, 25, 10, 0.5) 100%); }
+.tone-saintly { border-color: rgba(180, 200, 220, 0.4); color: #b4c8dc; background: linear-gradient(135deg, rgba(30, 40, 60, 0.4) 0%, rgba(15, 25, 35, 0.5) 100%); }
+.tone-bittersweet { border-color: rgba(200, 160, 90, 0.4); color: #c8a05a; background: linear-gradient(135deg, rgba(60, 45, 25, 0.4) 0%, rgba(30, 22, 12, 0.5) 100%); }
+.tone-tragic { border-color: rgba(150, 80, 70, 0.5); color: #c87868; background: linear-gradient(135deg, rgba(60, 30, 25, 0.4) 0%, rgba(30, 15, 12, 0.5) 100%); }
+.tone-dark { border-color: rgba(80, 60, 60, 0.5); color: #968080; background: linear-gradient(135deg, rgba(30, 20, 25, 0.4) 0%, rgba(15, 10, 12, 0.5) 100%); }
+.tone-controversial { border-color: rgba(160, 130, 80, 0.4); color: #c8a878; background: linear-gradient(135deg, rgba(50, 40, 30, 0.4) 0%, rgba(25, 20, 15, 0.5) 100%); }
+.tone-mysterious { border-color: rgba(120, 100, 160, 0.4); color: #b09cc8; background: linear-gradient(135deg, rgba(35, 30, 50, 0.4) 0%, rgba(20, 15, 30, 0.5) 100%); }
+.tone-redemptive { border-color: rgba(120, 160, 120, 0.4); color: #a0c8a0; background: linear-gradient(135deg, rgba(30, 50, 35, 0.4) 0%, rgba(15, 25, 18, 0.5) 100%); }
+
+/* 空状态 */
+.codex-empty {
+  padding: 40px;
+  text-align: center;
+  color: rgba(212, 175, 111, 0.4);
+  font-size: 0.95rem;
+}
+
+/* 底栏 */
+.codex-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: rgba(20, 14, 8, 0.5);
+  border-top: 1px solid rgba(180, 140, 80, 0.2);
+}
+.codex-footer-hint {
+  font-size: 0.78rem;
+  color: rgba(212, 175, 111, 0.5);
+  letter-spacing: 1px;
+}
+.codex-footer-close {
+  padding: 6px 18px;
+  background: linear-gradient(180deg, rgba(60, 40, 25, 0.6) 0%, rgba(40, 25, 15, 0.7) 100%);
+  border: 1px solid rgba(180, 140, 80, 0.3);
+  border-radius: 3px;
+  color: #d4af6f;
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 0.95rem;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.codex-footer-close:hover {
+  background: linear-gradient(180deg, rgba(80, 55, 30, 0.7) 0%, rgba(55, 35, 20, 0.8) 100%);
+  border-color: rgba(212, 175, 111, 0.5);
+}
+
+@media (max-width: 700px) {
+  .ending-codex-modal { max-height: 95vh; }
+  .codex-topbar { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
+  .codex-progress { width: 100%; max-width: 100%; }
+  .codex-tabs { padding: 0 12px; }
+  .codex-tab { padding: 10px 12px; font-size: 0.85rem; }
+  .codex-tab-icon { display: none; }
+  .codex-content { padding: 16px; }
+  .codex-card-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+}
+
+/* ============ 详情弹窗 ============ */
+.codex-card { cursor: pointer; user-select: none; }
+
+.codex-detail-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 20px;
+  animation: codex-fade-in 0.2s ease;
+}
+@keyframes codex-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.codex-detail-modal {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  background: linear-gradient(180deg, #1f1610 0%, #0d0804 100%);
+  border: 1px solid rgba(180, 140, 80, 0.5);
+  border-radius: 6px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 111, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: codex-zoom-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes codex-zoom-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.codex-detail-modal.locked {
+  /* 保留视觉区分，但不再蒙版隐藏内容 */
+  opacity: 1;
+  filter: none;
+}
+
+.codex-detail-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(20, 14, 8, 0.6);
+  border: 1px solid rgba(180, 140, 80, 0.3);
+  color: rgba(212, 175, 111, 0.7);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s;
+}
+.codex-detail-close:hover {
+  border-color: rgba(212, 175, 111, 0.6);
+  color: #d4af6f;
+  background: rgba(180, 140, 80, 0.15);
+}
+
+.codex-detail-header {
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid rgba(180, 140, 80, 0.25);
+  background: linear-gradient(90deg, rgba(45, 30, 18, 0.5) 0%, rgba(30, 20, 10, 0.5) 100%);
+}
+.codex-detail-tier-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.72rem;
+  font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+  letter-spacing: 2px;
+  border-radius: 2px;
+  border: 1px solid;
+  margin-bottom: 8px;
+}
+.codex-detail-title {
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 1.6rem;
+  color: #d4af6f;
+  margin: 0 0 8px;
+  letter-spacing: 6px;
+  text-shadow: 0 0 16px rgba(201, 162, 39, 0.3);
+}
+.codex-detail-modal.locked .codex-detail-title {
+  color: rgba(212, 175, 111, 0.7);
+  letter-spacing: 4px;
+}
+.codex-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: rgba(212, 175, 111, 0.5);
+  flex-wrap: wrap;
+}
+.codex-detail-unlocked {
+  color: #c9a227;
+  font-weight: bold;
+}
+.codex-detail-locked {
+  color: rgba(212, 175, 111, 0.4);
+  border: 1px solid rgba(180, 140, 80, 0.2);
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 0.7rem;
+}
+
+.codex-detail-body {
+  padding: 20px 28px 28px;
+  overflow-y: auto;
+  flex: 1;
+  line-height: 1.8;
+  color: rgba(212, 175, 111, 0.85);
+  font-size: 0.92rem;
+}
+.codex-detail-body::-webkit-scrollbar { width: 6px; }
+.codex-detail-body::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+.codex-detail-body::-webkit-scrollbar-thumb { background: rgba(212, 175, 111, 0.3); border-radius: 3px; }
+
+.codex-detail-quote {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  background: rgba(60, 40, 20, 0.25);
+  border-left: 3px solid rgba(201, 162, 39, 0.6);
+  font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 0.95rem;
+  color: #d4af6f;
+  font-style: italic;
+  border-radius: 2px;
+}
+.codex-detail-quote cite {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: rgba(212, 175, 111, 0.55);
+  font-style: normal;
+  text-align: right;
+}
+
+.codex-detail-section {
+  margin-bottom: 18px;
+}
+.codex-detail-section h4 {
+  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  color: #c9a227;
+  font-size: 0.95rem;
+  letter-spacing: 4px;
+  margin: 0 0 8px;
+  font-weight: normal;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(180, 140, 80, 0.25);
+}
+.codex-detail-section p {
+  margin: 0;
+  white-space: pre-wrap;
+  text-align: justify;
+  color: rgba(212, 175, 111, 0.85);
+}
+
+.codex-detail-echo {
+  font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+  font-size: 0.9rem;
+  line-height: 1.95;
+  color: rgba(212, 175, 111, 0.78);
+  background: rgba(0, 0, 0, 0.25);
+  padding: 14px 18px;
+  border-radius: 3px;
+  border: 1px solid rgba(180, 140, 80, 0.15);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
+.codex-detail-modal.locked .codex-detail-echo {
+  /* 全文展示，不做模糊或蒙版 */
+  filter: none;
+  user-select: text;
+  pointer-events: auto;
+  position: relative;
+}
+/* 隐藏"达成结局后可查阅"的占位蒙层 */
+.codex-detail-modal.locked .codex-detail-echo::after {
+  display: none;
+}
+
+.codex-detail-hint {
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: rgba(60, 40, 20, 0.25);
+  border-left: 3px solid rgba(201, 162, 39, 0.4);
+  color: rgba(212, 175, 111, 0.7);
+  font-size: 0.82rem;
+  border-radius: 2px;
+}
+
+@media (max-width: 700px) {
+  .codex-detail-modal { max-height: 90vh; }
+  .codex-detail-header { padding: 20px 20px 12px; }
+  .codex-detail-body { padding: 16px 20px 20px; }
+  .codex-detail-title { font-size: 1.3rem; letter-spacing: 4px; }
+}

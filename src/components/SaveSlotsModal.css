@@ -1,0 +1,333 @@
+.save-slots-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.save-slots-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.save-slots-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: rgba(212, 175, 55, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.save-slots-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #d4af37;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+}
+
+.current-game-info {
+  padding: 12px 24px;
+  background: rgba(212, 175, 55, 0.05);
+  font-size: 14px;
+  color: #ccc;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.current-game-info .highlight {
+  color: #d4af37;
+  font-weight: 500;
+}
+
+.save-slots-list {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* 自动存档槽位：独立于手动 1/2/3 槽，单独显示在最上方 */
+.autosave-slot {
+  background: linear-gradient(135deg, #1c2a1f 0%, #14201a 100%);
+  border: 1px solid rgba(138, 172, 106, 0.4);
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.autosave-slot.has-data {
+  border-color: rgba(138, 172, 106, 0.6);
+  box-shadow: 0 0 0 1px rgba(138, 172, 106, 0.2);
+}
+
+.autosave-slot .slot-number {
+  color: #8aac6a !important;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.autosave-tag {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  background: rgba(138, 172, 106, 0.15);
+  color: #8aac6a;
+  font-size: 0.7rem;
+  border-radius: 2px;
+  border: 1px solid rgba(138, 172, 106, 0.3);
+  letter-spacing: 1px;
+}
+
+.save-slot {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.2s ease;
+}
+
+.save-slot:last-child {
+  margin-bottom: 0;
+}
+
+.save-slot.has-data {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.save-slot:hover {
+  border-color: rgba(212, 175, 55, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.slot-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #d4af37;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.slot-content {
+  padding: 16px;
+  cursor: pointer;
+}
+
+.slot-content.empty-slot {
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 14px;
+}
+
+.slot-preview {
+  margin-bottom: 12px;
+}
+
+.preview-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.preview-title {
+  font-size: 13px;
+  color: #d4af37;
+}
+
+.slot-info {
+  margin-bottom: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.info-row .label {
+  color: #888;
+}
+
+.info-row .value {
+  color: #ccc;
+}
+
+.slot-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+  font-size: 14px;
+}
+
+.action-text {
+  font-weight: 500;
+}
+
+.arrow {
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.save-slot:hover .arrow {
+  transform: translateX(4px);
+}
+
+.confirm-delete {
+  padding: 16px;
+  background: rgba(220, 53, 69, 0.15);
+  border-top: 1px solid rgba(220, 53, 69, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirm-delete span {
+  color: #f8d7da;
+  font-size: 14px;
+  text-align: center;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirm-buttons button {
+  padding: 8px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.2s ease;
+}
+
+.confirm-buttons button:first-child {
+  background: #dc3545;
+  color: white;
+}
+
+.confirm-buttons button:first-child:hover {
+  background: #c82333;
+}
+
+.confirm-buttons button:last-child {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.confirm-buttons button:last-child:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 480px) {
+  .save-slots-modal {
+    width: 95%;
+  }
+
+  .save-slots-header {
+    padding: 16px;
+  }
+
+  .save-slots-header h2 {
+    font-size: 18px;
+  }
+
+  .save-slots-list {
+    padding: 16px;
+  }
+
+  .slot-content {
+    padding: 12px;
+  }
+}

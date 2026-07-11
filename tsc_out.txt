@@ -1,0 +1,1 @@
+﻿src/data/events/ending/endings_extra.ts(376,1): error TS1128: Declaration or statement expected.

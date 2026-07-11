@@ -1,0 +1,134 @@
+/* Overlay - entrance + exit via class toggles (CSS transitions, not keyframes) */
+.achievement-unlock-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  /* GPU-friendly: opacity only, fast composite */
+  transition: opacity 0.18s ease-out;
+  will-change: opacity;
+}
+
+.achievement-unlock-overlay.visible {
+  opacity: 1;
+}
+
+.achievement-unlock-overlay.leaving {
+  opacity: 0;
+  transition: opacity 0.18s ease-in;
+}
+
+/* Modal - pop entry + smooth exit. animate transform/opacity (compositor only). */
+.achievement-unlock-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid #d4af37;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  /* Short, decisive entry. cubic-bezier(0.16, 1, 0.3, 1) ≈ easeOutExpo - lands fast. */
+  animation: achievementPop 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+  transform-origin: center;
+}
+
+.achievement-unlock-overlay.leaving .achievement-unlock-modal {
+  animation: achievementShrink 0.18s ease-in both;
+}
+
+@keyframes achievementPop {
+  0%   { transform: scale(0.92) translateY(6px); opacity: 0; }
+  60%  { transform: scale(1.02) translateY(0);   opacity: 1; }
+  100% { transform: scale(1)    translateY(0);   opacity: 1; }
+}
+
+@keyframes achievementShrink {
+  from { transform: scale(1);    opacity: 1; }
+  to   { transform: scale(0.96); opacity: 0; }
+}
+
+.achievement-icon-container {
+  margin-bottom: 20px;
+}
+
+/* Icon - REPLACED the infinite drop-shadow animation with a one-shot, GPU-friendly shine.
+   - box-shadow + opacity animate on the compositor (no per-frame paint).
+   - Plays twice, then stops. No "infinite". */
+.achievement-icon {
+  font-size: 64px;
+  display: inline-block;
+  border-radius: 50%;
+  /* box-shadow on a transparent element behaves like a glow and is compositor-friendly. */
+  box-shadow: 0 0 0 rgba(212, 175, 55, 0);
+  animation: iconGlow 1.6s ease-out 1 both;
+  will-change: transform, opacity, box-shadow;
+}
+
+@keyframes iconGlow {
+  0%   { transform: scale(0.6); opacity: 0; box-shadow: 0 0 0 rgba(212, 175, 55, 0); }
+  35%  { transform: scale(1.08); opacity: 1; box-shadow: 0 0 24px rgba(212, 175, 55, 0.55); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 14px rgba(212, 175, 55, 0.35); }
+}
+
+.achievement-badge {
+  color: #d4af37;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.achievement-name {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.achievement-description {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.achievement-close-button {
+  background: linear-gradient(135deg, #d4af37 0%, #b8952e 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px 32px;
+  cursor: pointer;
+  /* Trim the long transition list down to the props we actually animate. */
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  will-change: transform;
+}
+
+.achievement-close-button:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
+.achievement-close-button:active {
+  transform: scale(0.97);
+}
+
+/* Respect users who opted out of motion: show instantly, no animations. */
+@media (prefers-reduced-motion: reduce) {
+  .achievement-unlock-overlay,
+  .achievement-unlock-modal,
+  .achievement-icon,
+  .achievement-close-button {
+    animation: none !important;
+    transition: none !important;
+  }
+  .achievement-unlock-overlay { opacity: 1; }
+}
