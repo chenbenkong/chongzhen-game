@@ -25,6 +25,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx vite build
+        env:
+          VITE_AI_API_KEY: ${{ secrets.VITE_AI_API_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

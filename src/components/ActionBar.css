@@ -73,6 +73,23 @@
   font-size: 0.85rem;
 }
 
+/* AI 谋士按钮特殊样式 */
+.ai-advisor-btn {
+  border-color: #3a2a12 !important;
+  color: #c9a227 !important;
+}
+
+.ai-advisor-btn:hover:not(:disabled) {
+  border-color: #6b5520 !important;
+  color: #e8c840 !important;
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.15);
+}
+
+.ai-advisor-btn .btn-icon {
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 0.95rem;
+}
+
 /* 平板 */
 @media (max-width: 900px) {
   .action-bar {

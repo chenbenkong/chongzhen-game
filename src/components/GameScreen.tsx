@@ -17,6 +17,8 @@ import AchievementPanel from './AchievementPanel'
 import TutorialModal from './TutorialModal'
 import Icon from './Icon'
 import StorylineBar from './StorylineBar'
+import { lazy, Suspense } from 'react'
+const AIAdvisor = lazy(() => import('./AIAdvisor'))
 import { SaveData, saveSaveSlot, loadSaveSlot, saveAutosave } from '../types/save'
 import {
   checkAndUnlockAchievements,
@@ -501,6 +503,7 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
     return !hasSeenTutorial && !loadSaveData
   })
   const [showHelp, setShowHelp] = useState(false)
+  const [showAIAdvisor, setShowAIAdvisor] = useState(false)
   
   const handleTutorialComplete = () => {
     localStorage.setItem('chongzhen_tutorial_seen', 'true')
@@ -1892,6 +1895,7 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
         onSave={handleSave}
         onOpenAchievements={() => setIsAchievementPanelOpen(true)}
         onOpenHelp={() => setShowHelp(true)}
+        onOpenAIAdvisor={() => setShowAIAdvisor(true)}
         onReturnToMenu={handleReturnToMenu}
         turn={gameState.turn}
         canProceed={!currentEvent || isProcessing}
@@ -2035,6 +2039,40 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
         onClose={() => setShowHelp(false)}
         onComplete={() => setShowHelp(false)}
       />
+
+      {/* AI 谋士对谈 */}
+      <Suspense fallback={null}>
+        <AIAdvisor
+          isOpen={showAIAdvisor}
+          onClose={() => setShowAIAdvisor(false)}
+          gameContext={{
+            year: gameState.currentYear,
+            month: gameState.currentMonth,
+            turn: gameState.turn,
+            playerName: character.name || '某',
+            courtesyName: character.courtesyName || '',
+            hometown: character.hometown || '',
+            age: character.age,
+            origin: character.origin,
+            rank: character.rank,
+            degree: character.degree,
+            attributes: { ...character.attributes },
+            hidden: { ...character.hidden },
+            gameState: {
+              圣眷: gameState.圣眷,
+              中官: gameState.中官,
+              清议: gameState.清议,
+              士绅: gameState.士绅,
+              民望: gameState.民望,
+              国势: gameState.国势,
+            },
+            currentEventTitle: currentEvent?.title,
+            currentEventDescription: currentEvent?.description,
+            currentChoices: currentEvent?.choices?.map(c => c.text),
+            recentRecords: lifeRecords.slice(-5).map(r => `崇祯${r.year}年${r.month}月：${r.title}`),
+          }}
+        />
+      </Suspense>
     </div>
   )
 }

@@ -6,12 +6,13 @@ interface ActionBarProps {
   onSave: () => void
   onOpenAchievements?: () => void
   onOpenHelp?: () => void
+  onOpenAIAdvisor?: () => void
   onReturnToMenu?: () => void
   turn: number
   canProceed: boolean
 }
 
-const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievements, onOpenHelp, onReturnToMenu, turn, canProceed }: ActionBarProps) {
+const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievements, onOpenHelp, onOpenAIAdvisor, onReturnToMenu, turn, canProceed }: ActionBarProps) {
   return (
     <div className="action-bar">
       <div className="action-left">
@@ -49,6 +50,17 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
           <span className="btn-icon">❓</span>
           <span>帮助</span>
         </button>
+        {onOpenAIAdvisor && (
+          <button
+            className="action-btn secondary ai-advisor-btn"
+            onClick={onOpenAIAdvisor}
+            title="询问 AI 谋士"
+            aria-label="AI 谋士"
+          >
+            <span className="btn-icon">策</span>
+            <span>谋士</span>
+          </button>
+        )}
         <button className="action-btn secondary" onClick={onSave}>
           <span className="btn-icon">💾</span>
           <span>存 档</span>
