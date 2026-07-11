@@ -86,6 +86,11 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
 
       setMessages(prev => [...prev, { role: 'assistant', content: accumulated }])
       setStreamingText('')
+
+      // 如果 AI 返回为空，给出友好提示
+      if (!accumulated.trim()) {
+        setError('AI 暂未返回内容，请重新提问一次')
+      }
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
         // 用户取消，保留已生成内容
