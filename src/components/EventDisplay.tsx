@@ -382,6 +382,7 @@ function EventDisplay({
   showResult: externalShowResult,
   selectedChoiceId: externalSelectedChoiceId,
   onBackToChoices,
+  onGenerateImageForEvent,
   onDeathEnding
 }: EventDisplayProps) {
   const [internalSelectedChoice, setInternalSelectedChoice] = useState<EventChoice | null>(null)
@@ -744,6 +745,15 @@ function EventDisplay({
           {narrative?.situation || '你决定——'}
         </div>
       </div>
+
+      {/* 事件插图存档区（玩家可在此为该事件作丹青） */}
+      {event?.id && !showResult && (
+        <EventImages
+          eventId={event.id}
+          eventTitle={event.title}
+          onGenerateClick={onGenerateImageForEvent ? () => onGenerateImageForEvent(event.id, event.title) : undefined}
+        />
+      )}
 
       {!showResult ? (
         /* 选项列表 */

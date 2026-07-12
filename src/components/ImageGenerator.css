@@ -32,6 +32,7 @@
   border-bottom: 1px solid #2a2015;
   background: #1a1510;
   flex-shrink: 0;
+  gap: 12px;
 }
 
 .ig-header-title {
@@ -42,6 +43,41 @@
   font-size: 1rem;
   font-family: 'Ma Shan Zheng', serif;
   letter-spacing: 3px;
+  flex-shrink: 0;
+}
+
+/* Tab 切换 */
+.ig-tab-row {
+  display: flex;
+  gap: 2px;
+  background: #0a0807;
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  padding: 2px;
+  flex: 1;
+  max-width: 280px;
+}
+
+.ig-tab {
+  flex: 1;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: #6b5a3a;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.ig-tab:hover:not(.active) {
+  color: #c9a227;
+}
+
+.ig-tab.active {
+  background: #2a2010;
+  color: #c9a227;
+  font-weight: 500;
 }
 
 .ig-header-icon {
@@ -452,12 +488,42 @@
   justify-content: center;
   max-height: 480px;
   overflow: hidden;
+  position: relative;
+  cursor: zoom-in;
 }
 
 .ig-result-image {
   max-width: 100%;
   max-height: 480px;
   display: block;
+}
+
+.ig-result-zoom-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #2a2015;
+  border-radius: 3px;
+  color: #8b7540;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.ig-result-image-wrap:hover .ig-result-zoom-hint {
+  opacity: 1;
+}
+
+.ig-result-event-tag {
+  padding: 6px 12px;
+  background: #1a1510;
+  border-top: 1px solid #2a2015;
+  color: #c9a227;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
 }
 
 .ig-result-actions {
@@ -504,26 +570,7 @@
   background: linear-gradient(180deg, #3a2818 0%, #2a1c10 100%);
 }
 
-/* 历史区 */
-.ig-history-section {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ig-history-label {
-  font-size: 0.72rem;
-  color: #8b7540;
-  letter-spacing: 2px;
-}
-
-.ig-history-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-}
-
+/* 历史区（重命名为卡片 + 新增事件标签） */
 .ig-history-card {
   position: relative;
   aspect-ratio: 1;
@@ -538,11 +585,31 @@
   border-color: #5a4020;
 }
 
-.ig-history-card img {
+.ig-history-card-img {
+  width: 100%;
+  height: 100%;
+}
+
+.ig-history-card-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.ig-history-card-event {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  padding: 2px 5px;
+  background: rgba(20, 16, 10, 0.85);
+  border-radius: 2px;
+  color: #c9a227;
+  font-size: 0.6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ig-history-meta {
@@ -556,6 +623,244 @@
   justify-content: space-between;
   font-size: 0.6rem;
   color: #c9a227;
+}
+
+.ig-history-delete {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #4a2020;
+  border-radius: 3px;
+  color: #c97070;
+  font-size: 0.65rem;
+  cursor: pointer;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.ig-history-card:hover .ig-history-delete {
+  opacity: 1;
+}
+
+.ig-history-delete:hover {
+  background: #2a1010;
+}
+
+/* 最近存档区（绘制 Tab 内的"最近 4 张"） */
+.ig-recent-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ig-recent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ig-recent-label {
+  font-size: 0.72rem;
+  color: #8b7540;
+  letter-spacing: 2px;
+}
+
+.ig-recent-more {
+  background: transparent;
+  border: 1px solid #2a2015;
+  border-radius: 3px;
+  color: #8b7540;
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.ig-recent-more:hover {
+  border-color: #5a4020;
+  color: #c9a227;
+}
+
+.ig-recent-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.ig-recent-card {
+  position: relative;
+  aspect-ratio: 1;
+  background: #0a0807;
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.ig-recent-card:hover {
+  border-color: #5a4020;
+}
+
+.ig-recent-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 画册 Tab（全部存档） */
+.ig-gallery-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ig-gallery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #2a2015;
+}
+
+.ig-gallery-label {
+  font-size: 0.74rem;
+  color: #8b7540;
+  letter-spacing: 1px;
+}
+
+.ig-gallery-clear {
+  background: transparent;
+  border: 1px solid #4a2020;
+  border-radius: 3px;
+  color: #c97070;
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.ig-gallery-clear:hover {
+  background: #2a1010;
+}
+
+.ig-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+/* 全屏查看器 */
+.ig-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 40px 40px;
+}
+
+.ig-viewer-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ig-viewer-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(20, 16, 10, 0.7);
+  border: 1px solid #2a2015;
+  border-radius: 4px;
+  max-width: 1000px;
+}
+
+.ig-viewer-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  color: #c9a227;
+}
+
+.ig-viewer-event {
+  font-family: 'Ma Shan Zheng', serif;
+  letter-spacing: 1px;
+}
+
+.ig-viewer-prompt {
+  color: #6b5a3a;
+  font-size: 0.72rem;
+  max-width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ig-viewer-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.ig-viewer-btn {
+  padding: 6px 14px;
+  background: #1a1510;
+  border: 1px solid #4a3820;
+  border-radius: 3px;
+  color: #c9a227;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.ig-viewer-btn:hover {
+  border-color: #6b5520;
+  background: #2a2010;
+}
+
+.ig-viewer-btn.close {
+  border-color: #4a2020;
+  color: #c97070;
+}
+
+.ig-viewer-btn.close:hover {
+  background: #2a1010;
+}
+
+.ig-viewer-image-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  max-width: 1000px;
+}
+
+.ig-viewer-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid #2a2015;
 }
 
 /* 响应式 */

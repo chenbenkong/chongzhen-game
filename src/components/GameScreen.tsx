@@ -1862,6 +1862,7 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
             onUndo={handleUndo}
             onGameOver={handleGameOver}
             onDeathEnding={handleDeathEnding}
+            onGenerateImageForEvent={() => setShowImageGenerator(true)}
             canUndo={undoHistory.length > 0}
             isProcessing={isProcessing}
             pendingCount={pendingEvents.length}
@@ -2092,6 +2093,7 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
             degree: character.degree,
             year: gameState.currentYear,
             month: gameState.currentMonth,
+            currentEventId: currentEvent?.id,
             currentEventTitle: currentEvent?.title,
             currentEventDescription: currentEvent?.description,
             currentChoices: currentEvent?.choices?.map(c => c.text),
