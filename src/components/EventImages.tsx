@@ -23,7 +23,7 @@ const Thumb = memo(function Thumb({
   return (
     <div className="ei-thumb">
       <div className="ei-thumb-img" onClick={onView} title="点击查看">
-        <img src={src} alt="事件插图" loading="lazy" />
+        <img src={src} alt="事件插图" loading="lazy" decoding="async" />
       </div>
       <button className="ei-thumb-delete" onClick={onDelete} title="删除此画">✕</button>
     </div>

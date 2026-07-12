@@ -1,0 +1,17 @@
+fix(perf): 画册卡死 —— 弃用 base64 存档 + 自动清理 + async 解码
+
+根因：之前生成的图如果返回 base64（一张 2K PNG ~1-3MB，3K ~5-10MB），
+会原样存进 localStorage。点击画册 Tab 时：
+1. JSON.parse 几 MB ~ 几十 MB 字符串（阻塞主线程几百 ms~几秒）
+2. React 一次性渲染 N 张图，每张都是大 base64
+3. <img> 同步 decode 大 PNG（默认 decoding=sync）阻塞主线程
+-> 浏览器假死几分钟
+
+修复（3 道保险）：
+1. 改 storage key 为 v2，readAll 自动剥离 b64Json 字段
+   首次启动新版会清理老 key（chongzhen_image_gallery_v1）
+2. persistCurrent 主动丢弃 b64Json（即使 API 返回也丢掉）
+3. 所有 <img> 加 decoding="async"（异步解码不阻塞主线程）
+4. MAX_ITEMS 从 50 降到 20（base64 弃用后 URL 单条 < 1KB，
+   20 条才几十 KB，但保护浏览性能）
+5. saveImage 类型签名强制 b64Json 永不入库

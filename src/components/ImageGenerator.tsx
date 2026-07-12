@@ -224,6 +224,9 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
 
   // 持久化保存并刷新画册
   const persistCurrent = useCallback((result: ImageGenResult, templateKind: string, eventId?: string, eventTitle?: string) => {
+    // 关键：主动丢弃 b64Json，只存 URL。
+    // 原因：base64 编码后体积是原始 PNG 的 1.37 倍（2K 图 1-3MB，3K 可达 5-10MB），
+    // 多个 base64 存 localStorage 会撑爆 5-10MB 容量限制，画册一次性渲染还会阻塞主线程。
     const saved = saveImage({
       userPrompt: prompt,
       fullPrompt: result.revisedPrompt || enhancePrompt(prompt, {
@@ -231,7 +234,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
         style: '中国工笔重彩与电影级古风写实结合'
       }),
       url: result.url,
-      b64Json: result.b64Json,
+      // b64Json: undefined —— 显式不存
       size,
       ratio,
       eventId,
@@ -545,7 +548,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
                       const src = item.url || (item.b64Json ? `data:image/png;base64,${item.b64Json}` : '')
                       return (
                         <div key={item.id} className="ig-recent-card" onClick={() => recallFromHistory(item)} title={item.userPrompt}>
-                          <img src={src} alt="存档" loading="lazy" />
+                          <img src={src} alt="存档" loading="lazy" decoding="async" />
                         </div>
                       )
                     })}
