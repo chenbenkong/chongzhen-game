@@ -47,3 +47,4 @@ pnpm-debug.log*
 
 # GitHub CLI local config
 .gh-config/
+commit_msg.txt
