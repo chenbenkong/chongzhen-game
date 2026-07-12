@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, memo } from 'react'
+import { createPortal } from 'react-dom'
 import {
   generateImage,
   enhancePrompt,
@@ -85,7 +86,7 @@ const HistoryCard = memo(function HistoryCard({
   )
 })
 
-/** 全屏查看器 */
+/** 全屏查看器（Portal 化：脱离父组件的 stacking context，避免 z-index / overflow 问题） */
 function ImageViewer({
   src,
   prompt,
@@ -99,7 +100,10 @@ function ImageViewer({
   onClose: () => void
   onDownload: () => void
 }) {
-  // Esc 关闭
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [imgError, setImgError] = useState(false)
+
+  // Esc 关闭（绑定 window）
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -108,25 +112,70 @@ function ImageViewer({
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
 
-  return (
-    <div className="ig-viewer-overlay" onClick={onClose}>
-      <div className="ig-viewer-panel" onClick={e => e.stopPropagation()}>
+  // 打开时锁 body 滚动（避免背景也跟着滚）
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [])
+
+  // 关闭按钮的 click handler（用 ref 确保总是最新）
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose }, [onClose])
+  const handleClose = useCallback(() => onCloseRef.current(), [])
+
+  const node = (
+    <div
+      className="ig-viewer-overlay"
+      onClick={(e) => {
+        // 只在点 overlay 自身时关闭，点子元素不关闭
+        if (e.target === e.currentTarget) handleClose()
+      }}
+    >
+      <div className="ig-viewer-panel">
         <div className="ig-viewer-header">
           <div className="ig-viewer-title">
             {eventTitle && <span className="ig-viewer-event">📜 {eventTitle}</span>}
             <span className="ig-viewer-prompt">{prompt.slice(0, 60)}{prompt.length > 60 ? '…' : ''}</span>
           </div>
           <div className="ig-viewer-actions">
-            <button className="ig-viewer-btn" onClick={onDownload}>↓ 保存</button>
-            <button className="ig-viewer-btn close" onClick={onClose}>✕ 关闭</button>
+            <button className="ig-viewer-btn" onClick={(e) => { e.stopPropagation(); onDownload() }}>↓ 保存</button>
+            <button className="ig-viewer-btn close" onClick={(e) => { e.stopPropagation(); handleClose() }}>✕ 关闭 (Esc)</button>
           </div>
         </div>
-        <div className="ig-viewer-image-wrap">
-          <img className="ig-viewer-image" src={src} alt="丹青" />
+        <div className="ig-viewer-image-wrap" onClick={(e) => e.stopPropagation()}>
+          {!imgLoaded && !imgError && (
+            <div className="ig-viewer-loading">
+              <div className="ig-viewer-loading-spinner" />
+              <div>画卷展开中…</div>
+            </div>
+          )}
+          {imgError ? (
+            <div className="ig-viewer-error">
+              <div className="ig-viewer-error-icon">⚠</div>
+              <div>图片加载失败</div>
+              <div className="ig-viewer-error-url">{src.slice(0, 60)}…</div>
+              <button className="ig-viewer-btn" onClick={onDownload}>下载源文件</button>
+            </div>
+          ) : (
+            <img
+              className={`ig-viewer-image ${imgLoaded ? 'loaded' : ''}`}
+              src={src}
+              alt="丹青"
+              decoding="async"
+              loading="eager"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
+              draggable={false}
+            />
+          )}
         </div>
       </div>
     </div>
   )
+
+  // Portal 到 body，脱离父组件 stacking context
+  return createPortal(node, document.body)
 }
 
 export default function ImageGenerator({ isOpen, onClose, context }: ImageGeneratorProps) {

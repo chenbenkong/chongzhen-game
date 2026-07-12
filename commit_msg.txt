@@ -1,17 +1,20 @@
-fix(perf): 画册卡死 —— 弃用 base64 存档 + 自动清理 + async 解码
+fix(viewer): ImageViewer Portal 化 + 加载占位 + 错误降级 + 三道关闭
 
-根因：之前生成的图如果返回 base64（一张 2K PNG ~1-3MB，3K ~5-10MB），
-会原样存进 localStorage。点击画册 Tab 时：
-1. JSON.parse 几 MB ~ 几十 MB 字符串（阻塞主线程几百 ms~几秒）
-2. React 一次性渲染 N 张图，每张都是大 base64
-3. <img> 同步 decode 大 PNG（默认 decoding=sync）阻塞主线程
--> 浏览器假死几分钟
+根因分析：viewer 嵌在 ImageGenerator 内部
+1. 大图 <img> 同步 decode 阻塞主线程几百 ms~几秒
+2. <div className="ig-viewer-panel" onClick={stopPropagation>
+   把整个屏幕的点击都拦截了
+3. z-index 9500 在父 stacking context 内可能受其他元素影响
 
-修复（3 道保险）：
-1. 改 storage key 为 v2，readAll 自动剥离 b64Json 字段
-   首次启动新版会清理老 key（chongzhen_image_gallery_v1）
-2. persistCurrent 主动丢弃 b64Json（即使 API 返回也丢掉）
-3. 所有 <img> 加 decoding="async"（异步解码不阻塞主线程）
-4. MAX_ITEMS 从 50 降到 20（base64 弃用后 URL 单条 < 1KB，
-   20 条才几十 KB，但保护浏览性能）
-5. saveImage 类型签名强制 b64Json 永不入库
+修复：
+1. createPortal 渲染到 document.body
+   脱离父组件 stacking context，z-index 提到 10000（最高）
+2. 移除 panel 的 stopPropagation，改用
+   e.target === e.currentTarget 判定是否点 overlay
+   （只点遮罩空白处才关闭，点 panel 内不关）
+3. <img> 加 decoding=async + onLoad/onError
+   加载时显示"画卷展开中"spinner，完成 0.2s 渐入
+   失败时显示错误界面（图标 + 源 URL + 下载按钮）
+4. body 滚动锁定（避免背景跟着滚）
+5. onClose 用 ref 持有，保证 click handler 总是最新
+6. 关闭按钮文案加 "(Esc)" 提示，按钮事件 stopPropagation
