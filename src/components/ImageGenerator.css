@@ -155,6 +155,33 @@
   letter-spacing: 2px;
 }
 
+.ig-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ig-scene-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: linear-gradient(180deg, #2a2010 0%, #1a1508 100%);
+  border: 1px solid #5a4020;
+  border-radius: 12px;
+  color: #c9a227;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  font-family: 'Ma Shan Zheng', serif;
+}
+
+.ig-scene-icon {
+  font-size: 0.6rem;
+  color: #c9a227;
+}
+
 .ig-prompt-input {
   width: 100%;
   padding: 10px 12px;

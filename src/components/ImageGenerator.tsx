@@ -14,6 +14,7 @@ import {
   clearAllImages,
   type SavedImage
 } from '../services/imageStorage'
+import { generateEventPrompt } from '../services/eventPromptGenerator'
 import './ImageGenerator.css'
 
 interface ImageGeneratorProps {
@@ -141,6 +142,8 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
   const [viewerSrc, setViewerSrc] = useState<{ src: string; prompt: string; eventTitle?: string } | null>(null)
   /** 控制 Tab 切换：'generate'（绘制）| 'gallery'（画册） */
   const [tab, setTab] = useState<'generate' | 'gallery'>('generate')
+  /** 识别出的场景大类（用于在 UI 显示） */
+  const [sceneName, setSceneName] = useState<string>('')
 
   const abortRef = useRef<AbortController | null>(null)
   const timerRef = useRef<number | null>(null)
@@ -177,18 +180,31 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
   }, [isGenerating])
 
   // 快捷 prompt 模板
-  const buildQuickPrompt = useCallback((kind: 'event' | 'portrait' | 'court' | 'street'): { prompt: string; eventId?: string; eventTitle?: string } => {
+  const buildQuickPrompt = useCallback((kind: 'event' | 'portrait' | 'court' | 'street'): { prompt: string; eventId?: string; eventTitle?: string; sceneName?: string } => {
     const name = context.playerName || '某'
     const courtesy = context.playerCourtesyName ? `（字${context.playerCourtesyName}）` : ''
     const era = `崇祯${context.year}年${context.month}月`
 
     if (kind === 'event') {
-      const title = context.currentEventTitle || '朝堂议事'
-      const desc = context.currentEventDescription || ''
+      // 智能事件场景生成：根据标题/描述识别场景大类，每类 2-3 模板 + 元素池随机
+      const { prompt, sceneName } = generateEventPrompt({
+        playerName: name,
+        playerCourtesyName: context.playerCourtesyName,
+        rank: context.rank,
+        degree: context.degree,
+        age: context.age,
+        origin: context.origin,
+        hometown: context.hometown,
+        year: context.year,
+        month: context.month,
+        currentEventTitle: context.currentEventTitle || '',
+        currentEventDescription: context.currentEventDescription || '',
+      })
       return {
-        prompt: `${era}，明末，${title}。${desc}。${name}${context.rank ? `（${context.rank}）` : ''}身处其中，神情凝重，背景含明代官衙、案牍、烛光等元素`,
+        prompt,
         eventId: context.currentEventId,
-        eventTitle: context.currentEventTitle
+        eventTitle: context.currentEventTitle,
+        sceneName,
       }
     }
     const map: Record<typeof kind, string> = {
@@ -380,13 +396,21 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
           {tab === 'generate' && (
             <>
               <div className="ig-input-section">
-                <div className="ig-label">场景描绘</div>
+                <div className="ig-label-row">
+                  <div className="ig-label">场景描绘</div>
+                  {sceneName && (
+                    <div className="ig-scene-tag" title="智能识别的事件场景">
+                      <span className="ig-scene-icon">◆</span>
+                      <span>{sceneName}</span>
+                    </div>
+                  )}
+                </div>
                 <textarea
                   ref={promptTextareaRef}
                   className="ig-prompt-input"
                   placeholder="例：崇祯元年元宵夜，金陵秦淮河畔灯火通明，画舫穿梭其间，士子佳人凭栏远望……"
                   value={prompt}
-                  onChange={e => setPrompt(e.target.value)}
+                  onChange={e => { setPrompt(e.target.value); if (sceneName) setSceneName('') }}
                   disabled={isGenerating}
                   rows={3}
                 />
