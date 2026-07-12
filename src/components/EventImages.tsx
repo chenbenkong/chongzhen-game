@@ -52,6 +52,7 @@ export default function EventImages({ eventId, eventTitle, onGenerateClick }: Ev
   const [images, setImages] = useState<SavedImage[]>([])
   const [viewerSrc, setViewerSrc] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(false)
+  const { confirm, dialog: confirmDialog } = useConfirm()
 
   // 每次 eventId 变化或 mounted 时重读
   const reload = useCallback(() => {
