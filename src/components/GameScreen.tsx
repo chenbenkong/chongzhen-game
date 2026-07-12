@@ -505,6 +505,7 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
   })
   const [showHelp, setShowHelp] = useState(false)
   const [showAIAdvisor, setShowAIAdvisor] = useState(false)
+  const [showImageGenerator, setShowImageGenerator] = useState(false)
   
   const handleTutorialComplete = () => {
     localStorage.setItem('chongzhen_tutorial_seen', 'true')
