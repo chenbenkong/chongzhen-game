@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
+import ConfirmDialog from './ConfirmDialog'
 import './ErrorBoundary.css'
 
 interface Props {
@@ -9,16 +10,28 @@ interface State {
   hasError: boolean
   error: Error | null
   errorInfo: ErrorInfo | null
+  /** 删除存档确认弹窗 */
+  confirmClearOpen: boolean
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = { hasError: false, error: null, errorInfo: null }
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      confirmClearOpen: false
+    }
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error, errorInfo: null }
+    return {
+      hasError: true,
+      error,
+      errorInfo: null,
+      confirmClearOpen: false
+    }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
@@ -42,16 +55,26 @@ export default class ErrorBoundary extends Component<Props, State> {
     this.setState({ hasError: false, error: null, errorInfo: null })
   }
 
+  /** 弹出确认弹窗（替代 window.confirm） */
   handleClearSave = (): void => {
-    if (window.confirm('确定要清除所有游戏存档吗？此操作不可恢复。')) {
-      try {
-        localStorage.removeItem('chongzhen_save')
-        localStorage.removeItem('chongzhen_error_logs')
-        window.location.reload()
-      } catch (e) {
-        window.location.reload()
-      }
+    this.setState({ confirmClearOpen: true })
+  }
+
+  /** 确认删除存档 */
+  handleConfirmClear = (): void => {
+    this.setState({ confirmClearOpen: false })
+    try {
+      localStorage.removeItem('chongzhen_save')
+      localStorage.removeItem('chongzhen_error_logs')
+    } catch (e) {
+      // ignore
     }
+    window.location.reload()
+  }
+
+  /** 取消删除 */
+  handleCancelClear = (): void => {
+    this.setState({ confirmClearOpen: false })
   }
 
   render(): ReactNode {
@@ -73,6 +96,18 @@ export default class ErrorBoundary extends Component<Props, State> {
               <button className="error-btn danger" onClick={this.handleClearSave}>清除存档</button>
             </div>
           </div>
+
+          <ConfirmDialog
+            open={this.state.confirmClearOpen}
+            title="焚尽红尘"
+            message="确定要清除所有游戏存档吗？此操作不可恢复。"
+            warning="所有人物、记录、成就、画卷将被永久抹去"
+            confirmText="清除存档"
+            cancelText="保留"
+            variant="danger"
+            onConfirm={this.handleConfirmClear}
+            onCancel={this.handleCancelClear}
+          />
         </div>
       )
     }

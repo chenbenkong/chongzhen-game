@@ -128,9 +128,7 @@ export default function EventImages({ eventId, eventTitle, onGenerateClick }: Ev
               key={item.id}
               item={item}
               onView={() => openViewer(item)}
-              onDelete={() => {
-                if (window.confirm('删除此画？')) handleDelete(item.id)
-              }}
+              onDelete={() => handleDelete(item)}
             />
           ))}
         </div>
