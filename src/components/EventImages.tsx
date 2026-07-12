@@ -1,5 +1,6 @@
 import { useState, useEffect, memo, useCallback } from 'react'
 import { getImagesByEvent, deleteImage, type SavedImage } from '../services/imageStorage'
+import { useConfirm } from '../hooks/useConfirm'
 import './EventImages.css'
 
 interface EventImagesProps {
@@ -135,6 +136,8 @@ export default function EventImages({ eventId, eventTitle, onGenerateClick }: Ev
       )}
 
       {viewerSrc && <Viewer src={viewerSrc} onClose={() => setViewerSrc(null)} />}
+
+      {confirmDialog}
     </div>
   )
 }

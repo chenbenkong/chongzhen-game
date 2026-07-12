@@ -1,20 +1,30 @@
-fix(viewer): ImageViewer Portal 化 + 加载占位 + 错误降级 + 三道关闭
+feat(ui): 古风确认弹窗 ConfirmDialog 替换 window.confirm
 
-根因分析：viewer 嵌在 ImageGenerator 内部
-1. 大图 <img> 同步 decode 阻塞主线程几百 ms~几秒
-2. <div className="ig-viewer-panel" onClick={stopPropagation>
-   把整个屏幕的点击都拦截了
-3. z-index 9500 在父 stacking context 内可能受其他元素影响
+新建组件：
+- ConfirmDialog.tsx + .css：暗金古风主题确认弹窗，Portal 到 body
+- useConfirm.tsx hook：返回 { confirm, dialog }
+  用 Promise 替代 window.confirm 的同步阻塞调用
+  confirm({ title, message, detail?, warning?, variant?, confirmText?, cancelText? })
+  -> Promise<boolean>
 
-修复：
-1. createPortal 渲染到 document.body
-   脱离父组件 stacking context，z-index 提到 10000（最高）
-2. 移除 panel 的 stopPropagation，改用
-   e.target === e.currentTarget 判定是否点 overlay
-   （只点遮罩空白处才关闭，点 panel 内不关）
-3. <img> 加 decoding=async + onLoad/onError
-   加载时显示"画卷展开中"spinner，完成 0.2s 渐入
-   失败时显示错误界面（图标 + 源 URL + 下载按钮）
-4. body 滚动锁定（避免背景跟着滚）
-5. onClose 用 ref 持有，保证 click handler 总是最新
-6. 关闭按钮文案加 "(Esc)" 提示，按钮事件 stopPropagation
+弹窗设计：
+- 标题（暗金色 + Ma Shan Zheng 字体）
+- 详情区（如果有事件关联，显示 "📜 关联事件：xxx"）
+- 警告区（红色 "⚠ 焚毁后无法复原"）
+- 两按钮：保留（暗金） / 焚毁（暗红 danger 样式）
+- 渐入动画（0.2s cubic-bezier(0.16, 1, 0.3, 1)）
+- Esc 取消 / Enter 确认（无 input focus 时）
+- 锁 body 滚动
+- 默认聚焦"焚毁"按钮
+- 圆角 + 阴影 + 边框符合整体暗金古风
+- z-index 11000（最高），脱离父 stacking context
+
+替换了三处 window.confirm：
+1. ImageGenerator handleDelete：画册单图删除
+   文案改为古风："焚毁此画" / "焚毁" / "保留"
+2. ImageGenerator handleClearAll：清空全部
+   文案："焚尽卷轴阁" / "全部焚毁"
+3. EventImages handleDelete：事件插图删除
+   自动带 detail = "📜 关联事件：xxx"
+
+构建时修了一个小坑：useConfirm.ts 改为 .tsx（内含 JSX）

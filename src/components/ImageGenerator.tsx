@@ -8,14 +8,14 @@ import {
   type ImageRatio,
   type ImageGenResult
 } from '../services/imageService'
-import {
-  saveImage,
+import { saveImage,
   getAllImages,
   deleteImage,
   clearAllImages,
   type SavedImage
 } from '../services/imageStorage'
 import { generateEventPrompt } from '../services/eventPromptGenerator'
+import { useConfirm } from '../hooks/useConfirm'
 import './ImageGenerator.css'
 
 interface ImageGeneratorProps {
@@ -397,19 +397,36 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
     setViewerSrc({ src, prompt: item.userPrompt, eventTitle: item.eventTitle })
   }, [])
 
-  const handleDelete = useCallback((id: string) => {
-    deleteImage(id)
-    setGallery(getAllImages())
-    if (current?.id === id) setCurrent(null)
-  }, [current])
+  const { confirm, dialog: confirmDialog } = useConfirm()
 
-  const handleClearAll = useCallback(() => {
-    if (window.confirm('确认清空所有存档画卷？此操作不可恢复。')) {
-      clearAllImages()
-      setGallery([])
-      setCurrent(null)
-    }
-  }, [])
+  const handleDelete = useCallback(async (item: SavedImage) => {
+    const ok = await confirm({
+      title: '焚毁此画',
+      message: '确定要焚毁此卷吗？此操作不可恢复。',
+      detail: item.eventTitle ? `📜 关联事件：${item.eventTitle}` : (item.userPrompt.slice(0, 60) + (item.userPrompt.length > 60 ? '…' : '')),
+      warning: '焚毁后无法复原',
+      confirmText: '焚毁',
+      cancelText: '保留'
+    })
+    if (!ok) return
+    deleteImage(item.id)
+    setGallery(getAllImages())
+    if (current?.id === item.id) setCurrent(null)
+  }, [current, confirm])
+
+  const handleClearAll = useCallback(async () => {
+    const ok = await confirm({
+      title: '焚尽卷轴阁',
+      message: `确定要焚毁全部 ${gallery.length} 卷存档吗？此操作不可恢复。`,
+      warning: '所有画卷将被永久焚毁',
+      confirmText: '全部焚毁',
+      cancelText: '保留'
+    })
+    if (!ok) return
+    clearAllImages()
+    setGallery([])
+    setCurrent(null)
+  }, [gallery.length, confirm])
 
   if (!isOpen) return null
 
@@ -629,7 +646,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
                         onClick={() => openViewer(item)}
                         onDelete={(e) => {
                           e.stopPropagation()
-                          if (window.confirm('删除此画？')) handleDelete(item.id)
+                          handleDelete(item)
                         }}
                       />
                     ))}
@@ -658,6 +675,8 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
             }}
           />
         )}
+
+        {confirmDialog}
       </div>
     </div>
   )

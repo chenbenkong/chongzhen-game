@@ -1,0 +1,209 @@
+/* ConfirmDialog 暗金古风确认弹窗 */
+
+/* 遮罩 */
+.cd-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  /* Portal 后是顶层，最高 z-index */
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: cd-overlay-fade-in 0.15s ease-out;
+}
+
+@keyframes cd-overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 主面板 */
+.cd-panel {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #1a1510 0%, #0e0c08 100%);
+  border: 1px solid #4a3820;
+  border-radius: 6px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(201, 162, 39, 0.06),
+    inset 0 1px 0 rgba(201, 162, 39, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: cd-panel-slide-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  color: #c9b896;
+}
+
+@keyframes cd-panel-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 顶部：图标 + 标题 */
+.cd-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid #2a2015;
+  background: linear-gradient(180deg, rgba(42, 32, 16, 0.4) 0%, transparent 100%);
+}
+
+.cd-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2a2010 0%, #1a1508 100%);
+  border: 1px solid #4a3820;
+  border-radius: 50%;
+  color: #c9a227;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.cd-header:has(.cd-btn-danger) .cd-icon,
+.cd-panel:has(.cd-btn-danger) .cd-icon {
+  border-color: #6b2020;
+  color: #c97070;
+  background: linear-gradient(135deg, #2a1010 0%, #1a0808 100%);
+}
+
+.cd-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #c9a227;
+  font-family: 'Ma Shan Zheng', serif;
+  letter-spacing: 3px;
+  font-weight: normal;
+  flex: 1;
+}
+
+.cd-panel:has(.cd-btn-danger) .cd-title {
+  color: #c97070;
+}
+
+/* 中部：消息 */
+.cd-body {
+  padding: 18px 22px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cd-message {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #c9b896;
+}
+
+.cd-detail {
+  padding: 8px 12px;
+  background: rgba(20, 16, 10, 0.6);
+  border: 1px solid #2a2015;
+  border-radius: 3px;
+  color: #8b7540;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.cd-warning {
+  padding: 8px 12px;
+  background: rgba(60, 16, 16, 0.3);
+  border: 1px solid #4a2020;
+  border-radius: 3px;
+  color: #c97070;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+/* 底部：按钮 */
+.cd-actions {
+  display: flex;
+  gap: 10px;
+  padding: 18px 22px 20px;
+  justify-content: flex-end;
+}
+
+.cd-btn {
+  padding: 9px 22px;
+  background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
+  border: 1px solid #2a2015;
+  border-radius: 3px;
+  color: #8b7540;
+  font-size: 0.85rem;
+  font-family: inherit;
+  letter-spacing: 2px;
+  cursor: pointer;
+  min-width: 90px;
+}
+
+.cd-btn:hover {
+  border-color: #4a3820;
+  color: #c9a227;
+  background: linear-gradient(180deg, #2a2010 0%, #1a1508 100%);
+}
+
+.cd-btn:focus {
+  outline: 1px solid #4a3820;
+  outline-offset: 1px;
+}
+
+.cd-btn-primary {
+  border-color: #5a4020;
+  color: #c9a227;
+  background: linear-gradient(180deg, #2a2010 0%, #1a1508 100%);
+}
+
+.cd-btn-primary:hover {
+  border-color: #6b5520;
+  background: linear-gradient(180deg, #3a2818 0%, #2a1c10 100%);
+}
+
+.cd-btn-danger {
+  border-color: #6b2020;
+  color: #c97070;
+  background: linear-gradient(180deg, #2a1010 0%, #1a0808 100%);
+}
+
+.cd-btn-danger:hover {
+  border-color: #8a3030;
+  color: #ff9090;
+  background: linear-gradient(180deg, #3a1818 0%, #2a1010 100%);
+  box-shadow: 0 0 12px rgba(201, 112, 112, 0.18);
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .cd-panel {
+    max-width: 100%;
+  }
+  .cd-header,
+  .cd-body,
+  .cd-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .cd-actions {
+    flex-direction: row;
+  }
+  .cd-btn {
+    flex: 1;
+  }
+}
