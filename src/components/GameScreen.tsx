@@ -19,6 +19,7 @@ import Icon from './Icon'
 import StorylineBar from './StorylineBar'
 import { lazy, Suspense } from 'react'
 const AIAdvisor = lazy(() => import('./AIAdvisor'))
+const ImageGenerator = lazy(() => import('./ImageGenerator'))
 import { SaveData, saveSaveSlot, loadSaveSlot, saveAutosave } from '../types/save'
 import {
   checkAndUnlockAchievements,
@@ -1896,6 +1897,7 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
         onOpenAchievements={() => setIsAchievementPanelOpen(true)}
         onOpenHelp={() => setShowHelp(true)}
         onOpenAIAdvisor={() => setShowAIAdvisor(true)}
+        onOpenImageGenerator={() => setShowImageGenerator(true)}
         onReturnToMenu={handleReturnToMenu}
         turn={gameState.turn}
         canProceed={!currentEvent || isProcessing}
@@ -2070,6 +2072,28 @@ export default function GameScreen({ origin, degree, bonusAttributes, playerName
             currentEventDescription: currentEvent?.description,
             currentChoices: currentEvent?.choices?.map(c => c.text),
             recentRecords: lifeRecords.slice(-5).map(r => `崇祯${r.year}年${r.month}月：${r.title}`),
+          }}
+        />
+      </Suspense>
+
+      {/* AI 丹青画卷 */}
+      <Suspense fallback={null}>
+        <ImageGenerator
+          isOpen={showImageGenerator}
+          onClose={() => setShowImageGenerator(false)}
+          context={{
+            playerName: character.name || '某',
+            playerCourtesyName: character.courtesyName || '',
+            hometown: character.hometown || '',
+            age: character.age,
+            origin: character.origin,
+            rank: character.rank,
+            degree: character.degree,
+            year: gameState.currentYear,
+            month: gameState.currentMonth,
+            currentEventTitle: currentEvent?.title,
+            currentEventDescription: currentEvent?.description,
+            currentChoices: currentEvent?.choices?.map(c => c.text),
           }}
         />
       </Suspense>

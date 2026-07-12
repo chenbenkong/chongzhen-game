@@ -7,12 +7,13 @@ interface ActionBarProps {
   onOpenAchievements?: () => void
   onOpenHelp?: () => void
   onOpenAIAdvisor?: () => void
+  onOpenImageGenerator?: () => void
   onReturnToMenu?: () => void
   turn: number
   canProceed: boolean
 }
 
-const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievements, onOpenHelp, onOpenAIAdvisor, onReturnToMenu, turn, canProceed }: ActionBarProps) {
+const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievements, onOpenHelp, onOpenAIAdvisor, onOpenImageGenerator, onReturnToMenu, turn, canProceed }: ActionBarProps) {
   return (
     <div className="action-bar">
       <div className="action-left">
@@ -59,6 +60,17 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
           >
             <span className="btn-icon">策</span>
             <span>谋士</span>
+          </button>
+        )}
+        {onOpenImageGenerator && (
+          <button
+            className="action-btn secondary image-generator-btn"
+            onClick={onOpenImageGenerator}
+            title="AI 生成场景插图"
+            aria-label="丹青画卷"
+          >
+            <span className="btn-icon">绘</span>
+            <span>丹青</span>
           </button>
         )}
         <button className="action-btn secondary" onClick={onSave}>
