@@ -4,6 +4,7 @@ import { Character, GameStateValues, Attributes } from '../types/game'
 import { ATTR_DISPLAY_MAP, STATE_DISPLAY_MAP } from '../utils/constants'
 import DiceAnimation from './DiceAnimation'
 import Icon from './Icon'
+import EventImages from './EventImages'
 import './EventDisplay.css'
 
 interface EventDisplayProps {
