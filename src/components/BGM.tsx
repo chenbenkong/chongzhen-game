@@ -3,32 +3,36 @@ import './BGM.css'
 
 // 主菜单 fixed 定位（独立浮在屏幕右上）
 export function BGMFixedButton() {
-  const { on, toggle } = useBGM()
+  const { on, toggle, status, errorMessage } = useBGM()
+  // 错误时强制显示 "关" 状态图标，避免误导
+  const isError = status === 'error'
   return (
     <button
-      className="bgm-toggle bgm-toggle--fixed"
+      type="button"
+      className={`bgm-toggle bgm-toggle--fixed ${isError ? 'is-error' : ''}`}
       onClick={toggle}
-      title={on ? '音乐：开（点击关闭）' : '音乐：关（点击开启）'}
-      aria-label={on ? '关闭背景音乐' : '开启背景音乐'}
+      title={isError ? errorMessage || '音乐加载失败，点击重试' : on ? '点击关闭音乐' : '点击开启音乐'}
+      aria-label={on ? '关闭音乐' : '开启音乐'}
     >
-      <span className="bgm-icon">{on ? '🎵' : '🔇'}</span>
-      <span className="bgm-label">音乐：{on ? '开' : '关'}</span>
+      <span className="bgm-icon">{isError ? '⚠' : (on ? '🎵' : '🔇')}</span>
+      <span className="bgm-label">{isError ? '音乐加载失败' : (on ? '音乐：开' : '音乐：关')}</span>
     </button>
   )
 }
 
-// 内联（在 StatusBar 幽灵模式按钮左边）
 export function BGMInlineButton() {
-  const { on, toggle } = useBGM()
+  const { on, toggle, status, errorMessage } = useBGM()
+  const isError = status === 'error'
   return (
     <button
-      className="bgm-toggle bgm-toggle--inline"
+      type="button"
+      className={`bgm-toggle bgm-toggle--inline ${isError ? 'is-error' : ''}`}
       onClick={toggle}
-      title={on ? '音乐：开（点击关闭）' : '音乐：关（点击开启）'}
-      aria-label={on ? '关闭背景音乐' : '开启背景音乐'}
+      title={isError ? errorMessage || '音乐加载失败，点击重试' : on ? '点击关闭音乐' : '点击开启音乐'}
+      aria-label={on ? '关闭音乐' : '开启音乐'}
     >
-      <span className="bgm-icon">{on ? '🎵' : '🔇'}</span>
-      <span className="bgm-label">{on ? '音乐：开' : '音乐：关'}</span>
+      <span className="bgm-icon">{isError ? '⚠' : (on ? '🎵' : '🔇')}</span>
+      <span className="bgm-label">{isError ? '音乐加载失败' : (on ? '音乐：开' : '音乐：关')}</span>
     </button>
   )
 }

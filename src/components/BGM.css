@@ -54,6 +54,17 @@
 .bgm-icon { font-size: 0.9rem; line-height: 1; }
 .bgm-label { font-size: 0.75rem; }
 
+.bgm-toggle.is-error {
+  border-color: #6b2020;
+  background: rgba(60, 16, 16, 0.6);
+  color: #ff9090;
+}
+
+.bgm-toggle.is-error:hover {
+  background: rgba(80, 24, 24, 0.8);
+  border-color: #8a3030;
+}
+
 /* ============================================================
    移动端
    ============================================================ */
