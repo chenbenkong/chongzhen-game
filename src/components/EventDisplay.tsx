@@ -677,7 +677,8 @@ function EventDisplay({
 
         <div className="dice-modal-content">
           {(() => {
-            const check = choiceChecks.get(diceModal.choice!.id)
+            if (!diceModal.choice) return null
+            const check = choiceChecks.get(diceModal.choice.id)
             if (!check || check.available) return null
 
             return (

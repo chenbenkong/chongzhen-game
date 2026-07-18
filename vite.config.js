@@ -147,7 +147,8 @@ export default defineConfig({
         comments: false,
       },
     },
-    cssCodeSplit: true,
+    // 禁用 CSS 代码分割：避免 GitHub Pages 缓存不一致时动态预加载 CSS 失败
+    cssCodeSplit: false,
     cssMinify: 'lightningcss',
     sourcemap: false,
     chunkSizeWarningLimit: 800,
