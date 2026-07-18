@@ -951,6 +951,12 @@
   border-color: rgba(212,175,111,0.5);
 }
 .counterfactual-icon { font-size: 1.1rem; }
+.counterfactual-icon::before {
+  content: '变';
+  display: inline-block;
+  font-family: 'Ma Shan Zheng', serif;
+  color: #d4af6f;
+}
 .counterfactual-label { color: #d4af6f; }
 .counterfactual-chevron {
   display: inline-block;

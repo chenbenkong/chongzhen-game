@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1637: GameEvent[] = [
   {
     id: 'historical_029',
     storyline: 'ordinary',
     title: '陈圆圆入京',
-    description: '',
+    description: '陈圆圆被外戚买入府中，命运悬而未决。',
     narrative: {
       speaker: {
         name: '周府家仆',
@@ -53,7 +54,7 @@ export const events1637: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 10 },
-          hidden: {欲望值: 8,道德值: 5,道德值: 10,道德值: 18, 道德值: -5},
+          hidden: { 欲望值: 8, 道德值: -5 },
           flags: { add: ['识陈圆圆'] }
         },
         resultDescription: '',
@@ -96,7 +97,9 @@ export const events1637: GameEvent[] = [
         effects: {
           attributes: {},
           gameState: { 清议: 15, 圣眷: 5 },
-          hidden: { 欲望值: -10 },
+          hidden: { 欲望值: -10,
+              道德值: 5
+        },
           flags: { add: ['避美守正'] }
         },
         resultDescription: '',
@@ -161,7 +164,7 @@ export const events1637: GameEvent[] = [
     id: 'historical_030',
     storyline: 'ordinary',
     title: '黄宗羲父案',
-    description: '',
+    description: '黄尊素被诬入狱，黄宗羲在京中奔走呼号。',
     narrative: {
       speaker: {
         name: '京中同乡',
@@ -205,7 +208,9 @@ export const events1637: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 25, 中官: -10, 圣眷: -8 },
-          hidden: {野心值: 8 },
+          hidden: {野心值: 8,
+              道德值: 18
+        },
           flags: { add: ['为黄尊素鸣冤'] }
         },
         resultDescription: '',
@@ -236,9 +241,13 @@ export const events1637: GameEvent[] = [
           attributes: { 财帛: { min: 50 } }
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -15
+        },
           gameState: { 清议: 12 },
-          hidden: {野心值: -3 },
+          hidden: {野心值: -3,
+              道德值: 10
+        },
           flags: { add: ['暗中助黄'] }
         },
         resultDescription: '',

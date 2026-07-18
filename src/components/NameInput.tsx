@@ -192,7 +192,7 @@ export default function NameInput({ onConfirm }: NameInputProps) {
                   onClick={handleRandomHometown}
                   title="随机抽一个明代常见籍贯"
                 >
-                  🎲 随机抽
+                  随机抽
                 </button>
               </div>
             </div>

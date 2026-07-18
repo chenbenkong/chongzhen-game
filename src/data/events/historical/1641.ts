@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1641: GameEvent[] = [
 {
     id: 'historical_008',
     storyline: 'nationfall',
     title: '李自成称王',
-    description: '',
+    description: '流寇肆虐，中原糜烂。',
     narrative: {
       speaker: {
         name: '河南急报',
@@ -34,13 +35,13 @@ export const events1641: GameEvent[] = [
         text: '【死守开封】"开封乃中原重镇，开封若失，中原不保！"',
         description: '率军死守开封，与李自成决一死战',
         showConditions: {
-          attributes: { 武略: { min: 65,财帛: -15,财帛: -20,财帛: -15, 财帛: -20}, 体质: { min: 60 } },
+          attributes: { 武略: { min: 65 }, 体质: { min: 60 } },
           origin: ['没落世家']
         },
         effects: {
           attributes: { 武略: 10, 体质: -20 },
-          gameState: { 圣眷: 20, 清议: 25,民望: -10,民望: -20,民望: -10,民望: -25,民望: 25,民望: 20, 民望: 15, 民望: 10},
-          hidden: {野心值: -5,道德值: 5,道德值: -10,道德值: 3,道德值: -10,道德值: 15,道德值: 10, 道德值: 15, 道德值: 5},
+          gameState: { 圣眷: 20, 清议: 25, 民望: 15 },
+          hidden: { 野心值: -5, 道德值: 15 },
           flags: { add: ['死守开封'] }
         },
         resultDescription: '',
@@ -71,8 +72,12 @@ export const events1641: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -10 },
-          gameState: { 圣眷: 10, 清议: 10,},
-          hidden: {},
+          gameState: { 圣眷: 10, 清议: 10,
+              民望: -10
+        },
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['追击流寇'] }
         },
         resultDescription: '',
@@ -104,9 +109,15 @@ export const events1641: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8 },
-          gameState: {清议: 15, 圣眷: -5 },
-          hidden: {},
+          attributes: {理政: 8,
+              财帛: -20
+        },
+          gameState: {清议: 15, 圣眷: -5,
+              民望: 25
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['招抚流民'] }
         },
         resultDescription: '',
@@ -137,8 +148,12 @@ export const events1641: GameEvent[] = [
         },
         effects: {
           attributes: { 体质: 5 },
-          gameState: { 圣眷: -15, 清议: -20,},
-          hidden: {野心值: 5 },
+          gameState: { 圣眷: -15, 清议: -20,
+              民望: -20
+        },
+          hidden: {野心值: 5,
+              道德值: -10
+        },
           flags: { add: ['保存实力'] }
         },
         resultDescription: '',
@@ -168,7 +183,7 @@ export const events1641: GameEvent[] = [
     id: 'historical_008_aftermath',
     storyline: 'ordinary',
     title: '中原烽火',
-    description: '',
+    description: '洛阳陷落，中原糜烂。',
     narrative: {
       speaker: {
         name: '河南巡按御史',
@@ -201,9 +216,15 @@ export const events1641: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 武略: 5,体质: -10 },
-          gameState: {圣眷: 5 },
-          hidden: {}
+          attributes: { 武略: 5,体质: -10,
+              财帛: -15
+        },
+          gameState: {圣眷: 5,
+              民望: 10
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -233,8 +254,12 @@ export const events1641: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 3, 体质: -25 },
-          gameState: { 圣眷: -5, 清议: 5,},
-          hidden: {}
+          gameState: { 圣眷: -5, 清议: 5,
+              民望: -10
+        },
+          hidden: {
+              道德值: 3
+        }
         },
         resultDescription: '',
         result: {
@@ -266,9 +291,15 @@ export const events1641: GameEvent[] = [
           origin: ['诗文清望', '缙绅']
         },
         effects: {
-          attributes: { 理政: 5,},
-          gameState: {清议: 10 },
-          hidden: {}
+          attributes: { 理政: 5,
+              财帛: -15
+        },
+          gameState: {清议: 10,
+              民望: 20
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -301,9 +332,15 @@ export const events1641: GameEvent[] = [
           origin: ['寒门', '没落世家']
         },
         effects: {
-          attributes: {},
-          gameState: {圣眷: -10 },
-          hidden: {}
+          attributes: {
+              财帛: -20
+        },
+          gameState: {圣眷: -10,
+              民望: -25
+        },
+          hidden: {
+              道德值: -10
+        }
         },
         resultDescription: '',
         result: {

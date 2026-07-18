@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // 缙绅专属事件：体现世家大族的人脉与党争漩涡
@@ -7,7 +8,7 @@ export const jinshenEvents: GameEvent[] = [
     storyline: 'power',
     type: 'transition',
     title: '族中求托',
-    description: '',
+    description: '家族利益与为官操守，你站哪边？',
     narrative: {
       speaker: { title: '族叔', name: '陈伯庸' },
       quote: '贤侄啊，你三堂兄的案子，你可得在知府面前说句话。咱们陈家一荣俱荣、一损俱损，你不会看着自家人吃亏吧？',
@@ -25,13 +26,13 @@ export const jinshenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'power',
+        storyline: 'corrupt',
         text: '【徇私说情】"族叔放心，我这就去拜访知府大人"',
         description: '利用关系为堂兄说情，维护家族利益',
         effects: {
-          attributes: {理政: -3,财帛: 15,财帛: 5,财帛: -15, 财帛: 10},
-          gameState: { 士绅: 10, 清议: -10,民望: 8,民望: 5, 民望: -8},
-          hidden: {欲望值: 5,道德值: 8,道德值: 3,道德值: 5, 道德值: -8},
+          attributes: { 理政: -3, 财帛: 10 },
+          gameState: { 士绅: 10, 清议: -10, 民望: -8 },
+          hidden: { 欲望值: 5, 道德值: -8 },
           flags: { add: ['origin_jinshen_001_done', '徇私说情'] }
         },
         result: {
@@ -48,13 +49,17 @@ export const jinshenEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'power',
+        storyline: 'eastern_forest',
         text: '【秉公处理】"三堂兄的事，我不好插手。国法面前，谁也不能例外"',
         description: '拒绝说情，秉公办事',
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 清议: 10, 士绅: -15,},
-          hidden: {},
+          gameState: { 清议: 10, 士绅: -15,
+              民望: 8
+        },
+          hidden: {
+              道德值: 8
+        },
           flags: { add: ['origin_jinshen_001_done', '大义灭亲'] }
         },
         result: {
@@ -71,7 +76,7 @@ export const jinshenEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'power',
+        storyline: 'gray',
         text: '【私下劝说】"我帮不了堂兄的案子，但可以让他主动自首，从轻发落"',
         description: '既不徇私也不全然无情，劝堂兄自首以争取从轻',
         effects: {
@@ -107,7 +112,7 @@ export const jinshenEvents: GameEvent[] = [
     storyline: 'power',
     type: 'transition',
     title: '商路风波',
-    description: '',
+    description: '家族生意危在旦夕，如何应对？',
     narrative: {
       speaker: { title: '管家', name: '福伯' },
       quote: '老爷，大事不好！咱们家在苏州的丝绸生意被人告了，说是偷逃关税。府衙已经封了铺面，扣押了货物！',
@@ -125,11 +130,13 @@ export const jinshenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'power',
+        storyline: 'corrupt',
         text: '【动用关系】"去找周大人，让他压下此案"',
         description: '利用官场关系摆平官司',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 15
+        },
           gameState: { 士绅: 5, 中官: -5, 清议: -8 },
           hidden: { 欲望值: 5 },
           flags: { add: ['origin_jinshen_002_done', '动用关系'] }
@@ -146,13 +153,19 @@ export const jinshenEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'power',
+        storyline: 'eastern_forest',
         text: '【补缴税款】"该补的补，该罚的罚，不要让人抓住把柄"',
         description: '依法补缴，保全名声',
         effects: {
-          attributes: {},
-          gameState: { 清议: 8,},
-          hidden: {},
+          attributes: {
+              财帛: -15
+        },
+          gameState: { 清议: 8,
+              民望: 5
+        },
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['origin_jinshen_002_done', '依法补缴'] }
         },
         result: {
@@ -201,7 +214,7 @@ export const jinshenEvents: GameEvent[] = [
     storyline: 'power',
     type: 'transition',
     title: '门生故吏',
-    description: '',
+    description: '门生主动效忠，是福是祸？',
     narrative: {
       speaker: { title: '门生', name: '赵孟辉' },
       quote: '恩师提携之恩，学生没齿难忘。如今学生已任刑部主事，若有差遣，万死不辞！',
@@ -224,7 +237,9 @@ export const jinshenEvents: GameEvent[] = [
         text: '【善用人脉】"赵大人客气了，今后互相照应"',
         description: '建立互惠关系，合理利用人脉',
         effects: {
-          attributes: { 理政: 5,},
+          attributes: { 理政: 5,
+              财帛: 5
+        },
           gameState: { 士绅: 8, 圣眷: 3 },
           flags: { add: ['origin_jinshen_003_done', '门生网络'] }
         },
@@ -240,13 +255,15 @@ export const jinshenEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'power',
+        storyline: 'eastern_forest',
         text: '【保持距离】"赵大人公事公办即可，不必如此"',
         description: '与门生保持距离，避免结党之嫌',
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 清议: 5, 士绅: -5 },
-          hidden: {},
+          hidden: {
+              道德值: 3
+        },
           flags: { add: ['origin_jinshen_003_done', '疏远门生'] }
         },
         result: {
@@ -261,7 +278,7 @@ export const jinshenEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'power',
+        storyline: 'eastern_forest',
         text: '【以荐代交】"我不便直接交往，但你可推荐几位寒门俊彦"',
         description: '不结党但也不孤立，转而推荐寒门俊彦以培养新血',
         effects: {

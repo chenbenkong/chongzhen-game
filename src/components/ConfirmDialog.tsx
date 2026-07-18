@@ -72,14 +72,14 @@ function ConfirmDialogImpl({
     >
       <div className="cd-panel" role="dialog" aria-modal="true" aria-labelledby="cd-title">
         <div className="cd-header">
-          <div className="cd-icon">{variant === 'danger' ? '⚠' : '?'}</div>
+          <div className={`cd-icon cd-icon-${variant}`} aria-hidden="true" />
           <h2 id="cd-title" className="cd-title">{title}</h2>
         </div>
 
         <div className="cd-body">
           <p className="cd-message">{message}</p>
-          {detail && <div className="cd-detail">📜 {detail}</div>}
-          {warning && <div className="cd-warning">⚠ {warning}</div>}
+          {detail && <div className="cd-detail">{detail}</div>}
+          {warning && <div className="cd-warning">{warning}</div>}
         </div>
 
         <div className="cd-actions">

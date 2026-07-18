@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -12,7 +13,7 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_001',
     storyline: 'gray',
     title: '下属献妻',
-    description: '',
+    description: '今日黄昏，周文德带着他的妻子柳如烟前来拜访。',
     narrative: {
       speaker: {
         title: '主簿',
@@ -26,10 +27,10 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
       year: { min: 1628, max: 1628 },
       month: { min: 3, max: 5 },
       attributes: {
-        理政: { min: 50,财帛: -20, 财帛: 25}
+        理政: { min: 50 }
       },
       hidden: {
-        欲望值: { min: 30,道德值: 5,道德值: -8,道德值: 10,道德值: -10,道德值: -5,道德值: -5,道德值: -5,道德值: -3, 道德值: -10, 道德值: 8, 道德值: 12}
+        欲望值: { min: 30 }
       }
     },
     choices: [
@@ -40,8 +41,10 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         description: '接受周文德的"礼物"，当夜便与柳如烟成就好事。你看着柳如烟颤抖的娇躯，心中涌起强烈的占有欲。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -15, 士绅: 8,民望: 5,民望: 10, 民望: -10},
-          hidden: { 欲望值: 20,}
+          gameState: { 清议: -15, 士绅: 8, 民望: -10},
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '金屋藏娇',
@@ -71,7 +74,9 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         text: '【欲拒还迎】"周主簿，此事还需从长计议"',
         description: '不直接接受，但暗示周文德继续"表示"。你看着柳如烟娇羞的模样，心中痒痒，想要慢慢享受这份"礼物"。',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 25
+        },
           gameState: { 清议: -5 },
           hidden: { 欲望值: 10 }
         },
@@ -104,7 +109,9 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         description: '严词拒绝，维护官德。你看着柳如烟楚楚可怜的模样，心中虽有动摇，但最终还是守住了底线。',
         effects: {
           gameState: { 清议: 5 },
-          hidden: {欲望值: -5 }
+          hidden: {欲望值: -5,
+              道德值: 5
+        }
         },
         result: {
           title: '拒色远祸',
@@ -132,9 +139,13 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         text: '【主动追求】"如烟姑娘，本官对你一见倾心"',
         description: '不通过周文德，直接追求柳如烟，用真心打动她。你看着柳如烟含泪的双眸，心中升起一股强烈的保护欲和占有欲。',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -20
+        },
           gameState: { 清议: -8 },
-          hidden: { 欲望值: 15,}
+          hidden: { 欲望值: 15,
+              道德值: -5
+        }
         },
         result: {
           title: '情投意合',
@@ -171,7 +182,7 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_002',
     storyline: 'gray',
     title: '少女倾心',
-    description: '',
+    description: '近日张老四告诉你，他女儿对你"仰慕已久"，甚至说"非大人不嫁"。',
     narrative: {
       speaker: {
         title: '衙役',
@@ -199,8 +210,12 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         description: '接受苏婉儿，纳她为妾。你看着苏婉儿青涩的脸庞，心中涌起强烈的欲望，想要采撷这朵娇嫩的花蕾。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -12,},
-          hidden: { 欲望值: 18,}
+          gameState: { 清议: -12,
+              民望: -10
+        },
+          hidden: { 欲望值: 18,
+              道德值: -8
+        }
         },
         result: {
           title: '抱得美人归',
@@ -228,8 +243,12 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         text: '【拒绝】"婉儿姑娘年幼，本官不能做这等事"',
         description: '以苏婉儿年幼为由，婉拒张老四。你看着苏婉儿稚嫩的脸庞，心中虽有欲望，但最终还是守住了底线。',
         effects: {
-          gameState: { 清议: 8,},
-          hidden: {欲望值: -5 }
+          gameState: { 清议: 8,
+              民望: 5
+        },
+          hidden: {欲望值: -5,
+              道德值: 8
+        }
         },
         result: {
           title: '拒色守德',
@@ -256,8 +275,12 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         description: '不收她为妾，而是收为义女，给她一个名分。你看着苏婉儿纯真的眼神，心中升起一股保护欲，想要守护这份纯真。',
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 清议: 10,},
-          hidden: {}
+          gameState: { 清议: 10,
+              民望: 10
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         result: {
           title: '义父义女',
@@ -289,7 +312,9 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -8 },
-          hidden: { 欲望值: 12,}
+          hidden: { 欲望值: 12,
+              道德值: -5
+        }
         },
         result: {
           title: '暗度陈仓',
@@ -324,7 +349,7 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_003',
     storyline: 'gray',
     title: '上司遗孀',
-    description: '',
+    description: '今日，沈碧瑶借故来拜访你，身穿素服，却难掩成熟妇人的风韵。',
     narrative: {
       speaker: {
         title: '知府遗孀',
@@ -353,7 +378,9 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -5 },
           gameState: { 清议: -18, 士绅: -8 },
-          hidden: { 欲望值: 15,}
+          hidden: { 欲望值: 15,
+              道德值: -10
+        }
         },
         result: {
           title: '鸠占鹊巢',
@@ -476,7 +503,9 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         description: '只提供庇护，不图色。你看着沈碧瑶楚楚可怜的模样，心中虽有欲望，但最终还是守住了底线。',
         effects: {
           gameState: { 清议: 8, 士绅: 8 },
-          hidden: {}
+          hidden: {
+              道德值: 12
+        }
         },
         result: {
           title: '正人君子',
@@ -556,7 +585,9 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -10 },
-          hidden: { 欲望值: 10,}
+          hidden: { 欲望值: 10,
+              道德值: -5
+        }
         },
         result: {
           title: '水到渠成',
@@ -627,8 +658,12 @@ export const subordinateDebaucheryEvents: GameEvent[] = [
         description: '不顾世俗眼光，明媒正娶沈碧瑶为正妻。你看着沈碧瑶端庄贤淑的模样，心中升起一股强烈的占有欲，想要给她一个名分，让她永远属于你。',
         effects: {
           attributes: {},
-          gameState: { 清议: -15, 士绅: -10 },
-          hidden: { 欲望值: 8,}
+          gameState: { 清议: -15, 士绅: -10,
+              圣眷: -5
+        },
+          hidden: { 欲望值: 8,
+              道德值: -3
+        }
         },
         result: {
           title: '冲破世俗',

@@ -51,7 +51,7 @@ function AttributePanel({ attributes, hidden }: AttributePanelProps) {
                 </div>
                 <span className={`attr-num attr-num-${level}`}>{Math.round(Math.max(value, 0))}</span>
                 {(isCritical && (level === 'danger' || level === 'critical')) && (
-                  <span className="attr-warning">⚠️</span>
+                  <span className="attr-warning" aria-label="警告" />
                 )}
               </div>
             )
@@ -85,7 +85,7 @@ function AttributePanel({ attributes, hidden }: AttributePanelProps) {
                    key === '野心值' ? (value > 75 ? '勃勃' : value > 50 ? '有' : value > 25 ? '微' : '无') : ''}
                 </span>
                 {(isCritical && (level === 'bad' || level === 'critical')) && (
-                  <span className="attr-warning-small">⚠️</span>
+                  <span className="attr-warning-small" aria-label="警告" />
                 )}
               </div>
             )

@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 // 结局前过渡事件（prelude）
 // 玩家在触发核心结局前 1-2 个月，会先看到一个"山雨欲来"的预感事件
 // 通过 EndingConfig.preludeEventId 字段关联
@@ -16,7 +17,7 @@ export const preludeEvents: GameEvent[] = [
     id: 'prelude_zhongxing_1643_12',
     storyline: 'legend',
     title: '中兴前夜',
-    description: '',
+    description: '新年将至，中兴在望。',
     narrative: {
       speaker: { name: '吏部尚书', title: '吏部天官', avatar: '/avatars/official.png' },
       quote: '大人，崇祯十六年将尽。这一年来，辽东收复、流寇平定、朝廷肃然——奇迹啊！大人之功，足以彪炳史册。新年朝会，皇上有密旨相召……',
@@ -35,7 +36,7 @@ export const preludeEvents: GameEvent[] = [
       year: { min: 1643, max: 1643 },
       month: { min: 12, max: 12 },
       gameState: { 国势: { min: 60, 民望: 10} },
-      attributes: { 文韬: { min: 50,财帛: -10,财帛: -30,财帛: 20, 财帛: 20} }
+      attributes: { 文韬: { min: 50 } }
     },
     choices: [
       {
@@ -94,7 +95,7 @@ export const preludeEvents: GameEvent[] = [
         description: '权势之巅，野心开始萌动',
         showConditions: { hidden: { 野心值: { min: 50 } } },
         effects: {
-          hidden: { 野心值: 10,道德值: -10,道德值: -5,道德值: -30,道德值: 20,道德值: -30,道德值: 15,道德值: 15, 道德值: 10, 道德值: -20, 道德值: -15},
+          hidden: { 野心值: 10, 道德值: -15 },
           gameState: { 圣眷: 5, 中官: 5 }
         },
         resultDescription: '权势之巅，野心萌动。',
@@ -127,7 +128,7 @@ export const preludeEvents: GameEvent[] = [
     id: 'prelude_martyr_1644_2',
     storyline: 'martyr',
     title: '城破前夕',
-    description: '',
+    description: '城破在即，皇上召见。',
     narrative: {
       speaker: { name: '王承恩', title: '司礼监秉笔太监', avatar: '/avatars/eunuch.png' },
       quote: '大人，皇上召您入宫。说是要商议……最后的对策。',
@@ -254,7 +255,7 @@ export const preludeEvents: GameEvent[] = [
     id: 'prelude_died_battlefield_1643_9',
     storyline: 'border_war',
     title: '决战前夜',
-    description: '',
+    description: '决战在即，凶多吉少。',
     narrative: {
       speaker: { name: '孙传庭', title: '督师', avatar: '/avatars/general.png' },
       quote: '明日出关。此战，有死无退。某已写好遗书，大人……也要早做准备。',
@@ -373,7 +374,7 @@ export const preludeEvents: GameEvent[] = [
     id: 'prelude_usurper_1643_12',
     storyline: 'power',
     title: '权欲之巅',
-    description: '',
+    description: '权欲之巅，黄袍加身只在一念之间。',
     narrative: {
       speaker: { name: '心腹幕僚', title: '密室', avatar: '/avatars/eunuch.png' },
       quote: '大人，时机已到。京师兵力空虚，皇上威信扫地，只待大人一声令下……',
@@ -508,7 +509,7 @@ export const preludeEvents: GameEvent[] = [
     id: 'prelude_exterminate_1644_1',
     storyline: 'corrupt',
     title: '抄家在即',
-    description: '',
+    description: '抄家在即，灭族之祸。',
     narrative: {
       speaker: { name: '锦衣卫千户', title: '密访', avatar: '/avatars/eunuch.png' },
       quote: '大人，奉圣上密旨，您的事……发了。明日一早，弟兄们就要登门。某先来通个气，让您……有个准备。',

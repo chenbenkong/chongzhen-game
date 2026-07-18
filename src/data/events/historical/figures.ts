@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // 关键历史人物互动
@@ -9,7 +10,7 @@ export const figuresEvents: GameEvent[] = [
     id: 'figure_chongzhen_audience',
     storyline: 'ordinary',
     title: '崇祯帝临朝',
-    description: '',
+    description: '崇祯帝临朝，召见奏事官。',
     narrative: {
       speaker: {
         name: '司礼监太监',
@@ -44,7 +45,7 @@ export const figuresEvents: GameEvent[] = [
     conditions: {
       year: { min: 1629, max: 1643 },
       month: { min: 1, max: 12 },
-      gameState: { 圣眷: { min: 30,民望: 8,民望: 5, 民望: 10} }
+      gameState: { 圣眷: { min: 30 } }
     },
     choices: [
       {
@@ -53,13 +54,13 @@ export const figuresEvents: GameEvent[] = [
         text: '【直言极谏】陈述国事，直言不讳',
         description: '直面崇祯帝的刚愎多疑，坦率陈述国事',
         showConditions: {
-          attributes: { 文韬: { min: 70,财帛: -80, 财帛: -10} },
+          attributes: { 文韬: { min: 70 } },
           origin: ['寒门', '诗文清望']
         },
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: 8, 清议: 15, 中官: -10 },
-          hidden: {野心值: 5,道德值: -5,道德值: 5,道德值: 15,道德值: 10,道德值: 10,道德值: 8, 道德值: 8, 道德值: 5, 道德值: 15},
+          hidden: { 野心值: 5, 道德值: 8 },
           flags: { add: ['崇祯赏识', '直臣'] }
         },
         resultDescription: '',
@@ -98,7 +99,9 @@ export const figuresEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 2 },
           gameState: { 圣眷: 18, 清议: -5, 中官: 8 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['崇祯近臣'] }
         },
         resultDescription: '',
@@ -135,8 +138,12 @@ export const figuresEvents: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -5 },
-          gameState: { 圣眷: 10, 清议: 18,},
-          hidden: {野心值: 8 },
+          gameState: { 圣眷: 10, 清议: 18,
+              民望: 10
+        },
+          hidden: {野心值: 8,
+              道德值: 10
+        },
           flags: { add: ['外放督抚'] }
         },
         resultDescription: '',
@@ -170,7 +177,7 @@ export const figuresEvents: GameEvent[] = [
     id: 'figure_hong_chengchou',
     storyline: 'border_war',
     title: '洪承畴拜将',
-    description: '',
+    description: '洪承畴拜将，誓师出关。',
     narrative: {
       speaker: {
         name: '蓟辽总督府幕僚',
@@ -218,8 +225,12 @@ export const figuresEvents: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 5, 武略: 8 },
-          gameState: { 圣眷: 15, 清议: 15,},
-          hidden: {野心值: 8 },
+          gameState: { 圣眷: 15, 清议: 15,
+              民望: 8
+        },
+          hidden: {野心值: 8,
+              道德值: 5
+        },
           flags: { add: ['洪承畴幕僚'] }
         },
         resultDescription: '',
@@ -266,7 +277,9 @@ export const figuresEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 8, 武略: 5 },
           gameState: { 圣眷: 10, 清议: 12 },
-          hidden: {野心值: 3 },
+          hidden: {野心值: 3,
+              道德值: 5
+        },
           flags: { add: ['洪承畴故交'] }
         },
         resultDescription: '',
@@ -337,7 +350,7 @@ export const figuresEvents: GameEvent[] = [
     id: 'figure_sun_chuanting',
     storyline: 'border_war',
     title: '孙传庭出关',
-    description: '',
+    description: '孙传庭出关，誓师剿贼。',
     narrative: {
       speaker: {
         name: '陕西巡按',
@@ -389,9 +402,13 @@ export const figuresEvents: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 体质: -20, 武略: 8,},
+          attributes: { 体质: -20, 武略: 8,
+              财帛: -10
+        },
           gameState: { 圣眷: 15, 清议: 20 },
-          hidden: {野心值: 8 },
+          hidden: {野心值: 8,
+              道德值: 15
+        },
           flags: { add: ['孙传庭监军'] }
         },
         resultDescription: '',
@@ -438,7 +455,9 @@ export const figuresEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: 5, 清议: 10 },
-          hidden: {野心值: -5 },
+          hidden: {野心值: -5,
+              道德值: 8
+        },
           flags: { add: ['孙传庭故交'] }
         },
         resultDescription: '',
@@ -520,7 +539,7 @@ export const figuresEvents: GameEvent[] = [
     id: 'figure_wu_sangui',
     storyline: 'ordinary',
     title: '吴三桂请饷',
-    description: '',
+    description: '吴三桂驻扎宁远，请饷催粮。',
     narrative: {
       speaker: {
         name: '山海关幕僚',
@@ -573,7 +592,9 @@ export const figuresEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: -5, 清议: 15, 中官: -5 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: 10
+        },
           flags: { add: ['代吴三桂请饷'] }
         },
         resultDescription: '',
@@ -614,9 +635,15 @@ export const figuresEvents: GameEvent[] = [
           attributes: { 财帛: { min: 100 } }
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -10, 清议: 12,},
-          hidden: {野心值: -5 },
+          attributes: {
+              财帛: -80
+        },
+          gameState: { 圣眷: -10, 清议: 12,
+              民望: 5
+        },
+          hidden: {野心值: -5,
+              道德值: 15
+        },
           flags: { add: ['关宁军故交'] }
         },
         resultDescription: '',

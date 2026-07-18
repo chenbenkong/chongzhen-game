@@ -264,6 +264,20 @@
   animation: warning-bounce 0.8s infinite;
 }
 
+.status-warning::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background: rgba(201, 32, 32, 0.2);
+  color: #ff4040;
+  font-weight: 900;
+  line-height: 1;
+}
+
 @media (max-width: 480px) {
   .status-warning {
     font-size: 0.85rem;
@@ -310,6 +324,15 @@
   color: #d4a520;
   letter-spacing: 3px;
   font-weight: bold;
+}
+
+.fortune-title::before {
+  content: '衡';
+  display: inline-block;
+  margin-right: 6px;
+  color: #8b7540;
+  font-family: 'Ma Shan Zheng', serif;
+  font-weight: normal;
 }
 
 @media (max-width: 480px) {

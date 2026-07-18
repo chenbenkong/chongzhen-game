@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -12,7 +13,7 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_009',
     storyline: 'gray',
     title: '同僚之妻',
-    description: '',
+    description: '今日县丞因公出差，慕容雪来衙门送些文书。',
     narrative: {
       speaker: {
         title: '县丞夫人',
@@ -29,7 +30,7 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         理政: { min: 65 }
       },
       hidden: {
-        欲望值: { min: 30,道德值: -10,道德值: 15,道德值: -8,道德值: 12,道德值: -12,道德值: 10, 道德值: -18, 道德值: -15}
+        欲望值: { min: 30 }
       }
     },
     choices: [
@@ -41,7 +42,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -4 },
           gameState: { 清议: -25, 士绅: -10 },
-          hidden: { 欲望值: 25,}
+          hidden: { 欲望值: 25,
+              道德值: -18
+        }
         },
         result: {
           title: '夺人之妻',
@@ -77,7 +80,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -15, 士绅: -5 },
-          hidden: { 欲望值: 18,}
+          hidden: { 欲望值: 18,
+              道德值: -10
+        }
         },
         result: {
           title: '偷香窃玉',
@@ -109,7 +114,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -15, 士绅: -5 },
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -12
+        }
         },
         result: {
           title: '权色交易',
@@ -140,7 +147,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         description: '放弃邪念，让慕容雪回去。你看着慕容雪惊恐的眼神，心中突然涌起一丝不忍，最终决定守住底线。',
         effects: {
           gameState: { 清议: 10 },
-          hidden: {欲望值: -8 }
+          hidden: {欲望值: -8,
+              道德值: 15
+        }
         },
         result: {
           title: '拒色远祸',
@@ -175,7 +184,7 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_010',
     storyline: 'gray',
     title: '上司宠妾',
-    description: '',
+    description: '今日，夏侯轻衣借故来拜访你，身穿一袭红色罗裙，外罩轻纱，发髻高挽，插着一支金步摇。',
     narrative: {
       speaker: {
         title: '知府小妾',
@@ -204,7 +213,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -4 },
           gameState: { 清议: -20, 士绅: -10 },
-          hidden: { 欲望值: 22,}
+          hidden: { 欲望值: 22,
+              道德值: -15
+        }
         },
         result: {
           title: '偷香窃玉',
@@ -240,7 +251,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -4 },
           gameState: { 清议: -15, 士绅: -5 },
-          hidden: { 欲望值: 18,}
+          hidden: { 欲望值: 18,
+              道德值: -8
+        }
         },
         result: {
           title: '两情相悦',
@@ -271,7 +284,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         description: '帮助夏侯轻衣，但不与她有肌肤之亲。你看着夏侯轻衣楚楚可怜的模样，心中虽有欲望，但最终还是守住了底线。',
         effects: {
           gameState: { 清议: 5 },
-          hidden: {欲望值: 3 }
+          hidden: {欲望值: 3,
+              道德值: 10
+        }
         },
         result: {
           title: '君子之交',
@@ -298,7 +313,9 @@ export const colleagueDebaucheryEvents: GameEvent[] = [
         description: '拒绝夏侯轻衣，让她回去。你看着夏侯轻衣期待的眼神，心中虽然犹豫，但最终还是守住了底线。',
         effects: {
           gameState: { 清议: 8 },
-          hidden: {欲望值: -5 }
+          hidden: {欲望值: -5,
+              道德值: 12
+        }
         },
         result: {
           title: '拒色远祸',

@@ -200,7 +200,7 @@ export default function GameOverScreen({
               onClick={() => setIsCounterfactualOpen(o => !o)}
               aria-expanded={isCounterfactualOpen}
             >
-              <span className="counterfactual-icon">🔀</span>
+              <span className="counterfactual-icon" aria-label="分支" />
               <span className="counterfactual-label">
                 {isCounterfactualOpen ? '收起' : '查看'}其他可能（{counterfactuals.length}）
               </span>

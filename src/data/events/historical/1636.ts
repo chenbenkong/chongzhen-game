@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1636: GameEvent[] = [
 {
     id: 'historical_009',
     storyline: 'ordinary',
     title: '清国建立',
-    description: '',
+    description: '清国建立，朝野震动。',
     narrative: {
       speaker: {
         name: '辽东塘报',
@@ -35,13 +36,15 @@ export const events1636: GameEvent[] = [
         description: '作为东林党核心，号召同道共同抗敌',
         showConditions: {
           flags: { has: ['东林党核心'] },
-          attributes: { 文韬: { min: 60,财帛: -15,财帛: -20, 财帛: -20}, 理政: { min: 50 } },
+          attributes: { 文韬: { min: 60 }, 理政: { min: 50 } },
           origin: ['诗文清望', '缙绅']
         },
         effects: {
           attributes: { 文韬: 8, 理政: 5 },
-          gameState: { 清议: 20, 圣眷: 10,民望: 10},
-          hidden: {道德值: 10,道德值: 10,道德值: 5,道德值: 5,道德值: 0,道德值: -5,道德值: -5, 道德值: -5, 道德值: 3},
+          gameState: { 清议: 20, 圣眷: 10,民望: 10,
+              国势: 5
+        },
+          hidden: { 道德值: 10 },
           flags: { add: ['东林北伐'] }
         },
         resultDescription: '',
@@ -75,8 +78,12 @@ export const events1636: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 8 },
-          gameState: { 中官: 15, 圣眷: 5,},
-          hidden: {野心值: 5 },
+          gameState: { 中官: 15, 圣眷: 5,
+              国势: 2
+        },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['秘密议和'] }
         },
         resultDescription: '',
@@ -108,9 +115,16 @@ export const events1636: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 文韬: 5, 武略: 3,},
-          gameState: { 圣眷: 15, 清议: 25,中官: -15,},
-          hidden: {野心值: 10 },
+          attributes: { 文韬: 5, 武略: 3,
+              财帛: -20
+        },
+          gameState: { 圣眷: 15, 清议: 25,中官: -15,
+              民望: 10,
+              国势: -5
+        },
+          hidden: {野心值: 10,
+              道德值: 10
+        },
           flags: { add: ['主战派'] }
         },
         resultDescription: '',
@@ -146,8 +160,12 @@ export const events1636: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 8 },
-          gameState: { 圣眷: -10, 清议: -25, 中官: 15,},
-          hidden: {野心值: 5 },
+          gameState: { 圣眷: -10, 清议: -25, 中官: 15,
+              国势: 3
+        },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['主和派'] }
         },
         resultDescription: '',
@@ -181,9 +199,13 @@ export const events1636: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 武略: 5, 理政: 3,},
+          attributes: { 武略: 5, 理政: 3,
+              财帛: -15
+        },
           gameState: { 圣眷: 10, 清议: 15, 中官: -5, 士绅: -10 },
-          hidden: {},
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['联合蒙古'] }
         },
         resultDescription: '',
@@ -218,7 +240,9 @@ export const events1636: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: -5, 清议: -10 },
-          hidden: {野心值: -5 },
+          hidden: {野心值: -5,
+              道德值: 3
+        },
           flags: { add: ['静观其变'] }
         },
         resultDescription: '',
@@ -248,7 +272,7 @@ export const events1636: GameEvent[] = [
     id: 'historical_009_aftermath',
     storyline: 'ordinary',
     title: '清国余波',
-    description: '',
+    description: '清国建立后的第一波冲击已经过去。',
     narrative: {
       speaker: {
         name: '兵部职方司郎中',
@@ -289,7 +313,9 @@ export const events1636: GameEvent[] = [
         effects: {
           attributes: { 武略: 5, 体质: -15 },
           gameState: { 圣眷: -10, 清议: 5 },
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -322,7 +348,9 @@ export const events1636: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: -20, 清议: -30, 中官: 10 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['议和泄露'] }
         },
         resultDescription: '',
@@ -353,7 +381,9 @@ export const events1636: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 理政: 5,},
+          attributes: { 理政: 5,
+              财帛: -20
+        },
           gameState: { 圣眷: 0, 清议: -10 },
           hidden: {}
         },

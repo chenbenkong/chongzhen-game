@@ -1,7 +1,9 @@
 import { memo, useState, useEffect, useMemo, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { GameEvent, EventChoice } from '../types/event'
 import { Character, GameStateValues, Attributes } from '../types/game'
 import { ATTR_DISPLAY_MAP, STATE_DISPLAY_MAP } from '../utils/constants'
+import { getStoryline } from '../data/storylines'
 import DiceAnimation from './DiceAnimation'
 import Icon from './Icon'
 import EventImages from './EventImages'
@@ -23,6 +25,7 @@ interface EventDisplayProps {
   showResult?: boolean
   selectedChoiceId?: string | null
   onBackToChoices?: () => void
+  onGenerateImageForEvent?: (eventId: string, eventTitle: string) => void
   onDeathEnding?: (ending: {
     type: 'martyrdom' | 'suicide' | 'killed' | 'execution'
     title: string
@@ -655,7 +658,7 @@ function EventDisplay({
     return (
       <div className="event-display empty">
         <div className="empty-state">
-          <div className="empty-icon">📜</div>
+          <div className="empty-icon" aria-label="无事件" />
           <p className="empty-text">暂无事件</p>
           <p className="empty-hint">等待命运的安排...</p>
         </div>
@@ -664,6 +667,75 @@ function EventDisplay({
   }
 
   const narrative = event.narrative
+
+  const node = (
+    <div className="dice-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeDiceModal() }}>
+      <div className="dice-modal" onClick={e => e.stopPropagation()}>
+        <div className="dice-modal-header">
+          <h3>勉 力 一 试</h3>
+        </div>
+
+        <div className="dice-modal-content">
+          {(() => {
+            const check = choiceChecks.get(diceModal.choice!.id)
+            if (!check || check.available) return null
+
+            return (
+              <div className="dice-info-simple">
+                <div className="dice-condition-simple">
+                  {check.reason}
+                </div>
+
+                <div className="difficulty-adjust-info">
+                  <span className="difficulty-label">难度：</span>
+                  <div className="difficulty-circles">
+                    {[1, 2, 3, 4, 5, 6].map((level) => (
+                      <span
+                        key={level}
+                        className={`difficulty-circle ${level <= (diceModal.difficulty || 3) ? 'active' : ''}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="dice-target">
+                  需投出 <span className="target-char">{['零', '一', '二', '三', '四', '五', '六'][diceModal.difficulty || 3]}</span>（{diceModal.difficulty}）或以上
+                </div>
+
+                <div className="attempt-info">
+                  投骰一次，成功即达成，失败则触发负面效果
+                </div>
+              </div>
+            )
+          })()}
+          
+          <div className="dice-area" onClick={!diceModal.isRolling && diceModal.success === null ? rollDice : undefined}>
+            <DiceAnimation 
+              isRolling={diceModal.isRolling}
+              result={diceModal.rollResult}
+              success={diceModal.success}
+            />
+          </div>
+          
+          {!diceModal.isRolling && diceModal.success === null && (
+            <div className="dice-click-hint">点击骰子开始</div>
+          )}
+          
+          {diceModal.success !== null && (
+            <div className={`dice-result-text ${diceModal.success ? 'success' : 'fail'}`}>
+              {diceModal.success ? '天命所归——成功' : '力有不逮——失败'}
+            </div>
+          )}
+          
+          {/* 失败后的属性变化会由效果系统自动应用，不在弹窗里重复显示 */}
+        </div>
+        
+        <div className="dice-modal-footer">
+          {/* 失败后会自动显示结果，不需要单独确认按钮了 */}
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div className={`event-display ${showResult ? 'show-result' : ''}`}>
@@ -726,9 +798,9 @@ function EventDisplay({
             )}
             {narrative?.quote && (
               <div className="quote-box-compact">
-                <span className="quote-mark-compact">"</span>
+                <span className="quote-mark-compact" aria-hidden="true" />
                 <p className="quote-text-compact">{narrative.quote}</p>
-                <span className="quote-end-compact">"</span>
+                <span className="quote-end-compact" aria-hidden="true" />
               </div>
             )}
           </div>
@@ -781,6 +853,11 @@ function EventDisplay({
                     <div className="choice-content">
                       <div className="choice-title">
                         {choice.text}
+                        {choice.storyline && choice.storyline !== event.storyline && (
+                          <span className="choice-storyline-shift">
+                            → {getStoryline(choice.storyline)?.name || choice.storyline}
+                          </span>
+                        )}
                       </div>
                       {choice.description && (
                         <div className="choice-description">{choice.description}</div>
@@ -885,74 +962,7 @@ function EventDisplay({
       {diceModal.show && diceModal.choice && (() => {
         const check = choiceChecks.get(diceModal.choice.id)
         return check && !check.available
-      })() && (
-        <div className="dice-modal-overlay" onClick={closeDiceModal}>
-          <div className="dice-modal" onClick={e => e.stopPropagation()}>
-            <div className="dice-modal-header">
-              <h3>勉 力 一 试</h3>
-            </div>
-
-            <div className="dice-modal-content">
-              {(() => {
-                const check = choiceChecks.get(diceModal.choice!.id)
-                if (!check || check.available) return null
-
-                return (
-                  <div className="dice-info-simple">
-                    <div className="dice-condition-simple">
-                      {check.reason}
-                    </div>
-
-                    <div className="difficulty-adjust-info">
-                      <span className="difficulty-label">难度：</span>
-                      <div className="difficulty-circles">
-                        {[1, 2, 3, 4, 5, 6].map((level) => (
-                          <span
-                            key={level}
-                            className={`difficulty-circle ${level <= (diceModal.difficulty || 3) ? 'active' : ''}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="dice-target">
-                      需投出 <span className="target-char">{['零', '一', '二', '三', '四', '五', '六'][diceModal.difficulty || 3]}</span>（{diceModal.difficulty}）或以上
-                    </div>
-
-                    <div className="attempt-info">
-                      投骰一次，成功即达成，失败则触发负面效果
-                    </div>
-                  </div>
-                )
-              })()}
-              
-              <div className="dice-area" onClick={!diceModal.isRolling && diceModal.success === null ? rollDice : undefined}>
-                <DiceAnimation 
-                  isRolling={diceModal.isRolling}
-                  result={diceModal.rollResult}
-                  success={diceModal.success}
-                />
-              </div>
-              
-              {!diceModal.isRolling && diceModal.success === null && (
-                <div className="dice-click-hint">点击骰子开始</div>
-              )}
-              
-              {diceModal.success !== null && (
-                <div className={`dice-result-text ${diceModal.success ? 'success' : 'fail'}`}>
-                  {diceModal.success ? '天命所归——成功' : '力有不逮——失败'}
-                </div>
-              )}
-              
-              {/* 失败后的属性变化会由效果系统自动应用，不在弹窗里重复显示 */}
-            </div>
-            
-            <div className="dice-modal-footer">
-              {/* 失败后会自动显示结果，不需要单独确认按钮了 */}
-            </div>
-          </div>
-        </div>
-      )}
+      })() && createPortal(node, document.body)}
 
     </div>
   )

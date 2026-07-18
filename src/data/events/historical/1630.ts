@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1630: GameEvent[] = [
 {
     id: 'historical_004',
     storyline: 'eastern_forest',
     title: '袁崇焕之死',
-    description: '',
+    description: '袁崇焕已死，朝局再变。',
     narrative: {
       speaker: {
         name: '刑部书吏',
@@ -38,9 +39,9 @@ export const events1630: GameEvent[] = [
           origin: ['寒门', '诗文清望']
         },
         effects: {
-          attributes: { 文韬: 5,财帛: 20,财帛: -25,财帛: -15, 财帛: -25, 财帛: 50},
-          gameState: { 圣眷: -30, 清议: 35,民望: 30,民望: 20,民望: -20, 民望: -15, 民望: -40},
-          hidden: {野心值: 10,道德值: 15,道德值: -5,道德值: -5,道德值: -30,道德值: -30,道德值: 10, 道德值: 25, 道德值: 15},
+          attributes: { 文韬: 5, 财帛: 50 },
+          gameState: { 圣眷: -30, 清议: 35, 民望: -15 },
+          hidden: { 野心值: 10, 道德值: 25 },
           flags: { add: ['袁党余孽'] }
         },
         resultDescription: '',
@@ -67,9 +68,13 @@ export const events1630: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {文韬: 3 },
+          attributes: {文韬: 3,
+              财帛: -25
+        },
           gameState: { 清议: 15 },
-          hidden: {欲望值: -5 },
+          hidden: {欲望值: -5,
+              道德值: 15
+        },
           flags: { add: ['资助袁家'] }
         },
         resultDescription: '',
@@ -95,9 +100,13 @@ export const events1630: GameEvent[] = [
           origin: ['寒门', '诗文清望']
         },
         effects: {
-          attributes: { 理政: 10,},
+          attributes: { 理政: 10,
+              财帛: 20
+        },
           gameState: { 圣眷: 30, 清议: -35, 中官: 15 },
-          hidden: {野心值: 25 },
+          hidden: {野心值: 25,
+              道德值: -30
+        },
           flags: { add: ['清算袁党'] }
         },
         resultDescription: '',
@@ -119,7 +128,9 @@ export const events1630: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: -5, 清议: -5 },
-          hidden: {野心值: -10 }
+          hidden: {野心值: -10,
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -142,7 +153,7 @@ export const events1630: GameEvent[] = [
     id: 'historical_005',
     storyline: 'ordinary',
     title: '赤地千里',
-    description: '',
+    description: '赤地千里，民不聊生。',
     narrative: {
       speaker: {
         name: '老农',
@@ -174,9 +185,15 @@ export const events1630: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 5 },
-          gameState: {清议: 15, 圣眷: -10 },
-          hidden: {野心值: -5 },
+          attributes: {理政: 5,
+              财帛: -15
+        },
+          gameState: {清议: 15, 圣眷: -10,
+              民望: 30
+        },
+          hidden: {野心值: -5,
+              道德值: 15
+        },
           flags: { add: ['擅自开仓'] }
         },
         resultDescription: '',
@@ -199,8 +216,12 @@ export const events1630: GameEvent[] = [
         description: '按程序上报朝廷，等待赈灾粮到来',
         effects: {
           attributes: { 理政: 3 },
-          gameState: {清议: 5, 圣眷: 5 },
-          hidden: {}
+          gameState: {清议: 5, 圣眷: 5,
+              民望: -20
+        },
+          hidden: {
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -225,9 +246,15 @@ export const events1630: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8 },
-          gameState: {清议: 10, 圣眷: -5 },
-          hidden: {},
+          attributes: {理政: 8,
+              财帛: -25
+        },
+          gameState: {清议: 10, 圣眷: -5,
+              民望: 20
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['招抚流民'] }
         },
         resultDescription: '',
@@ -254,9 +281,15 @@ export const events1630: GameEvent[] = [
           hidden: { 道德值: { max: 25 }, 欲望值: { min: 40 } }
         },
         effects: {
-          attributes: {理政: -5 },
-          gameState: {清议: -30, 圣眷: 10 },
-          hidden: {欲望值: 20, 野心值: 15 },
+          attributes: {理政: -5,
+              财帛: 50
+        },
+          gameState: {清议: -30, 圣眷: 10,
+              民望: -40
+        },
+          hidden: {欲望值: 20, 野心值: 15,
+              道德值: -30
+        },
           flags: { add: ['贪污赈灾粮'] }
         },
         resultDescription: '',

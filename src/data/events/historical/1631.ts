@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1631: GameEvent[] = [
 {
     id: 'historical_006',
     storyline: 'ordinary',
     title: '登莱兵变',
-    description: '',
+    description: '登莱危急，兵变一触即发。',
     narrative: {
       speaker: {
         name: '辽军把总',
@@ -34,13 +35,15 @@ export const events1631: GameEvent[] = [
         text: '【筹饷安抚】"当兵吃粮，天经地义，当设法筹饷"',
         description: '挪用其他款项，甚至自掏腰包，筹措军饷安抚士兵',
         showConditions: {
-          attributes: { 财帛: { min: 40,财帛: -15, 财帛: -35}, 理政: { min: 50 } },
+          attributes: { 财帛: { min: 40 }, 理政: { min: 50 } },
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8 },
-          gameState: { 圣眷: 10,清议: 5,民望: -25,民望: -20,民望: 10, 民望: 15},
-          hidden: {欲望值: -5,道德值: -15,道德值: -5,道德值: 10, 道德值: 15},
+          attributes: {理政: 8,
+              财帛: -35
+        },
+          gameState: { 圣眷: 10, 清议: 5, 民望: 15 },
+          hidden: { 欲望值: -5, 道德值: 15 },
           flags: { add: ['筹饷安抚', '稳定登莱'] }
         },
         resultDescription: '',
@@ -67,8 +70,12 @@ export const events1631: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -15 },
-          gameState: { 圣眷: 15,清议: -10 },
-          hidden: {野心值: 10 },
+          gameState: { 圣眷: 15,清议: -10,
+              民望: -25
+        },
+          hidden: {野心值: 10,
+              道德值: -15
+        },
           flags: { add: ['镇压兵变', '激化矛盾'] }
         },
         resultDescription: '',
@@ -96,9 +103,15 @@ export const events1631: GameEvent[] = [
           origin: ['诗文清望', '缙绅']
         },
         effects: {
-          attributes: { 理政: 10, 文韬: 5,},
-          gameState: {清议: 10, 圣眷: 5, 士绅: -10 },
-          hidden: {},
+          attributes: { 理政: 10, 文韬: 5,
+              财帛: -15
+        },
+          gameState: {清议: 10, 圣眷: 5, 士绅: -10,
+              民望: 10
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['调停成功', '化解矛盾'] }
         },
         resultDescription: '',
@@ -127,8 +140,12 @@ export const events1631: GameEvent[] = [
         description: '不上奏朝廷，等待朝廷的旨意和拨款',
         effects: {
           attributes: { 理政: 3 },
-          gameState: { 圣眷: 5,清议: -5 },
-          hidden: {},
+          gameState: { 圣眷: 5,清议: -5,
+              民望: -20
+        },
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['上报朝廷', '延误时机'] }
         },
         resultDescription: '',

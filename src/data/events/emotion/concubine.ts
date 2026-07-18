@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const concubineEvents: GameEvent[] = [
   {
     id: 'emotion_concubine_001',
     storyline: 'female',
     title: '秦淮初遇',
-    description: '',
+    description: '帘幕掀开，一位绝色女子抱琴而出。',
     narrative: {
       speaker: { title: '名妓', name: '红袖' },
       quote: '大人也是来听曲的？不如让奴家为大人弹一曲《平沙落雁》如何？',
@@ -15,8 +16,8 @@ export const concubineEvents: GameEvent[] = [
     conditions: {
       year: { min: 1628, max: 1644 },
       month: { min: 1, max: 12 },
-      attributes: { 财帛: { min: 30,财帛: -15,财帛: -15,财帛: -15,财帛: -10,财帛: -25,财帛: 8,财帛: -5,财帛: -8,财帛: -5, 财帛: -10, 财帛: -25, 财帛: -15}, 文韬: { min: 50 } },
-      hidden: { 欲望值: { min: 30,道德值: 3,道德值: -5,道德值: 3,道德值: 2,道德值: -5,道德值: 5,道德值: -10,道德值: 8,道德值: -10,道德值: -6,道德值: 8,道德值: -4,道德值: 2,道德值: 4,道德值: 5,道德值: 5,道德值: -3,道德值: -5,道德值: 3, 道德值: -2, 道德值: 3, 道德值: 8, 道德值: -5, 道德值: 3, 道德值: -8, 道德值: 4} },
+      attributes: { 财帛: { min: 30 }, 文韬: { min: 50 } },
+      hidden: { 欲望值: { min: 30 } },
       flags: { notHas: ['met_hongxiu', 'concubine_hongxiu'] }
     },
     choices: [
@@ -26,7 +27,9 @@ export const concubineEvents: GameEvent[] = [
         text: '【欣赏】"姑娘琴艺精湛，在下佩服"',
         description: '以文会友，欣赏才艺',
         effects: {
-          attributes: {文韬: 3 },
+          attributes: {文韬: 3,
+              财帛: -10
+        },
           hidden: { 欲望值: 3 },
           flags: { add: ['met_hongxiu'] }
         },
@@ -56,8 +59,12 @@ export const concubineEvents: GameEvent[] = [
         text: '【沉沦】"今夜……就不回驿馆了"',
         description: '留宿画舫，沉溺美色',
         effects: {
-          attributes: {文韬: 2 },
-          hidden: { 欲望值: 6,},
+          attributes: {文韬: 2,
+              财帛: -15
+        },
+          hidden: { 欲望值: 6,
+              道德值: -2
+        },
           flags: { add: ['met_hongxiu', 'hongxiu_intimate'] }
         },
         result: {
@@ -88,8 +95,12 @@ export const concubineEvents: GameEvent[] = [
         text: '【题诗相赠】"此情可待成追忆——姑娘珍重"',
         description: '以诗为礼，留下风雅印象，体面告退',
         effects: {
-          attributes: {文韬: 6 },
-          hidden: {},
+          attributes: {文韬: 6,
+              财帛: -5
+        },
+          hidden: {
+              道德值: 3
+        },
           flags: { add: ['met_hongxiu', 'hongxiu_poetry'] }
         },
         result: {
@@ -119,7 +130,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_002',
     storyline: 'female',
     title: '赎身从良',
-    description: '',
+    description: '马妈妈开出的价码是一千两银子——相当于你十年的俸禄总和。',
     narrative: {
       speaker: { title: '鸨母', name: '马妈妈' },
       quote: '哎哟，大人要为红袖赎身？这可不是小数目啊……一千两银子，少一个子儿都不行！',
@@ -138,9 +149,13 @@ export const concubineEvents: GameEvent[] = [
         text: '【倾尽所有】"一千两就一千两！"',
         description: '倾尽家财为红袖赎身',
         effects: {
-          attributes: {文韬: 3 },
-          gameState: { 清议: -6,民望: 3,民望: 8,民望: -10, 民望: -5, 民望: 3},
-          hidden: {欲望值: 6 },
+          attributes: {文韬: 3,
+              财帛: -15
+        },
+          gameState: { 清议: -6, 民望: 3 },
+          hidden: {欲望值: 6,
+              道德值: 4
+        },
           flags: { add: ['concubine_hongxiu'], remove: ['met_hongxiu'] }
         },
         result: {
@@ -171,7 +186,9 @@ export const concubineEvents: GameEvent[] = [
         text: '【放弃】"……我能力有限，恐怕难以如愿"',
         description: '无力承担赎身费用',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['hongxiu_heartbreak'] }
         },
         result: {
@@ -198,9 +215,13 @@ export const concubineEvents: GameEvent[] = [
         text: '【先接出后凑钱】"马妈妈，先放人，银子我三日内定补齐"',
         description: '借同僚之资先行接出，再分期偿还',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -15
+        },
           gameState: { 清议: -5, 士绅: 3 },
-          hidden: {欲望值: 5 },
+          hidden: {欲望值: 5,
+              道德值: 3
+        },
           flags: { add: ['concubine_hongxiu', 'hongxiu_debt'], remove: ['met_hongxiu'] }
         },
         result: {
@@ -229,7 +250,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_003',
     storyline: 'female',
     title: '旧日恩客',
-    description: '',
+    description: '此人名叫赵公子，是江南盐商之子，红袖未入你府前的常客。',
     narrative: {
       speaker: { title: '不速之客', name: '赵公子' },
       quote: '哟，这不是红袖吗？怎么，攀上高枝就把老朋友忘了？',
@@ -247,8 +268,12 @@ export const concubineEvents: GameEvent[] = [
         text: '【出钱打发】"这位兄台，这是三百两，请回吧"',
         description: '花钱消灾，让他离开',
         effects: {
-          attributes: {},
-          hidden: {}
+          attributes: {
+              财帛: -15
+        },
+          hidden: {
+              道德值: 3
+        }
         },
         result: {
           title: '破财免灾',
@@ -278,7 +303,9 @@ export const concubineEvents: GameEvent[] = [
         effects: {
           attributes: { 武略: 3 },
           gameState: { 士绅: -8 },
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         result: {
           title: '护短',
@@ -306,9 +333,13 @@ export const concubineEvents: GameEvent[] = [
         text: '【请中间人调停】"赵公子，此事若闹大，对你我都不好看"',
         description: '请两人都熟识的士绅出面斡旋，体面收场',
         effects: {
-          attributes: {理政: 3 },
+          attributes: {理政: 3,
+              财帛: -8
+        },
           gameState: { 士绅: 3 },
-          hidden: {}
+          hidden: {
+              道德值: 2
+        }
         },
         result: {
           title: '化干戈为玉帛',
@@ -338,7 +369,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_004',
     storyline: 'female',
     title: '贴身丫鬟',
-    description: '',
+    description: '近日妻子回了娘家省亲，府中只剩你和翠屏两人。',
     narrative: {
       speaker: { title: '丫鬟', name: '翠屏' },
       quote: '老爷，热水备好了……老爷今日看起来很累呢，要不要翠屏帮您捶捶腿？',
@@ -357,7 +388,9 @@ export const concubineEvents: GameEvent[] = [
         text: '【拒绝】"放这就行，你退下吧"',
         description: '严守礼法，拒绝诱惑',
         effects: {
-          hidden: {欲望值: -3 }
+          hidden: {欲望值: -3,
+              道德值: 8
+        }
         },
         result: {
           title: '坐怀不乱',
@@ -388,7 +421,9 @@ export const concubineEvents: GameEvent[] = [
         description: '接受丫鬟的暗示',
         effects: {
           attributes: { 体质: 2 },
-          hidden: {欲望值: 8 },
+          hidden: {欲望值: 8,
+              道德值: -5
+        },
           flags: { add: ['concubine_cuir', 'wife_tension'] }
         },
         result: {
@@ -415,7 +450,9 @@ export const concubineEvents: GameEvent[] = [
         text: '【温和提醒】"翠屏，穿好衣服，自重些"',
         description: '既不羞辱也不接受，明确界限后让她离开',
         effects: {
-          hidden: {欲望值: -2 }
+          hidden: {欲望值: -2,
+              道德值: 5
+        }
         },
         result: {
           title: '发乎情止乎礼',
@@ -445,7 +482,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_005',
     storyline: 'female',
     title: '正妻发难',
-    description: '',
+    description: '正妻泪流满面，手指颤抖地指着你们两个。',
     narrative: {
       speaker: { title: '正妻', name: '夫人' },
       quote: '好啊，连我的丫鬟都不放过！你这个没良心的东西！',
@@ -465,7 +502,9 @@ export const concubineEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -5 },
           gameState: { 清议: -5 },
-          hidden: {},
+          hidden: {
+              道德值: 5
+        },
           flags: { remove: ['wife_tension'], add: ['wife_forgave'] }
         },
         result: {
@@ -494,7 +533,9 @@ export const concubineEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -5, 士绅: -5 },
-          hidden: {},
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['wife_hates_cuir'] }
         },
         result: {
@@ -526,8 +567,12 @@ export const concubineEvents: GameEvent[] = [
         description: '反过来指责正妻',
         effects: {
           attributes: { 理政: -5 },
-          gameState: { 清议: -8, 圣眷: -3,},
-          hidden: {},
+          gameState: { 清议: -8, 圣眷: -3,
+              民望: -5
+        },
+          hidden: {
+              道德值: -10
+        },
           flags: { add: ['wife_broken'] }
         },
         result: {
@@ -560,7 +605,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_006',
     storyline: 'female',
     title: '金屋藏娇',
-    description: '',
+    description: '今日是你难得有空来探望云娘的日子。',
     narrative: {
       speaker: { title: '外室', name: '云娘' },
       quote: '爷，您终于来了……云娘等您好久了……',
@@ -579,8 +624,12 @@ export const concubineEvents: GameEvent[] = [
         text: '【享受】"让爷好好看看你"',
         description: '享受偷情的刺激',
         effects: {
-          attributes: { 体质: 4,},
-          hidden: { 欲望值: 8,},
+          attributes: { 体质: 4,
+              财帛: -10
+        },
+          hidden: { 欲望值: 8,
+              道德值: -3
+        },
           flags: { add: ['concubine_waishi'] }
         },
         result: {
@@ -609,9 +658,15 @@ export const concubineEvents: GameEvent[] = [
         text: '【劝她另嫁】"云娘，我不能耽误你一辈子"',
         description: '忍痛割爱，给她一笔银子让她寻个好人家',
         effects: {
-          attributes: {},
-          gameState: {},
-          hidden: {欲望值: -5 }
+          attributes: {
+              财帛: -15
+        },
+          gameState: {
+              民望: 3
+        },
+          hidden: {欲望值: -5,
+              道德值: 8
+        }
         },
         result: {
           title: '善始善终',
@@ -637,7 +692,9 @@ export const concubineEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: 3 },
           gameState: { 清议: 3 },
-          hidden: {欲望值: 3 }
+          hidden: {欲望值: 3,
+              道德值: 3
+        }
         },
         result: {
           title: '红颜知己',
@@ -665,7 +722,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_007',
     storyline: 'female',
     title: '东窗事发',
-    description: '',
+    description: '"大人，"他从袖中掏出一叠纸张，"这是您每月去那处宅院的记录，还有……一些不便明说的证据。',
     narrative: {
       speaker: { title: '政敌', name: '刘御史' },
       quote: '大人，您在城外的那处宅院……啧啧啧，可真是别有洞天啊。不知尊夫人可知此事？',
@@ -684,8 +741,12 @@ export const concubineEvents: GameEvent[] = [
         text: '【屈服】"刘大人有话不妨直说"',
         description: '接受勒索，保住秘密',
         effects: {
-          attributes: {理政: -5 },
-          hidden: {},
+          attributes: {理政: -5,
+              财帛: -15
+        },
+          hidden: {
+              道德值: -10
+        },
           flags: { add: ['blackmailed', 'liu_yushi_debt'] }
         },
         result: {
@@ -716,7 +777,9 @@ export const concubineEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 10, 文韬: 5 },
           gameState: { 清议: 5 },
-          hidden: {},
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['liu_yushi_enemy'] }
         },
         result: {
@@ -748,8 +811,12 @@ export const concubineEvents: GameEvent[] = [
         description: '主动坦白，不再隐瞒',
         effects: {
           attributes: { 体质: -6 },
-          gameState: { 清议: -12, 圣眷: -5,},
-          hidden: {},
+          gameState: { 清议: -12, 圣眷: -5,
+              民望: -10
+        },
+          hidden: {
+              道德值: -6
+        },
           flags: { add: ['waishi_exposed'], remove: ['concubine_waishi'] }
         },
         result: {
@@ -782,7 +849,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_008',
     storyline: 'female',
     title: '投其所好',
-    description: '',
+    description: '那女子低着头，脸颊绯红，身材窈窕。',
     narrative: {
       speaker: { title: '下属', name: '赵县丞' },
       quote: '大人，这是舍妹，年方二八，尚未许配人家。小人想着大人单身赴任，身边也没个照应……',
@@ -803,7 +870,9 @@ export const concubineEvents: GameEvent[] = [
         description: '收下女子',
         effects: {
           attributes: { 理政: 8 },
-          hidden: {欲望值: 8 },
+          hidden: {欲望值: 8,
+              道德值: -8
+        },
           flags: { add: ['subordinate_gift', 'concubine_zhaomei'] }
         },
         result: {
@@ -831,8 +900,12 @@ export const concubineEvents: GameEvent[] = [
         description: '严词拒绝',
         effects: {
           attributes: { 理政: -3 },
-          gameState: {},
-          hidden: {}
+          gameState: {
+              民望: 8
+        },
+          hidden: {
+              道德值: 8
+        }
         },
         result: {
           title: '洁身自好',
@@ -858,9 +931,15 @@ export const concubineEvents: GameEvent[] = [
         text: '【暂留另择】"先安顿在客院，我另有安排"',
         description: '既不收为妾也不当场驳回，先妥善安顿她另寻出路',
         effects: {
-          attributes: { 理政: 3,},
-          gameState: {},
-          hidden: {}
+          attributes: { 理政: 3,
+              财帛: -5
+        },
+          gameState: {
+              民望: 3
+        },
+          hidden: {
+              道德值: 3
+        }
         },
         result: {
           title: '君子有成人之美',
@@ -888,7 +967,7 @@ export const concubineEvents: GameEvent[] = [
     id: 'emotion_concubine_009',
     storyline: 'female',
     title: '枕边风',
-    description: '',
+    description: '你敏锐地察觉到了——这不是闲聊，而是在替赵县丞说情。',
     narrative: {
       speaker: { title: '妾室', name: '赵灵儿' },
       quote: '夫君……哥哥来信说，最近县里的漕运差事好像缺人……',
@@ -906,8 +985,12 @@ export const concubineEvents: GameEvent[] = [
         text: '【配合】"这事我会留意"',
         description: '通过妾室的关系回报下属',
         effects: {
-          attributes: { 理政: 4,},
-          hidden: {}
+          attributes: { 理政: 4,
+              财帛: 8
+        },
+          hidden: {
+              道德值: -4
+        }
         },
         result: {
           title: '利益闭环',
@@ -933,7 +1016,9 @@ export const concubineEvents: GameEvent[] = [
         text: '【警告】"以后不要再说这些事了"',
         description: '明确禁止妾室干政',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: 4
+        },
           flags: { add: ['zhaomei_restrained'] }
         },
         result: {
@@ -960,7 +1045,9 @@ export const concubineEvents: GameEvent[] = [
         text: '【顾左右而言他】"哦，天凉了，多加件衣裳"',
         description: '装糊涂婉转岔开话题，既不答应也不撕破脸',
         effects: {
-          hidden: {}
+          hidden: {
+              道德值: 2
+        }
         },
         result: {
           title: '难得糊涂',

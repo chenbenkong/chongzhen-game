@@ -1,8 +1,11 @@
 // 事件条件检查工具
 // 消除 GameScreen.tsx 中 findAvailableEvent / findAvailableEventWithState / findAllEventsForState 的重复条件检查代码
 
-import { GameEvent, GameStateValues, Attributes, HiddenAttributes, OriginType } from '../types/game'
+import { GameEvent } from '../types/event'
+import { GameStateValues, Attributes, HiddenAttributes, OriginType } from '../types/game'
 import { ATTR_MAP, STATE_MAP } from './constants'
+
+type Range = { min?: number; max?: number }
 
 /**
  * 检查单个事件的所有条件是否满足
@@ -41,8 +44,9 @@ export function checkEventConditions(
       const mappedKey = ATTR_MAP[key] || key
       const attrKey = mappedKey as keyof Attributes
       const value = character.attributes[attrKey] || 0
-      if (range.min !== undefined && value < range.min) return false
-      if (range.max !== undefined && value > range.max) return false
+      const r = range as Range
+      if (r.min !== undefined && value < r.min) return false
+      if (r.max !== undefined && value > r.max) return false
     }
   }
 
@@ -52,8 +56,9 @@ export function checkEventConditions(
       const hiddenKey = key as keyof HiddenAttributes
       const value = character.hidden[hiddenKey]
       if (value === undefined) return false
-      if (range.min !== undefined && value < range.min) return false
-      if (range.max !== undefined && value > range.max) return false
+      const r = range as Range
+      if (r.min !== undefined && value < r.min) return false
+      if (r.max !== undefined && value > r.max) return false
     }
   }
 
@@ -64,8 +69,9 @@ export function checkEventConditions(
       if (mappedKey === 'currentYear' || mappedKey === 'currentMonth' || mappedKey === 'turn') continue
       const stateKey = mappedKey as keyof GameStateValues
       const value = state[stateKey] as number
-      if (range.min !== undefined && value < range.min) return false
-      if (range.max !== undefined && value > range.max) return false
+      const r = range as Range
+      if (r.min !== undefined && value < r.min) return false
+      if (r.max !== undefined && value > r.max) return false
     }
   }
 
@@ -77,8 +83,8 @@ export function checkEventConditions(
 
   // 标志位
   if (cond.flags) {
-    if (cond.flags.has?.some(f => !character.flags.includes(f))) return false
-    if (cond.flags.notHas?.some(f => character.flags.includes(f))) return false
+    if (cond.flags.has?.some((f: string) => !character.flags.includes(f))) return false
+    if (cond.flags.notHas?.some((f: string) => character.flags.includes(f))) return false
   }
 
   return true

@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1634: GameEvent[] = [
 {
     id: 'historical_021',
     storyline: 'ordinary',
     title: '三晋大旱',
-    description: '',
+    description: '山西大旱，流寇四起。',
     narrative: {
       speaker: {
         name: '山西巡按御史',
@@ -33,13 +34,15 @@ export const events1634: GameEvent[] = [
         text: '【开仓赈灾】"民为邦本，当开仓放粮，救济灾民"',
         description: '擅自打开官仓，发放粮食救济灾民，同时招募青壮年入伍以安置流民',
         showConditions: {
-          attributes: { 财帛: { min: 30,财帛: -10,财帛: -25,财帛: -20,财帛: -20,财帛: -50,财帛: 40,财帛: -15, 财帛: -35, 财帛: -20, 财帛: -35}, 理政: { min: 60 } },
+          attributes: { 财帛: { min: 30 }, 理政: { min: 60 } },
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 10, 体质: -10 },
-          gameState: {清议: 25, 圣眷: -5, 中官: -5,民望: -20,民望: 20,民望: 15,民望: -25,民望: 5, 民望: 30, 民望: -5},
-          hidden: {道德值: 20,道德值: 12,道德值: 15,道德值: 8,道德值: 10,道德值: -25,道德值: -20, 道德值: -15, 道德值: -5},
+          attributes: {理政: 10, 体质: -10,
+              财帛: -35
+        },
+          gameState: { 清议: 25, 圣眷: -5, 中官: -5, 民望: 30 },
+          hidden: { 道德值: 20 },
           flags: { add: ['开仓赈灾', '仁政官员'] }
         },
         resultDescription: '',
@@ -72,8 +75,12 @@ export const events1634: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 体质: -15 },
-          gameState: { 圣眷: 15,中官: 5 },
-          hidden: {},
+          gameState: { 圣眷: 15,中官: 5,
+              民望: -20
+        },
+          hidden: {
+              道德值: -15
+        },
           flags: { add: ['镇压流寇'] }
         },
         resultDescription: '',
@@ -106,9 +113,13 @@ export const events1634: GameEvent[] = [
           origin: ['寒门', '诗文清望']
         },
         effects: {
-          attributes: { 文韬: 5,体质: -5 },
+          attributes: { 文韬: 5,体质: -5,
+              财帛: -10
+        },
           gameState: { 圣眷: 5, 清议: 20, 中官: -5 },
-          hidden: {},
+          hidden: {
+              道德值: 12
+        },
           flags: { add: ['上疏减免'] }
         },
         resultDescription: '',
@@ -141,9 +152,15 @@ export const events1634: GameEvent[] = [
           hidden: { 道德值: { max: 30 }, 野心值: { min: 20 } }
         },
         effects: {
-          attributes: {理政: 5 },
-          gameState: {清议: -30, 中官: 10 },
-          hidden: {野心值: 18 },
+          attributes: {理政: 5,
+              财帛: 40
+        },
+          gameState: {清议: -30, 中官: 10,
+              民望: -25
+        },
+          hidden: {野心值: 18,
+              道德值: -25
+        },
           flags: { add: ['赈灾敛财'] }
         },
         resultDescription: '',
@@ -173,7 +190,7 @@ export const events1634: GameEvent[] = [
     id: 'historical_021b',
     storyline: 'nationfall',
     title: '流寇壮大',
-    description: '',
+    description: '流寇壮大，已成气候。',
     narrative: {
       speaker: {
         name: '陕西塘报',
@@ -208,9 +225,15 @@ export const events1634: GameEvent[] = [
           attributes: { 理政: { min: 60 }, 财帛: { min: 30 } }
         },
         effects: {
-          attributes: {理政: 10 },
-          gameState: {清议: 15, 圣眷: 0 },
-          hidden: {},
+          attributes: {理政: 10,
+              财帛: -25
+        },
+          gameState: {清议: 15, 圣眷: 0,
+              民望: 20
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['持续仁政'] }
         },
         resultDescription: '',
@@ -243,9 +266,15 @@ export const events1634: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 武略: 10,体质: -10 },
-          gameState: { 圣眷: 10,},
-          hidden: {},
+          attributes: { 武略: 10,体质: -10,
+              财帛: -20
+        },
+          gameState: { 圣眷: 10,
+              民望: -5
+        },
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['强化武备'] }
         },
         resultDescription: '',
@@ -276,7 +305,9 @@ export const events1634: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8 },
+          attributes: {理政: 8,
+              财帛: -20
+        },
           gameState: { 圣眷: 15, 中官: 15, 清议: -10 },
           hidden: { 野心值: 10 },
           flags: { add: ['经营朝堂'] }
@@ -311,9 +342,15 @@ export const events1634: GameEvent[] = [
           origin: ['诗文清望', '缙绅']
         },
         effects: {
-          attributes: { 文韬: 5,},
-          gameState: {清议: 10 },
-          hidden: {},
+          attributes: { 文韬: 5,
+              财帛: -15
+        },
+          gameState: {清议: 10,
+              民望: 15
+        },
+          hidden: {
+              道德值: 8
+        },
           flags: { add: ['士绅联盟'] }
         },
         resultDescription: '',
@@ -345,10 +382,23 @@ export const events1634: GameEvent[] = [
     id: 'historical_021_crisis',
     storyline: 'nationfall',
     title: '流寇清算',
-    description: `你之前赈灾敛财的事情被人揭发了！
+    description: '赈灾贪腐事发，举人告御状，锦衣卫介入。',
+    narrative: {
+      speaker: {
+        name: '山西举人',
+        title: '通政司前',
+        avatar: '/avatars/commoner.png'
+      },
+      quote: '大人！你贪墨赈灾银两，害死我晋中数千百姓！今日我便要敲登闻鼓，告御状！',
+      background: `崇祯七年，陕西、山西大旱，赤地千里，流民遍野。朝廷拨下赈灾银两，命地方官员赈济灾民。然而，层层克扣之下，真正落到百姓手中的粮食寥寥无几。
 
-一位来自山西的举人在京师击鼓鸣冤，控告你贪污赈灾银两。
-锦衣卫已经开始调查。`,
+你曾在赈灾差事中中饱私囊，本以为时过境迁，无人追究。谁知一位山西举人辗转来到京师，在通政司前击鼓鸣冤，告你贪污赈灾银、草菅人命。他怀中揣着一本血书，上面密密麻麻写满了死难灾民的名字。
+
+更糟的是，锦衣卫已经介入调查。镇抚司的番子们开始打听你的家产、盘问你的幕僚。一旦查实，轻则革职流放，重则斩首抄家。
+
+你必须在今夜做出决断。`,
+      situation: '赈灾贪腐事发，举人告御状，锦衣卫介入。你将如何应对？'
+    },
     conditions: {
       year: { min: 1635, max: 1638 },
       month: { min: 1, max: 12 },
@@ -364,12 +414,22 @@ export const events1634: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
           gameState: { 圣眷: 5, 清议: -20 },
-          hidden: {野心值: 10 },
+          hidden: { 野心值: 10 },
           flags: { remove: ['赈灾敛财'], add: ['杀人灭口'] }
         },
-        resultDescription: '你派出刺客，在京师截杀了那位举人。锦衣卫的调查因此失去了关键证人，此事不了了之。但那位举人的家人四处喊冤，你的名声更加臭了。'
+        resultDescription: '',
+        result: {
+          title: '暗下杀手，血债血偿',
+          tags: ['圣眷+5', '清议-20', '野心+10'],
+          echo: `你派出了最得力的家丁，化装成流民，在那位举人返回家乡的路上截杀了他。
+
+次日，京郊发现一具无名尸体，怀中揣着的血书已被雨水泡烂。锦衣卫的调查因此失去了关键证人，案子渐渐不了了之。
+
+然而，举人的家人并未善罢甘休。他的老父拖着病体，在京城沿街乞讨，见人便说"某官杀子贪赃"。清议之士闻风而动，虽然拿不到实证，但你的名声已经臭不可闻。
+
+你坐在书房中，看着窗外沉沉的夜色，知道自己的双手已经沾满了无辜者的血。野心在这血腥中滋长，而你的灵魂，早已一文不值。`
+        }
       },
       {
         id: 'c2',
@@ -380,23 +440,42 @@ export const events1634: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
           gameState: { 中官: 15, 圣眷: 5 },
           flags: { remove: ['赈灾敛财'] }
         },
-        resultDescription: '你找王德化帮忙，让他安排了一个替罪羊——一个已经被革职的阉党小吏。此人被推出去顶罪，抄家问斩。你躲过了一劫，但从此欠下了天大的人情。'
+        resultDescription: '',
+        result: {
+          title: '移花接木，金蝉脱壳',
+          tags: ['中官+15', '圣眷+5'],
+          echo: `你连夜求见王德化，奉上从赈灾银中分出的最后一笔巨款，请他务必相救。
+
+王德化捻须笑道："大人放心，咱家自有办法。"三日后，一个已经被革职的阉党小吏被锦衣卫拿获，从他家中"搜出"了赈灾银的账本。此人被推出去问斩，抄家没产。
+
+你躲过了一劫，圣眷未损，反而因"协助查清贪腐"得到了皇帝的嘉许。王德化借此向你要了更多的人情，你在中官一系中的羁绊愈发深厚。
+
+但你心中清楚，这桩案子从未真正了结。那个替罪羊临刑前绝望的眼神，会在你的梦中反复出现。你欠下的，是一条人命，也是一份永远还不清的债。`
+        }
       },
       {
         id: 'c3',
         storyline: 'ordinary',
         text: '主动认罪退赃',
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -15, 清议: 10,},
-          hidden: {},
+          gameState: { 圣眷: -15, 清议: 10 },
           flags: { remove: ['赈灾敛财'], add: ['改过自新'] }
         },
-        resultDescription: '你主动向朝廷认罪，退还了全部赃款外加利息。皇帝念你"自首有功"，只降职一级。清议反而称赞你"知错能改"，百姓也觉得你还有良心。'
+        resultDescription: '',
+        result: {
+          title: '负荆请罪，知错能改',
+          tags: ['圣眷-15', '清议+10'],
+          echo: `你在朝堂上脱下乌纱，跪地请罪，将贪污的赈灾银两如数退还，又变卖家产，补上了利息。
+
+崇祯帝本想严惩，但见你态度诚恳，又有清议之士联名担保，最终下旨："念其自首有功，降一级留用。"
+
+清议之间，有人赞你"知错能改"，也有人说你"惺惺作态"。但百姓是单纯的，他们听说某官退还了赈灾银，便觉得这人"还有良心"。
+
+你重新戴上那顶矮了一级的乌纱，心中五味杂陈。这一次，你选择了一条更难走的路。"改过自新"四个字，写起来容易，做起来，却要用一生去证明。`
+        }
       }
     ],
     type: 'chain'

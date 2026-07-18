@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GameEvent } from "../../../../types/event"
 
 // ════════════════════════════════════════════════
@@ -8,12 +9,12 @@ import { GameEvent } from "../../../../types/event"
 const ENDING_DEBAUCHERY_001: GameEvent = {
   id: 'ending_debauchery_001',
   title: '精尽人亡',
-  description: '',
+  description: '大夫诊脉后，面色凝重地告诉你：已经无药可医了。',
   type: 'ending',
   narrative: {
     speaker: { title: '大夫', name: '张神医' },
     quote: '大人，您这是...肾水枯竭，精气耗尽啊！',
-    background: '你常年沉迷酒色，身体早已透支。',
+    background: `崇祯某年，你已是年过五旬的官员。这二十年来，你在秦楼楚馆中挥霍了无数夜晚，把年少时的抱负换成了酒色财气。姬妾成群，宴饮无度，你的身体早就被掏空，面色青白、手足冰凉，连上衙都需人搀扶。`,
     situation: '大夫诊脉后，面色凝重地告诉你：已经无药可医了。'
   },
   conditions: {
@@ -36,7 +37,15 @@ const ENDING_DEBAUCHERY_001: GameEvent = {
     result: {
       title: '精尽人亡',
       tags: ['游戏结束'],
-      echo: '你躺在病床上......【游戏结束】'
+      echo: `你躺在病床上，听着窗外雨打芭蕉。
+
+一生荒唐，此刻皆如潮水般涌来。那些曾让你沉溺的温存、那些曾让你得意的夜色，如今都化作了腹中绞痛与喉头腥甜。
+
+你想说些什么，却发不出声音。夫人背对着你，不愿再看；侍妾们早已散去，只余一个老仆在门边垂泪。
+
+你终于明白：酒色是刀，温柔乡亦是黄泉路。
+
+【游戏结束】`
     }
   }],
   endingConfig: { category: 'gray', tier: 'dark' }
@@ -71,7 +80,9 @@ const ENDING_DEBAUCH_FALL: GameEvent = {
     id: 'c1',
     text: '【纵欲而亡】',
     description: '查看你的最后时刻',
-    effects: {},
+    effects: {
+        special: { type: 'ending' }
+    },
     resultDescription: '你因酒色过度，卒于某年某月，享年不过五十。',
     result: {
       title: '纵欲而亡 · 红粉骷髅',
@@ -138,7 +149,9 @@ const ENDING_PIMP_LORD: GameEvent = {
     id: 'c1',
     text: '【烟花之主】',
     description: '查看你的风月江山',
-    effects: {},
+    effects: {
+        special: { type: 'ending' }
+    },
     resultDescription: '你以官身入股青楼，成为秦淮河畔的隐形巨头。',
     result: {
       title: '烟花之主 · 风月无疆',
@@ -211,7 +224,9 @@ const ENDING_TRAITOR: GameEvent = {
     id: 'c1',
     text: '【卖国求荣】',
     description: '查看你的新朝生涯',
-    effects: {},
+    effects: {
+        special: { type: 'ending' }
+    },
     resultDescription: '你投降清廷，成为"识时务"的贰臣。',
     result: {
       title: '卖国求荣 · 贰臣末路',

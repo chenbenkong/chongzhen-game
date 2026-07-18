@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const powersexDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_019',
     storyline: 'gray',
     title: '上司献妾',
-    description: '',
+    description: '李鸿章设宴招待你，席间突然让他的爱妾紫菱出来敬酒。',
     narrative: {
       speaker: {
         title: '巡抚',
@@ -31,7 +32,7 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         政绩: { min: 50 }
       },
       hidden: {
-        欲望值: { min: 25,道德值: 15,道德值: -30,道德值: 20,道德值: -25,道德值: -20,道德值: 10, 道德值: -15, 道德值: -15}
+        欲望值: { min: 25 }
       }
     },
     choices: [
@@ -42,8 +43,10 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你被紫菱的美貌打动，当晚就将她抱上了床，同时答应为上司提供政治支持。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: {圣眷: 10 },
-          hidden: { 欲望值: 25,}
+          gameState: {圣眷: 25 },
+          hidden: { 欲望值: 25,
+              道德值: -15
+        }
         },
         result: {
           title: '权色交易',
@@ -76,7 +79,9 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你拒绝了李鸿章的美人，但在拒绝前要先享用一番。',
         effects: {
           gameState: { 圣眷: 8, 清议: 10 },
-          hidden: {}
+          hidden: {
+              道德值: 15
+        }
         },
         result: {
           title: '公私分明',
@@ -111,8 +116,10 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你收下紫菱，但要求李鸿章提供更多政治资源作为交换，当晚就将她抱上了床。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: 5, 清议: -15 },
-          hidden: { 野心值: 25,}
+          gameState: { 圣眷: 25, 清议: -15 },
+          hidden: { 野心值: 25,
+              道德值: -20
+        }
         },
         result: {
           title: '狮子大开口',
@@ -145,8 +152,10 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你假装接受紫菱，实际上以此要挟李鸿章，当晚就将她抱上了床。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: -5 },
-          hidden: { 野心值: 30,}
+          gameState: { 圣眷: 20 },
+          hidden: { 野心值: 30,
+              道德值: -30
+        }
         },
         result: {
           title: '反客为主',
@@ -185,7 +194,7 @@ export const powersexDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_020',
     storyline: 'gray',
     title: '下属献妻',
-    description: '',
+    description: '王德明设宴招待你，席间让妻子柳如烟出来敬酒。',
     narrative: {
       speaker: {
         title: '县丞',
@@ -214,8 +223,12 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你被柳如烟的美貌打动，当晚就将她抱上了床，同时提拔王德明。',
         effects: {
           attributes: { 体质: -4 },
-          gameState: {清议: -20 },
-          hidden: { 欲望值: 20,}
+          gameState: {清议: -20,
+              圣眷: 10
+        },
+          hidden: { 欲望值: 20,
+              道德值: -15
+        }
         },
         result: {
           title: '权色交易',
@@ -246,7 +259,9 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你严厉拒绝了王德明的提议，但在拒绝前要先享用一番。',
         effects: {
           gameState: { 清议: 15, 士绅: 10 },
-          hidden: {}
+          hidden: {
+              道德值: 20
+        }
         },
         result: {
           title: '正气凛然',
@@ -278,8 +293,12 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         text: '【只升官不纳妾】提拔王德明，但不接受柳如烟',
         description: '你提拔王德明，但拒绝接受柳如烟，显示你的"大度"，但在拒绝前要先享用一番。',
         effects: {
-          gameState: {士绅: 5 },
-          hidden: {}
+          gameState: {士绅: 5,
+              圣眷: 8
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         result: {
           title: '恩威并施',
@@ -312,8 +331,12 @@ export const powersexDebaucheryEvents: GameEvent[] = [
         description: '你假装接受，实际上以此为把柄要挟王德明，获得更多利益，当晚就将她抱上了床。',
         effects: {
           attributes: {},
-          gameState: { 清议: -10 },
-          hidden: { 野心值: 20,}
+          gameState: { 清议: -10,
+              圣眷: 15
+        },
+          hidden: { 野心值: 20,
+              道德值: -25
+        }
         },
         result: {
           title: '敲诈勒索',

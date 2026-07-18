@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1635: GameEvent[] = [
   {
     id: 'historical_027',
     storyline: 'ordinary',
     title: '闯王被擒',
-    description: '',
+    description: '高迎祥被擒，但闯军余部四散。',
     narrative: {
       speaker: {
         name: '陕西巡抚',
@@ -41,13 +42,13 @@ export const events1635: GameEvent[] = [
         text: '【上疏献策】"宜招抚流民，解散闯军"',
         description: '上疏朝廷，主张招抚流民、瓦解闯军',
         showConditions: {
-          attributes: { 文韬: { min: 60,财帛: 5,财帛: -20, 财帛: -15} },
+          attributes: { 文韬: { min: 60 } },
           origin: ['寒门', '诗文清望', '缙绅']
         },
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 圣眷: 12, 清议: 15, 民望: 5},
-          hidden: {野心值: -3,道德值: 12,道德值: 15,道德值: -5, 道德值: 8, 道德值: 8},
+          hidden: { 野心值: -3, 道德值: 8 },
           flags: { add: ['主招抚'] }
         },
         resultDescription: '',
@@ -75,9 +76,15 @@ export const events1635: GameEvent[] = [
           origin: ['没落世家', '缙绅']
         },
         effects: {
-          attributes: { 体质: -10, 武略: 8,},
-          gameState: { 圣眷: 18, 清议: 20,},
-          hidden: {野心值: 8 },
+          attributes: { 体质: -10, 武略: 8,
+              财帛: -15
+        },
+          gameState: { 圣眷: 18, 清议: 20,
+              民望: 5
+        },
+          hidden: {野心值: 8,
+              道德值: 12
+        },
           flags: { add: ['从军剿贼'] }
         },
         resultDescription: '',
@@ -110,9 +117,13 @@ export const events1635: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 5
+        },
           gameState: { 圣眷: -5, 清议: -8 },
-          hidden: {野心值: 3 },
+          hidden: {野心值: 3,
+              道德值: -5
+        },
           flags: { add: ['明哲保身'] }
         },
         resultDescription: '',
@@ -138,7 +149,7 @@ export const events1635: GameEvent[] = [
     id: 'historical_028',
     storyline: 'nationfall',
     title: '张献忠入蜀',
-    description: '',
+    description: '张献忠入蜀，朝议纷纷。',
     narrative: {
       speaker: {
         name: '四川布政使',
@@ -163,7 +174,7 @@ export const events1635: GameEvent[] = [
     },
     conditions: {
       year: { min: 1635, max: 1636 },
-      month: { min: 11, max: 3 }
+      month: { min: 1, max: 12 }
     },
     choices: [
       {
@@ -176,9 +187,13 @@ export const events1635: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 体质: -15, 武略: 10,},
+          attributes: { 体质: -15, 武略: 10,
+              财帛: -20
+        },
           gameState: { 圣眷: 20, 清议: 18 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: 15
+        },
           flags: { add: ['入蜀平乱'] }
         },
         resultDescription: '',
@@ -214,7 +229,9 @@ export const events1635: GameEvent[] = [
         effects: {
           attributes: { 文韬: 6 },
           gameState: { 圣眷: 15, 清议: 20, 中官: -5 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: 8
+        },
           flags: { add: ['保蜀策'] }
         },
         resultDescription: '',

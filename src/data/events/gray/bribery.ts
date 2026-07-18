@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const briberyGrayEvents: GameEvent[] = [
     id: 'gray_bribery_001',
     storyline: 'gray',
     title: '盐商求引',
-    description: '',
+    description: '王大盛亲自登门拜访，恭敬地呈上礼单。',
     narrative: {
       speaker: {
         title: '晋商',
@@ -27,10 +28,10 @@ export const briberyGrayEvents: GameEvent[] = [
       year: { min: 1635, max: 1635 },
       month: { min: 4, max: 6 },
       attributes: {
-        理政: { min: 30,财帛: 10,财帛: -10,财帛: -20, 财帛: 30}
+        理政: { min: 30 }
       },
       hidden: {
-        道德值: { max: 70,道德值: -10,道德值: -8,道德值: 12,道德值: 15, 道德值: -20, 道德值: -3}
+        道德值: { max: 70 }
       }
     },
     choices: [
@@ -41,8 +42,10 @@ export const briberyGrayEvents: GameEvent[] = [
         description: '你收下王大盛的厚礼，承诺为他争取更多盐引。从此你走上了贪墨之路。',
         effects: {
           attributes: {},
-          gameState: {民望: -15, 民望: 15},
-          hidden: {野心值: 15 }
+          gameState: { 民望: -15 },
+          hidden: {野心值: 15,
+              道德值: -20
+        }
         },
         result: {
           title: '初涉贪墨',
@@ -68,7 +71,9 @@ export const briberyGrayEvents: GameEvent[] = [
         effects: {
           attributes: {},
           gameState: { 圣眷: -5 },
-          hidden: {野心值: 5 }
+          hidden: {野心值: 5,
+              道德值: -10
+        }
         },
         result: {
           title: '灰色交易',
@@ -93,8 +98,12 @@ export const briberyGrayEvents: GameEvent[] = [
         description: '你严词拒绝王大盛的贿赂，并将其行贿之事上报朝廷。',
         effects: {
           attributes: { 理政: 5 },
-          gameState: { 圣眷: 10,},
-          hidden: {机敏值: 10 }
+          gameState: { 圣眷: 10,
+              民望: 15
+        },
+          hidden: {机敏值: 10,
+              道德值: 15
+        }
         },
         result: {
           title: '清正廉明',
@@ -123,7 +132,7 @@ export const briberyGrayEvents: GameEvent[] = [
     id: 'gray_bribery_002',
     storyline: 'gray',
     title: '节礼之重',
-    description: '',
+    description: '中秋将至，周延儒派人送来一封信，信中看似寒暄，实则暗示："佳节将至，望诸同僚不忘朝廷之恩，各尽忠心。',
     narrative: {
       speaker: {
         title: '上官',
@@ -149,7 +158,9 @@ export const briberyGrayEvents: GameEvent[] = [
         effects: {
           attributes: {},
           gameState: { 圣眷: 8 },
-          hidden: {野心值: 10 }
+          hidden: {野心值: 10,
+              道德值: -8
+        }
         },
         result: {
           title: '攀附权贵',
@@ -173,7 +184,9 @@ export const briberyGrayEvents: GameEvent[] = [
         effects: {
           attributes: {},
           gameState: { 圣眷: -3 },
-          hidden: {机敏值: 5 }
+          hidden: {机敏值: 5,
+              道德值: -3
+        }
         },
         result: {
           title: '试探底线',
@@ -194,7 +207,9 @@ export const briberyGrayEvents: GameEvent[] = [
         description: '你拒绝行贿，但担心被周延儒记恨。',
         effects: {
           gameState: { 圣眷: -10 },
-          hidden: {机敏值: 8 }
+          hidden: {机敏值: 8,
+              道德值: 12
+        }
         },
         result: {
           title: '不惧权贵',

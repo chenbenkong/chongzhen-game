@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import './SaveNotification.css'
 
 interface SaveNotificationProps {
@@ -21,10 +22,10 @@ export default function SaveNotification({ isOpen, onClose, message, subMessage 
 
   if (!isOpen) return null
 
-  return (
-    <div className="save-notification-overlay" onClick={onClose}>
-      <div className="save-notification" onClick={e => e.stopPropagation()}>
-        <div className="save-icon">💾</div>
+  const node = (
+    <div className="save-notification-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="save-notification">
+        <div className="save-icon"></div>
         <div className="save-content">
           <div className="save-title">{message}</div>
           {subMessage && <div className="save-subtitle">{subMessage}</div>}
@@ -32,4 +33,5 @@ export default function SaveNotification({ isOpen, onClose, message, subMessage 
       </div>
     </div>
   )
+  return createPortal(node, document.body)
 }

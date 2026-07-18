@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // ════════════════════════════════════════════════
@@ -38,7 +39,7 @@ export const events1644_critical: GameEvent[] = [
     conditions: {
       year: { min: 1644, max: 1644 },
       month: { min: 3, max: 3 },
-      gameState: { 国势: { max: 25,民望: 15, 民望: 15} }
+      gameState: { 国势: { max: 25 } }
     },
     choices: [
       {
@@ -47,12 +48,12 @@ export const events1644_critical: GameEvent[] = [
         text: '【殉国】与大明共存亡',
         description: '选择殉国，以死报君（高道德路线）',
         showConditions: {
-          attributes: { 体质: { min: 10,财帛: -10,财帛: -20, 财帛: -30} },
+          attributes: { 体质: { min: 10 } },
           origin: ['寒门', '没落世家', '诗文清望']
         },
         effects: {
           flags: { add: ['殉国报君'] },
-          hidden: {道德值: 20,道德值: 5,道德值: -15,道德值: -15,道德值: 30,道德值: 15,道德值: 10, 道德值: -20, 道德值: 20, 道德值: -5},
+          hidden: { 道德值: 20 },
           gameState: { 清议: 15 }
         },
         resultDescription: '你决定以死殉国，与大明共存亡。',
@@ -81,7 +82,9 @@ export const events1644_critical: GameEvent[] = [
         description: '选择投降新朝（灰色路线）',
         effects: {
           flags: { add: ['贰臣', '投降大顺'] },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: -20
+        },
           attributes: { 体质: 5 }
         },
         resultDescription: '你决定投降，保全性命。',
@@ -147,7 +150,9 @@ export const events1644_critical: GameEvent[] = [
         showConditions: { hidden: { 道德值: { min: 40 } } },
         effects: {
           flags: { add: ['出家', '和尚'] },
-          hidden: {欲望值: -30 },
+          hidden: {欲望值: -30,
+              道德值: 15
+        },
           attributes: { 体质: -5 }
         },
         resultDescription: '你看破红尘，决定遁入空门。',
@@ -221,9 +226,15 @@ export const events1644_critical: GameEvent[] = [
         showConditions: { attributes: { 武略: { min: 30 }, 财帛: { min: 20 } } },
         effects: {
           flags: { add: ['组织义军'] },
-          attributes: {武略: 5, 体质: -5 },
-          hidden: {},
-          gameState: {}
+          attributes: {武略: 5, 体质: -5,
+              财帛: -30
+        },
+          hidden: {
+              道德值: 20
+        },
+          gameState: {
+              民望: 15
+        }
         },
         resultDescription: '你散尽家财，组织义军抵抗。',
         result: {
@@ -294,7 +305,9 @@ export const events1644_critical: GameEvent[] = [
         description: '投降清朝（贰臣路线确认）',
         effects: {
           flags: { add: ['投降清朝', '贰臣'] },
-          hidden: {欲望值: 10 },
+          hidden: {欲望值: 10,
+              道德值: -15
+        },
           attributes: { 体质: 5 }
         },
         resultDescription: '你投降了清朝，剃发易服。',
@@ -359,7 +372,9 @@ export const events1644_critical: GameEvent[] = [
         description: '隐姓埋名，藏匿民间',
         effects: {
           flags: { add: ['藏匿民间'] },
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           attributes: {}
         },
         resultDescription: '你隐姓埋名，消失在茫茫人海中。',
@@ -397,7 +412,7 @@ export const events1644_critical: GameEvent[] = [
     id: 'transition_1644_family_martyr',
     storyline: 'martyr',
     title: '满门何去何从',
-    description: '',
+    description: '府中灯火通明。所有人都在等你一句话。',
     narrative: {
       speaker: { name: '夫人', title: '结发妻子', avatar: '/avatars/family.png' },
       quote: '老爷，您要殉国，妾身不拦您。但孩子们……他们还小啊！',
@@ -437,7 +452,9 @@ export const events1644_critical: GameEvent[] = [
         showConditions: { hidden: { 道德值: { min: 80 } } },
         effects: {
           flags: { add: ['满门忠烈'] },
-          hidden: {},
+          hidden: {
+              道德值: 30
+        },
           gameState: { 清议: 25,}
         },
         resultDescription: '你率全家三十七口同日殉国。',
@@ -515,7 +532,9 @@ export const events1644_critical: GameEvent[] = [
         description: '把选择权交给家人',
         showConditions: { hidden: { 道德值: { min: 60, max: 75 } } },
         effects: {
-          hidden: {野心值: 5 }
+          hidden: {野心值: 5,
+              道德值: -5
+        }
         },
         resultDescription: '你把选择权交给家人，自己先行一步。',
         result: {

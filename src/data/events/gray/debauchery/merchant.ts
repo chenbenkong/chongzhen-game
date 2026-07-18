@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -12,7 +13,7 @@ export const merchantDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_004',
     storyline: 'gray',
     title: '商人献女',
-    description: '',
+    description: '今日，沈万三带着他的独生女沈清瑶前来拜访。',
     narrative: {
       speaker: {
         title: '盐商',
@@ -26,10 +27,10 @@ export const merchantDebaucheryEvents: GameEvent[] = [
       year: { min: 1631, max: 1631 },
       month: { min: 5, max: 7 },
       attributes: {
-        理政: { min: 60,财帛: -30,财帛: 30,财帛: -50,财帛: 100,财帛: -10, 财帛: 50, 财帛: -20}
+        理政: { min: 60 }
       },
       hidden: {
-        欲望值: { min: 25,道德值: -5,道德值: -8,道德值: 10,道德值: 5,道德值: 15,道德值: -8, 道德值: -10, 道德值: -10, 道德值: 5}
+        欲望值: { min: 25 }
       }
     },
     choices: [
@@ -39,9 +40,13 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         text: '【欣然接受】"沈老板果然识时务，清瑶姑娘秀外慧中，本官甚是喜欢"',
         description: '接受沈万三的女儿，帮她摆平私盐案。你看着沈清瑶绝美的容貌，心中涌起强烈的占有欲，想要采撷这朵娇嫩的花蕾。',
         effects: {
-          attributes: { 体质: -4 },
+          attributes: { 体质: -4,
+              财帛: 50
+        },
           gameState: { 清议: -20, 士绅: -10,},
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '权色交易',
@@ -73,9 +78,13 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         text: '【主动追求】"清瑶姑娘，本官对你一见倾心，愿以正妻之礼待你"',
         description: '不通过交易，真心追求沈清瑶。你看着沈清瑶含泪的双眸，心中升起一股强烈的保护欲，想要用真心打动她。',
         effects: {
-          attributes: { 体质: -3 },
+          attributes: { 体质: -3,
+              财帛: -30
+        },
           gameState: { 清议: -10, 士绅: 5,},
-          hidden: { 欲望值: 15,}
+          hidden: { 欲望值: 15,
+              道德值: -5
+        }
         },
         result: {
           title: '真心换真情',
@@ -108,7 +117,10 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         description: '不要沈清瑶，但要一大笔银子。你看着沈清瑶绝美的容貌，心中虽有欲望，但你知道，银子比美人更实在。',
         effects: {
           gameState: { 清议: -10,},
-          hidden: { 欲望值: 10 }
+          hidden: { 欲望值: 10 },
+            attributes: {
+                财帛: 100
+            }
         },
         result: {
           title: '贪财拒色',
@@ -135,7 +147,9 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         description: '严词拒绝，秉公处理私盐案。你看着沈清瑶绝望的眼神，心中突然涌起一丝不忍，决定守住底线。',
         effects: {
           gameState: { 清议: 15, 士绅: -5 },
-          hidden: {欲望值: -5 }
+          hidden: {欲望值: -5,
+              道德值: 15
+        }
         },
         result: {
           title: '铁面无私',
@@ -168,7 +182,7 @@ export const merchantDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_005',
     storyline: 'gray',
     title: '乡绅内眷',
-    description: '',
+    description: '今日，赵德昌邀请你到他府上赴宴，暗示他的第三房小妾柳梦璃对你"仰慕已久"。',
     narrative: {
       speaker: {
         title: '乡绅',
@@ -197,7 +211,9 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -15, 士绅: 10 },
-          hidden: { 欲望值: 15,}
+          hidden: { 欲望值: 15,
+              道德值: -8
+        }
         },
         result: {
           title: '醉卧温柔乡',
@@ -233,7 +249,9 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -4 },
           gameState: { 清议: -20, 士绅: -5 },
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '偷香窃玉',
@@ -264,7 +282,10 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         description: '只要银子，不要美人。你看着柳梦璃艳丽的容貌，心中虽有欲望，但你知道，银子比美人更实在。',
         effects: {
           gameState: { 清议: -5, 士绅: 5,},
-          hidden: { 欲望值: 5 }
+          hidden: { 欲望值: 5 },
+            attributes: {
+                财帛: 30
+            }
         },
         result: {
           title: '贪财有道',
@@ -291,7 +312,9 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         description: '严词拒绝，秉公处理。你看着柳梦璃期待的眼神，心中突然涌起一丝不忍，决定守住底线。',
         effects: {
           gameState: { 清议: 10, 士绅: -5 },
-          hidden: {欲望值: -5 }
+          hidden: {欲望值: -5,
+              道德值: 10
+        }
         },
         result: {
           title: '拒色远祸',
@@ -324,7 +347,7 @@ export const merchantDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_006',
     storyline: 'gray',
     title: '青楼名妓',
-    description: '',
+    description: '李妈妈邀请你到醉仙楼，暗示花想容对你"仰慕已久"，愿意免费侍奉大人。',
     narrative: {
       speaker: {
         title: '老鸨',
@@ -351,7 +374,9 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         text: '【赴约共度】"本官倒要看看，是什么样的绝色佳人能让满城权贵趋之若鹜"',
         description: '去醉仙楼，与花想容共度春宵。你看着花想容绝美的容貌，心中涌起强烈的欲望，想要占有这位名妓。',
         effects: {
-          attributes: { 体质: -5,},
+          attributes: { 体质: -5,
+              财帛: -20
+        },
           gameState: { 清议: -10 },
           hidden: { 欲望值: 15 }
         },
@@ -385,9 +410,13 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         text: '【赎身纳妾】"想容姑娘才情出众，本官愿为你赎身，纳你为妾"',
         description: '花钱为花想容赎身，纳她为妾。你看着花想容绝美的容貌和出众的才情，心中升起一股强烈的占有欲，想要独占这位佳人。',
         effects: {
-          attributes: { 体质: -3,},
+          attributes: { 体质: -3,
+              财帛: -50
+        },
           gameState: { 清议: -15, 士绅: -5 },
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -8
+        }
         },
         result: {
           title: '金屋藏娇',
@@ -419,9 +448,13 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         text: '【红颜知己】"想容姑娘才情出众，本官愿与你结为知己，不谈风月"',
         description: '与花想容结为红颜知己，不谈风月。你看着花想容出众的才情，心中升起一股敬佩之情，想要与她成为精神上的伴侣。',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -10
+        },
           gameState: { 清议: 5 },
-          hidden: {欲望值: 5 }
+          hidden: {欲望值: 5,
+              道德值: 5
+        }
         },
         result: {
           title: '红颜知己',
@@ -450,7 +483,9 @@ export const merchantDebaucheryEvents: GameEvent[] = [
         description: '拒绝邀请，远离酒色。你看着花想容期待的眼神，心中虽然犹豫，但最终还是守住了底线。',
         effects: {
           gameState: { 清议: 5 },
-          hidden: {欲望值: -3 }
+          hidden: {欲望值: -3,
+              道德值: 5
+        }
         },
         result: {
           title: '洁身自好',

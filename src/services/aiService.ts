@@ -175,7 +175,6 @@ async function* streamChatOnce(
     }),
     signal,
     keepalive: true,
-    // @ts-expect-error 优先权，浏览器支持的 fetch 扩展
     priority: 'high'
   })
 
@@ -244,6 +243,39 @@ async function* streamChatOnce(
   }
 }
 
+async function chatOnce(
+  fullMessages: ChatMessage[],
+  apiKey: string,
+  signal?: AbortSignal
+): Promise<string> {
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: fullMessages,
+      temperature: 0.8,
+      // 显式禁用 thinking 模式：否则模型把所有 token 耗在 reasoning_content，
+      // 导致返回内容为空
+      chat_template_kwargs: { enable_thinking: false },
+      // 不限制 token 数量上限，避免长回答被截断
+      max_tokens: 32000
+    }),
+    signal
+  })
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => response.statusText)
+    throw new Error(`API 请求失败 (${response.status}): ${errText}`)
+  }
+
+  const json = await response.json()
+  return json.choices?.[0]?.message?.content || ''
+}
+
 /** 发送聊天请求（非流式，用于简单场景） */
 export async function chat(
   messages: ChatMessage[],
@@ -261,27 +293,25 @@ export async function chat(
     ...messages
   ]
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: fullMessages,
-      temperature: 0.8,
-      chat_template_kwargs: { enable_thinking: false },
-      max_tokens: 5000
-    }),
-    signal
-  })
-
-  if (!response.ok) {
-    const errText = await response.text().catch(() => response.statusText)
-    throw new Error(`API 请求失败 (${response.status}): ${errText}`)
+  // 与 streamChat 保持一致：服务端 5xx 时重试 3 次
+  let lastError: Error | null = null
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await chatOnce(fullMessages, apiKey, signal)
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw err
+      }
+      lastError = err instanceof Error ? err : new Error(String(err))
+      const msg = lastError.message
+      // 客户端错误（4xx）不重试
+      if (msg.includes('(400)') || msg.includes('(401)') || msg.includes('(403)')) {
+        throw lastError
+      }
+      if (attempt < 2) {
+        await new Promise(r => setTimeout(r, 1500))
+      }
+    }
   }
-
-  const json = await response.json()
-  return json.choices?.[0]?.message?.content || ''
+  throw lastError || new Error('API 请求失败')
 }

@@ -72,15 +72,23 @@
   border: 1px solid #4a3820;
   border-radius: 50%;
   color: #c9a227;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  font-family: serif;
   flex-shrink: 0;
 }
 
-.cd-header:has(.cd-btn-danger) .cd-icon,
-.cd-panel:has(.cd-btn-danger) .cd-icon {
+.cd-icon::before {
+  content: '询';
+}
+
+.cd-icon-danger {
   border-color: #6b2020;
   color: #c97070;
   background: linear-gradient(135deg, #2a1010 0%, #1a0808 100%);
+}
+
+.cd-icon-danger::before {
+  content: '警';
 }
 
 .cd-title {

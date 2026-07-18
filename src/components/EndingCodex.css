@@ -39,6 +39,14 @@
   color: #d4af6f;
   letter-spacing: 6px;
 }
+
+.codex-title::before {
+  content: '鉴';
+  display: inline-block;
+  margin-right: 8px;
+  color: #8b7540;
+  font-family: 'Ma Shan Zheng', serif;
+}
 .codex-subtitle {
   font-size: 0.7rem;
   color: rgba(212, 175, 111, 0.6);
@@ -424,6 +432,14 @@
   color: #c9a227;
   font-weight: bold;
 }
+.codex-detail-unlocked::before {
+  content: '成';
+  display: inline-block;
+  margin-right: 4px;
+  color: #c9a227;
+  font-family: 'Ma Shan Zheng', serif;
+  font-weight: normal;
+}
 .codex-detail-locked {
   color: rgba(212, 175, 111, 0.4);
   border: 1px solid rgba(180, 140, 80, 0.2);
@@ -517,6 +533,13 @@
   color: rgba(212, 175, 111, 0.7);
   font-size: 0.82rem;
   border-radius: 2px;
+}
+.codex-detail-hint::before {
+  content: '注';
+  display: inline-block;
+  margin-right: 6px;
+  color: #8b7540;
+  font-family: 'Ma Shan Zheng', serif;
 }
 
 @media (max-width: 700px) {

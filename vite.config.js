@@ -2,12 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'node:fs'
 import path from 'node:path'
-import { createServer } from 'node:http'
 
 // ===== chongzhen-game 文件树 API 独立 server =====
-// Vite 的 SPA fallback / 中间件栈对自定义 /api 路由处理不可靠，
-// 直接起一个独立 HTTP server 在 5174 端口处理 /api/file-tree 和 /api/file。
-// HTML 端 fetch http://localhost:5174/api/file-tree（带 CORS 头）。
 const IGNORE = new Set(['node_modules', '.git', 'dist', 'dist-ssr', '.trae', '.vscode', 'public'])
 const SKIP_FILES = new Set(['package-lock.json', 'tsconfig.tsbuildinfo', 'tsconfig.node.tsbuildinfo'])
 
@@ -72,7 +68,6 @@ function fileTreeApiPlugin() {
     name: 'file-tree-api',
     configureServer(server) {
       const projectRoot = process.cwd()
-
       server.middlewares.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
@@ -129,22 +124,104 @@ function fileTreeApiPlugin() {
 export default defineConfig({
   base: '/chongzhen-game/',
   plugins: [
-    react(),
+    react({
+      // 生产环境使用自动 JSX 运行时
+      jsxRuntime: 'automatic',
+    }),
     fileTreeApiPlugin()
   ],
   build: {
-    target: 'es2020',
-    minify: 'esbuild',
+    target: 'es2022',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        passes: 2,
+        pure_funcs: ['console.log', 'console.warn', 'console.info'],
+      },
+      mangle: {
+        safari10: true,
+      },
+      format: {
+        comments: false,
+      },
+    },
     cssCodeSplit: true,
+    cssMinify: 'lightningcss',
     sourcemap: false,
-    chunkSizeWarningLimit: 1500,
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
+        manualChunks(id) {
+          // React 生态 vendor
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor'
+          }
+          // 游戏数据分片：按年份/类型拆包，路由级按需加载
+          // 历史事件按年份拆分，避免单 chunk 过大并提升缓存命中率
+          const historicalYearMatch = id.match(/\/src\/data\/events\/historical\/(\d{4})[^/]*\.ts$/)
+          if (historicalYearMatch) {
+            return `events-historical-${historicalYearMatch[1]}`
+          }
+          if (id.includes('/src/data/events/historical/')) {
+            return 'events-historical-misc'
+          }
+          // 过渡事件按年份拆分（文本量最大，单 chunk 曾达 600KB+）
+          const transitionYearMatch = id.match(/\/src\/data\/events\/transition\/(\d{4})[^/]*\.ts$/)
+          if (transitionYearMatch) {
+            return `events-transition-${transitionYearMatch[1]}`
+          }
+          if (id.includes('/src/data/events/transition/')) {
+            return 'events-transition-misc'
+          }
+          // 支线事件按类型拆分
+          if (id.includes('/src/data/events/gray/')) {
+            return 'events-gray'
+          }
+          if (id.includes('/src/data/events/emotion/')) {
+            return 'events-emotion'
+          }
+          if (id.includes('/src/data/events/origin/')) {
+            return 'events-origin'
+          }
+          if (id.includes('/src/data/events/ending/')) {
+            return 'events-ending'
+          }
+          // 服务层独立 chunk，避免功能 chunk 与 UI chunk 循环引用
+          if (id.includes('/src/services/')) {
+            return 'services'
+          }
+          // AI / 图片功能独立 chunk（仅组件，服务已拆出）
+          if (id.includes('/src/components/AIAdvisor')) {
+            return 'feature-ai'
+          }
+          if (id.includes('/src/components/ImageGenerator')) {
+            return 'feature-image'
+          }
+          // UI 组件库
+          if (id.includes('/src/components/')) {
+            return 'ui-components'
+          }
+          // 工具/类型
+          if (id.includes('/src/utils/') || id.includes('/src/types/')) {
+            return 'utils-types'
+          }
+        },
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name || ''
+          if (info.endsWith('.css')) return 'assets/styles/[name]-[hash][extname]'
+          if (info.endsWith('.mp3') || info.endsWith('.ogg') || info.endsWith('.wav')) return 'assets/media/[name]-[hash][extname]'
+          if (/\.(webp|png|jpg|jpeg|gif|svg)$/.test(info)) return 'assets/images/[name]-[hash][extname]'
+          if (/\.(woff2?|ttf|otf|eot)$/.test(info)) return 'assets/fonts/[name]-[hash][extname]'
+          return 'assets/[name]-[hash][extname]'
         },
       },
     },
+    // 启用构建缓存
+    reportCompressedSize: false,
   },
   server: {
     port: 5173,
@@ -159,5 +236,16 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
+  },
+  // 路径别名，简化深层导入
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@services': path.resolve(__dirname, './src/services'),
+      '@data': path.resolve(__dirname, './src/data'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@types': path.resolve(__dirname, './src/types'),
+    },
   },
 })

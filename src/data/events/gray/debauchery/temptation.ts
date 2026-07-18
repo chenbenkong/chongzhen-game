@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const temptationDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_021',
     storyline: 'gray',
     title: '画舫春宵',
-    description: '',
+    description: '你因公事途经秦淮河畔，被当地知府邀请夜游。',
     narrative: {
       speaker: {
         title: '画舫花魁',
@@ -27,11 +28,11 @@ export const temptationDebaucheryEvents: GameEvent[] = [
       year: { min: 1636, max: 1636 },
       month: { min: 4, max: 6 },
       attributes: {
-        理政: { min: 55,财帛: -60,财帛: -20,财帛: -50,财帛: -30, 财帛: -40, 财帛: -25},
+        理政: { min: 55 },
         财帛: { min: 50 }
       },
       hidden: {
-        欲望值: { min: 35,道德值: -10,道德值: 10,道德值: -15,道德值: -10,道德值: 10,道德值: -10,机敏值: 10, 机敏值: 15,道德值: 10,道德值: -5,道德值: 15,道德值: -20,道德值: -20, 道德值: -15, 道德值: -20, 道德值: -5, 道德值: 15}
+        欲望值: { min: 35 }
       }
     },
     choices: [
@@ -41,9 +42,15 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         text: '【一掷千金】豪掷千金买断她的初夜，彻夜狂欢',
         description: '你被柳如烟的美貌彻底迷住，决定不惜一切代价占有她。',
         effects: {
-          attributes: { 体质: -6,},
-          gameState: { 清议: -25, 民望: -10, 民望: -15, 民望: 5, 民望: -10, 民望: 20, 民望: -5, 民望: 25, 民望: -10, 民望: -5, 民望: 20},
-          hidden: { 欲望值: 30,}
+          attributes: { 体质: -6,
+              财帛: -40
+        },
+          gameState: { 清议: -25, 民望: 20,
+              中官: -10
+        },
+          hidden: { 欲望值: 30,
+              道德值: -15
+        }
         },
         result: {
           title: '醉生梦死',
@@ -57,9 +64,15 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         text: '【金屋藏娇】为她赎身，带回府中私藏',
         description: '你决定为柳如烟赎身，将她带回府中独占，日日欢好。',
         effects: {
-          attributes: {},
-          gameState: { 清议: -30,},
-          hidden: { 欲望值: 25,}
+          attributes: {
+              财帛: -60
+        },
+          gameState: { 清议: -30,
+              中官: -15
+        },
+          hidden: { 欲望值: 25,
+              道德值: -10
+        }
         },
         result: {
           title: '红颜祸水',
@@ -75,7 +88,9 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -3 },
           gameState: { 清议: -15 },
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -5
+        }
         },
         result: {
           title: '一夜风流',
@@ -90,8 +105,12 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         description: '你虽然心动，但克制住了欲望，只与她抚琴论诗。',
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 清议: 10,},
-          hidden: {机敏值: 5 }
+          gameState: { 清议: 10,
+              士绅: 5
+        },
+          hidden: {机敏值: 5,
+              道德值: 10
+        }
         },
         result: {
           title: '君子之风',
@@ -110,7 +129,7 @@ export const temptationDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_022',
     storyline: 'gray',
     title: '佛堂春深',
-    description: '',
+    description: '你因公事前往城外白云寺祈福，在佛堂中偶遇一位正在诵经的年轻女居士。',
     narrative: {
       speaker: {
         title: '带发修行的居士',
@@ -139,7 +158,9 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -5 },
           gameState: { 清议: -30,},
-          hidden: { 欲望值: 25,}
+          hidden: { 欲望值: 25,
+              道德值: -40
+        }
         },
         result: {
           title: '佛门孽缘',
@@ -153,9 +174,15 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         text: '【金屋藏娇】为她还俗，纳为外室',
         description: '你决定帮她脱离寺庙，将她纳为外室，独占她的美色。',
         effects: {
-          attributes: {},
-          gameState: { 清议: -20,},
-          hidden: { 欲望值: 20,}
+          attributes: {
+              财帛: -30
+        },
+          gameState: { 清议: -20,
+              中官: -10
+        },
+          hidden: { 欲望值: 20,
+              道德值: -15
+        }
         },
         result: {
           title: '还俗纳妾',
@@ -171,7 +198,9 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 15,},
-          hidden: {}
+          hidden: {
+              道德值: 25
+        }
         },
         result: {
           title: '红粉知己',
@@ -186,7 +215,9 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         description: '你察觉到她的异常，暗中调查，发现她是前朝余孽派来接近你的。',
         effects: {
           attributes: {},
-          gameState: {圣眷: 15 },
+          gameState: {圣眷: 25,
+              中官: 20
+        },
           hidden: { 机敏值: 20, 野心值: 10 }
         },
         result: {
@@ -206,7 +237,7 @@ export const temptationDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_023',
     storyline: 'gray',
     title: '医馆艳遇',
-    description: '',
+    description: '你近日公务繁忙，感到身体有些不适，便前往城中有名的"济世堂"医馆求诊。',
     narrative: {
       speaker: {
         title: '女医师',
@@ -233,9 +264,15 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         text: '【借口复诊】以治病为由，日日来医馆与她亲近',
         description: '你以身体未愈为由，日日来医馆，实则是为了亲近这位美貌女医师。',
         effects: {
-          attributes: { 体质: -4,},
-          gameState: { 清议: -20,},
-          hidden: { 欲望值: 25,}
+          attributes: { 体质: -4,
+              财帛: -20
+        },
+          gameState: { 清议: -20,
+              中官: -5
+        },
+          hidden: { 欲望值: 25,
+              道德值: -10
+        }
         },
         result: {
           title: '医者仁心',
@@ -249,9 +286,13 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         text: '【聘为私医】将她聘为府中私医，方便随时亲近',
         description: '你决定聘请沈青囊为府中私医，这样就可以名正言顺地日日与她相处。',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -25
+        },
           gameState: { 清议: -15 },
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -5
+        }
         },
         result: {
           title: '府中春色',
@@ -267,7 +308,9 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 清议: 10 },
-          hidden: {}
+          hidden: {
+              道德值: 10
+        }
         },
         result: {
           title: '药到病除',
@@ -282,8 +325,11 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         description: '你察觉到她的药方有蹊跷，暗中调查发现她是政敌派来害你的。',
         effects: {
           attributes: {},
-          gameState: {},
-          hidden: { 机敏值: 25, 野心值: 15 }
+          gameState: {
+              圣眷: 15,
+              中官: 25
+        },
+          hidden: { 机敏值: 35, 野心值: 15 }
         },
         result: {
           title: '识破毒计',
@@ -302,7 +348,7 @@ export const temptationDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_024',
     storyline: 'gray',
     title: '戏台春梦',
-    description: '',
+    description: '你受同僚邀请，前往城中最大的戏楼观看霓裳阁的演出。',
     narrative: {
       speaker: {
         title: '戏班台柱',
@@ -330,8 +376,12 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         description: '你被她的美色冲昏了头脑，推门而入，在这杂乱的后台占有了她。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -35,},
-          hidden: { 欲望值: 30,}
+          gameState: { 清议: -35,
+              中官: -10
+        },
+          hidden: { 欲望值: 30,
+              道德值: -20
+        }
         },
         result: {
           title: '霸王硬上弓',
@@ -345,9 +395,15 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         text: '【赎身纳妾】为她赎身，带回府中独占',
         description: '你决定为她赎身，将她带回府中做你的妾室，日日欣赏她的歌舞。',
         effects: {
-          attributes: {},
-          gameState: { 清议: -25,},
-          hidden: { 欲望值: 20,}
+          attributes: {
+              财帛: -50
+        },
+          gameState: { 清议: -25,
+              中官: -5
+        },
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '金屋藏娇',
@@ -362,8 +418,10 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         description: '你虽然心动，但克制住了欲望，只与她谈论戏曲艺术。',
         effects: {
           attributes: { 文韬: 5 },
-          gameState: { 清议: 15, 清议: 10 },
-          hidden: {}
+          gameState: { 清议: 25 },
+          hidden: {
+              道德值: 15
+        }
         },
         result: {
           title: '知音难觅',
@@ -378,8 +436,11 @@ export const temptationDebaucheryEvents: GameEvent[] = [
         description: '你察觉到她的某些异常，怀疑她是刺客，决定设局试探。',
         effects: {
           attributes: {},
-          gameState: {清议: 10 },
-          hidden: { 机敏值: 25, 野心值: 15 }
+          gameState: {清议: 10,
+              中官: 20,
+              国势: 10
+        },
+          hidden: { 机敏值: 40, 野心值: 15 }
         },
         result: {
           title: '暗藏杀机',

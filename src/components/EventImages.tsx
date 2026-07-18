@@ -1,4 +1,5 @@
 import { useState, useEffect, memo, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { getImagesByEvent, deleteImage, type SavedImage } from '../services/imageStorage'
 import { useConfirm } from '../hooks/useConfirm'
 import './EventImages.css'
@@ -20,13 +21,17 @@ const Thumb = memo(function Thumb({
   onView: () => void
   onDelete: () => void
 }) {
-  const src = item.url || (item.b64Json ? `data:image/png;base64,${item.b64Json}` : '')
+  const src = item.url || ''
   return (
     <div className="ei-thumb">
       <div className="ei-thumb-img" onClick={onView} title="点击查看">
-        <img src={src} alt="事件插图" loading="lazy" decoding="async" />
+        {src ? (
+          <img src={src} alt="事件插图" loading="lazy" decoding="async" />
+        ) : (
+          <span className="ei-thumb-placeholder">图载失败</span>
+        )}
       </div>
-      <button className="ei-thumb-delete" onClick={onDelete} title="删除此画">✕</button>
+      <button className="ei-thumb-delete" onClick={onDelete} title="删除此画">删</button>
     </div>
   )
 })
@@ -40,19 +45,20 @@ function Viewer({ src, onClose }: { src: string; onClose: () => void }) {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
-  return (
-    <div className="ei-viewer-overlay" onClick={onClose}>
-      <button className="ei-viewer-close" onClick={onClose} title="关闭 (Esc)">✕</button>
-      <img className="ei-viewer-image" src={src} alt="事件插图" onClick={e => e.stopPropagation()} />
+  const node = (
+    <div className="ei-viewer-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+      <button className="ei-viewer-close" onClick={onClose} title="关闭 (Esc)"></button>
+      <img className="ei-viewer-image" src={src} alt="事件插图" />
     </div>
   )
+  return createPortal(node, document.body)
 }
 
-export default function EventImages({ eventId, eventTitle, onGenerateClick }: EventImagesProps) {
+export default function EventImages({ eventId, onGenerateClick }: EventImagesProps) {
   const [images, setImages] = useState<SavedImage[]>([])
   const [viewerSrc, setViewerSrc] = useState<string | null>(null)
   const [expanded, setExpanded] = useState(false)
-  const { confirm, dialog: confirmDialog } = useConfirm()
+  const { dialog: confirmDialog } = useConfirm()
 
   // 每次 eventId 变化或 mounted 时重读
   const reload = useCallback(() => {
@@ -93,14 +99,14 @@ export default function EventImages({ eventId, eventTitle, onGenerateClick }: Ev
   }
 
   const openViewer = (item: SavedImage) => {
-    const src = item.url || (item.b64Json ? `data:image/png;base64,${item.b64Json}` : '')
+    const src = item.url || ''
     if (src) setViewerSrc(src)
   }
 
   return (
     <div className="event-images">
       <div className="ei-header">
-        <span className="ei-title">📜 事件插图</span>
+        <span className="ei-title">事件插图</span>
         <span className="ei-count">（{images.length}）</span>
         {onGenerateClick && (
           <button className="ei-generate-btn" onClick={onGenerateClick} title="为该事件生成新插图">
@@ -128,7 +134,7 @@ export default function EventImages({ eventId, eventTitle, onGenerateClick }: Ev
               key={item.id}
               item={item}
               onView={() => openViewer(item)}
-              onDelete={() => handleDelete(item)}
+              onDelete={() => handleDelete(item.id)}
             />
           ))}
         </div>

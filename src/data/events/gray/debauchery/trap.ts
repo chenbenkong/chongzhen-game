@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const trapDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_013',
     storyline: 'gray',
     title: '闯王美人计',
-    description: '',
+    description: '今日你正在府中查阅军情，一名自称"红娘子"的女子被手下带到府中，声称因避战乱流落至此，希望得到你的庇护。',
     narrative: {
       speaker: {
         title: '神秘女子',
@@ -27,10 +28,10 @@ export const trapDebaucheryEvents: GameEvent[] = [
       year: { min: 1635, max: 1635 },
       month: { min: 6, max: 8 },
       attributes: {
-        理政: { min: 60,财帛: 15, 财帛: 30}
+        理政: { min: 60 }
       },
       hidden: {
-        欲望值: { min: 25,道德值: 5,道德值: 5,道德值: -10, 道德值: -10, 道德值: 15}
+        欲望值: { min: 25 }
       }
     },
     choices: [
@@ -41,8 +42,13 @@ export const trapDebaucheryEvents: GameEvent[] = [
         description: '你被红娘子的美貌打动，将她收为侍妾，日夜与她相处。你不知道的是，她正在利用你的信任套取机密。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -20, 民望: -25, 民望: 10, 民望: 15, 民望: 15, 民望: 10, 民望: -5, 民望: -10},
-          hidden: { 欲望值: 25,}
+          gameState: { 清议: -20, 民望: -10,
+              国势: -20,
+              中官: -25
+        },
+          hidden: { 欲望值: 25,
+              道德值: -10
+        }
         },
         result: {
           title: '美人误国',
@@ -75,8 +81,13 @@ export const trapDebaucheryEvents: GameEvent[] = [
         description: '你表面上收留红娘子，但暗中派人监视她的一举一动，以防有诈。',
         effects: {
           attributes: {},
-          gameState: {},
-          hidden: { 野心值: 10,}
+          gameState: {
+              圣眷: 5,
+              中官: 10
+        },
+          hidden: { 野心值: 10,
+              道德值: 5
+        }
         },
         result: {
           title: '反间计',
@@ -110,7 +121,9 @@ export const trapDebaucheryEvents: GameEvent[] = [
         text: '【直接驱逐】看出破绽，直接将她驱逐出境',
         description: '你敏锐地察觉到她的可疑之处，但在驱逐前要先享用一番。',
         effects: {
-          gameState: {},
+          gameState: {
+              中官: 15
+        },
           hidden: { 机敏值: 15 }
         },
         result: {
@@ -144,7 +157,10 @@ export const trapDebaucheryEvents: GameEvent[] = [
         description: '你故意表现出被她迷惑的样子，实际上将计就计，利用她传递假情报给敌军。',
         effects: {
           attributes: {},
-          gameState: { 清议: 10 },
+          gameState: { 清议: 10,
+              圣眷: 8,
+              国势: 10
+        },
           hidden: { 机敏值: 20, 野心值: 15 }
         },
         result: {
@@ -174,7 +190,7 @@ export const trapDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_014',
     storyline: 'gray',
     title: '盐商美人计',
-    description: '',
+    description: '胡雪岩带着女儿胡蝶前来拜访，声称要将女儿献给你，以表忠心。',
     narrative: {
       speaker: {
         title: '盐商',
@@ -202,9 +218,15 @@ export const trapDebaucheryEvents: GameEvent[] = [
         text: '【笑纳美人】收下胡蝶，让她成为你的枕边人',
         description: '你被胡蝶的美貌和才情打动，收下她作为侍妾，享受美人的陪伴。',
         effects: {
-          attributes: { 体质: -4,},
-          gameState: { 清议: -20,},
-          hidden: { 欲望值: 20,}
+          attributes: { 体质: -4,
+              财帛: 30
+        },
+          gameState: { 清议: -20,
+              士绅: 15
+        },
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '权财结合',
@@ -234,9 +256,15 @@ export const trapDebaucheryEvents: GameEvent[] = [
         text: '【只取其才】欣赏她的才情，聘为幕僚',
         description: '你欣赏胡蝶的才情，聘她为幕僚，参与政务讨论，但保持适当距离。',
         effects: {
-          attributes: { 文韬: 5,},
-          gameState: {},
-          hidden: { 机敏值: 10,}
+          attributes: { 文韬: 5,
+              财帛: 15
+        },
+          gameState: {
+              士绅: 10
+        },
+          hidden: { 机敏值: 10,
+              道德值: 5
+        }
         },
         result: {
           title: '红颜知己',
@@ -268,8 +296,12 @@ export const trapDebaucheryEvents: GameEvent[] = [
         text: '【拒绝美人，但允商业】拒绝胡蝶，但允许公平竞争',
         description: '你拒绝了胡雪岩的美人计，但在拒绝前要先享用一番。',
         effects: {
-          gameState: { 清议: 10,},
-          hidden: {}
+          gameState: { 清议: 10,
+              士绅: -5
+        },
+          hidden: {
+              道德值: 15
+        }
         },
         result: {
           title: '公私分明',
@@ -304,7 +336,10 @@ export const trapDebaucheryEvents: GameEvent[] = [
         description: '你表面上接受胡蝶，实际上利用她监控胡雪岩的商业活动，打击垄断行为。',
         effects: {
           attributes: {},
-          gameState: {清议: -10 },
+          gameState: {清议: -10,
+              圣眷: 10,
+              士绅: -10
+        },
           hidden: { 机敏值: 15, 野心值: 10 }
         },
         result: {

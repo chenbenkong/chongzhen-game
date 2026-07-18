@@ -14,7 +14,7 @@ export function BGMFixedButton() {
       title={isError ? errorMessage || '音乐加载失败，点击重试' : on ? '点击关闭音乐' : '点击开启音乐'}
       aria-label={on ? '关闭音乐' : '开启音乐'}
     >
-      <span className="bgm-icon">{isError ? '⚠' : (on ? '🎵' : '🔇')}</span>
+      <span className={`bgm-icon ${isError ? 'is-error' : on ? 'is-on' : 'is-off'}`} />
       <span className="bgm-label">{isError ? '音乐加载失败' : (on ? '音乐：开' : '音乐：关')}</span>
     </button>
   )
@@ -31,7 +31,7 @@ export function BGMInlineButton() {
       title={isError ? errorMessage || '音乐加载失败，点击重试' : on ? '点击关闭音乐' : '点击开启音乐'}
       aria-label={on ? '关闭音乐' : '开启音乐'}
     >
-      <span className="bgm-icon">{isError ? '⚠' : (on ? '🎵' : '🔇')}</span>
+      <span className={`bgm-icon ${isError ? 'is-error' : on ? 'is-on' : 'is-off'}`} />
       <span className="bgm-label">{isError ? '音乐加载失败' : (on ? '音乐：开' : '音乐：关')}</span>
     </button>
   )

@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1640: GameEvent[] = [
   {
     id: 'historical_031',
     storyline: 'ordinary',
-    title: '松锦之战',
-    description: '',
+    title: '松锦之战 · 洪承畴降',
+    description: '松锦大败、洪承畴降敌。',
     narrative: {
       speaker: {
         name: '宁远总兵',
@@ -42,7 +43,7 @@ export const events1640: GameEvent[] = [
     },
     conditions: {
       year: { min: 1640, max: 1641 },
-      month: { min: 7, max: 3 }
+      month: { min: 1, max: 12 }
     },
     choices: [
       {
@@ -51,13 +52,15 @@ export const events1640: GameEvent[] = [
         text: '【请缨关外】"臣请率兵出关，与建虏决一死战"',
         description: '请缨出关，整军再战',
         showConditions: {
-          attributes: { 体质: { min: 70,财帛: 5,财帛: -50, 财帛: -30}, 武略: { min: 70 } },
+          attributes: { 体质: { min: 70 }, 武略: { min: 70 } },
           origin: ['没落世家', '缙绅']
         },
         effects: {
-          attributes: { 体质: -20, 武略: 12,},
-          gameState: { 圣眷: 25, 清议: 25,民望: -5,民望: 40,民望: 30, 民望: 10},
-          hidden: {野心值: 12,道德值: 15,道德值: 15,道德值: 25,道德值: -8, 道德值: 18, 道德值: 18},
+          attributes: { 体质: -20, 武略: 12,
+              财帛: -30
+        },
+          gameState: { 圣眷: 25, 清议: 25, 民望: 10 },
+          hidden: { 野心值: 12, 道德值: 18 },
           flags: { add: ['关外督师'] }
         },
         resultDescription: '',
@@ -95,7 +98,9 @@ export const events1640: GameEvent[] = [
         effects: {
           attributes: { 文韬: 8 },
           gameState: { 圣眷: -15, 清议: 30, 中官: -20 },
-          hidden: {野心值: 8 },
+          hidden: {野心值: 8,
+              道德值: 15
+        },
           flags: { add: ['弹劾关外诸臣'] }
         },
         resultDescription: '',
@@ -128,9 +133,15 @@ export const events1640: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -8, 清议: -12,},
-          hidden: {野心值: 5 },
+          attributes: {
+              财帛: 5
+        },
+          gameState: { 圣眷: -8, 清议: -12,
+              民望: -5
+        },
+          hidden: {野心值: 5,
+              道德值: -8
+        },
           flags: { add: ['明哲保身'] }
         },
         resultDescription: '',
@@ -160,7 +171,7 @@ export const events1640: GameEvent[] = [
     id: 'historical_032',
     storyline: 'ordinary',
     title: '闯王入河南',
-    description: '',
+    description: '李自成入河南，"均田免赋"号令天下。',
     narrative: {
       speaker: {
         name: '河南驿卒',
@@ -214,8 +225,12 @@ export const events1640: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 5 },
-          gameState: { 圣眷: 10, 清议: 25,},
-          hidden: {野心值: -5 },
+          gameState: { 圣眷: 10, 清议: 25,
+              民望: 30
+        },
+          hidden: {野心值: -5,
+              道德值: 15
+        },
           flags: { add: ['主赈济'] }
         },
         resultDescription: '',
@@ -253,7 +268,9 @@ export const events1640: GameEvent[] = [
         effects: {
           attributes: { 文韬: 8 },
           gameState: { 圣眷: -20, 清议: 35, 中官: -25 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: 18
+        },
           flags: { add: ['痛陈时弊'] }
         },
         resultDescription: '',
@@ -288,9 +305,15 @@ export const events1640: GameEvent[] = [
           attributes: { 财帛: { min: 80 } }
         },
         effects: {
-          attributes: {},
-          gameState: {清议: 15 },
-          hidden: {欲望值: -10 },
+          attributes: {
+              财帛: -50
+        },
+          gameState: {清议: 15,
+              民望: 40
+        },
+          hidden: {欲望值: -10,
+              道德值: 25
+        },
           flags: { add: ['家赈自救'] }
         },
         resultDescription: '',

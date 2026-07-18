@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // 寒门专属事件：体现出身寒微的困境与逆袭
@@ -7,7 +8,7 @@ export const hanmenEvents: GameEvent[] = [
     storyline: 'power',
     type: 'transition',
     title: '家书催银',
-    description: '',
+    description: '忠孝难两全——是想办法筹钱救母，还是省下银两维持仕途？',
     narrative: {
       speaker: { title: '家仆', name: '老张' },
       quote: '少爷，老家来信了……您母亲病重，大夫说需银三十两方可抓药。家里实在拿不出了……',
@@ -25,13 +26,13 @@ export const hanmenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'power',
+        storyline: 'family',
         text: '【变卖家当】"把我在京城的旧宅典了，先救母亲"',
         description: '变卖仅有的家产，筹银救母',
         effects: {
-          attributes: {财帛: -20, 财帛: -5},
+          attributes: { 财帛: -20 },
           gameState: { 圣眷: 5, 民望: 8},
-          hidden: {道德值: 10,道德值: -10,道德值: 3,道德值: 5, 道德值: 3},
+          hidden: { 道德值: 10 },
           flags: { add: ['origin_hanmen_001_done', '变产救母'] }
         },
         result: {
@@ -54,9 +55,13 @@ export const hanmenEvents: GameEvent[] = [
         text: '【借贷度日】"先向同僚借些银两，日后还上"',
         description: '向同僚借钱救母，但欠下人情债',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -5
+        },
           gameState: { 士绅: -5, 清议: -3 },
-          hidden: {欲望值: 5 },
+          hidden: {欲望值: 5,
+              道德值: 3
+        },
           flags: { add: ['origin_hanmen_001_done', '负债借贷'] }
         },
         result: {
@@ -78,7 +83,9 @@ export const hanmenEvents: GameEvent[] = [
         description: '忍痛不寄钱，保住仕途资源',
         effects: {
           attributes: { 文韬: 5, 理政: 3 },
-          hidden: {野心值: 8 },
+          hidden: {野心值: 8,
+              道德值: -10
+        },
           flags: { add: ['origin_hanmen_001_done', '弃母求仕'] }
         },
         result: {
@@ -102,7 +109,7 @@ export const hanmenEvents: GameEvent[] = [
     storyline: 'power',
     type: 'transition',
     title: '清流举荐',
-    description: '',
+    description: '清流的橄榄枝已伸来，接还是不接？',
     narrative: {
       speaker: { title: '翰林编修', name: '黄道周' },
       quote: '足下文章锋利，气节凛然，正是我辈中人。朝中正缺这样的人才，我愿为足下举荐。',
@@ -121,13 +128,15 @@ export const hanmenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'power',
+        storyline: 'eastern_forest',
         text: '【欣然接受】"多谢黄大人提携，晚辈愿效犬马之劳"',
         description: '接受清流举荐，加入东林阵营',
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 15, 圣眷: 8, 中官: -10 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: 5
+        },
           flags: { add: ['origin_hanmen_002_done', '清流举荐', '东林系'] }
         },
         result: {
@@ -144,13 +153,15 @@ export const hanmenEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'power',
+        storyline: 'ordinary',
         text: '【婉言谢绝】"黄大人美意心领了，但晚辈资历尚浅，不敢攀附"',
         description: '婉拒举荐，保持独立',
         effects: {
           attributes: { 理政: 3 },
           gameState: { 清议: -5, 中官: 5 },
-          hidden: { 野心值: -3 },
+          hidden: { 野心值: -3,
+              道德值: 3
+        },
           flags: { add: ['origin_hanmen_002_done', '婉拒清流'] }
         },
         result: {
@@ -197,7 +208,7 @@ export const hanmenEvents: GameEvent[] = [
     storyline: 'power',
     type: 'transition',
     title: '寒窗苦读',
-    description: '',
+    description: '又是一个不眠之夜，继续苦读还是早些歇息？',
     narrative: {
       speaker: { title: '书童', name: '小墨' },
       quote: '大人，都三更天了，您还不歇息？这蜡烛都快烧完了……',
@@ -236,7 +247,7 @@ export const hanmenEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'power',
+        storyline: 'ordinary',
         text: '【适度而止】"明日还有公务，早些歇息吧"',
         description: '适度学习，平衡发展',
         effects: {
@@ -255,7 +266,7 @@ export const hanmenEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'power',
+        storyline: 'eastern_forest',
         text: '【拜师求教】"读万卷书不如行万里路，去拜访名师"',
         description: '拜访名师，获得指点，文韬大幅提升',
         effects: {

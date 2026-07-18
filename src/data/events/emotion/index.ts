@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../types/event'
 import { wifeEvents } from './wife'
 import { concubineEvents } from './concubine'

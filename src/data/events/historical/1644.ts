@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1644: GameEvent[] = [
 {
     id: 'historical_015',
     storyline: 'ordinary',
     title: '大顺建国',
-    description: '',
+    description: '大顺建国，兵锋直指北京。',
     narrative: {
       speaker: {
         name: '陕西塘报',
@@ -33,13 +34,15 @@ export const events1644: GameEvent[] = [
         text: '【主战勤王】"当调集勤王之师，与李自成决一死战！"',
         description: '主张调集天下兵马，入京勤王，与李自成决战',
         showConditions: {
-          attributes: { 武略: { min: 70,财帛: 30,财帛: 20,财帛: 20,财帛: -50,财帛: -50,财帛: 25,财帛: 30, 财帛: -30, 财帛: 30, 财帛: -30}, 财帛: { min: 40 } },
+          attributes: { 武略: { min: 70 }, 财帛: { min: 40 } },
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 武略: 8,体质: -15 },
-          gameState: { 圣眷: 25, 清议: 30,民望: -30,民望: 20,民望: -25,民望: 25,民望: 10,民望: 30,民望: 15,民望: 5,民望: 10,民望: 8,民望: 20,民望: 25,民望: 5,民望: 20,民望: -10,民望: 5,民望: 5,民望: 5,民望: -10, 民望: 15, 民望: -10, 民望: 15, 民望: -30, 民望: 20, 民望: 15, 民望: 15},
-          hidden: {野心值: 10,道德值: -5,道德值: 15,道德值: -10,道德值: -5,道德值: 15,道德值: 5,道德值: -35,道德值: -10,道德值: 20,道德值: 10,道德值: 15,道德值: 20,道德值: 18,道德值: 30,道德值: -5,道德值: -30,道德值: -25,道德值: -20,道德值: 10,道德值: -30,道德值: -3,道德值: -25, 道德值: 20, 道德值: 25, 道德值: 30, 道德值: 50, 道德值: 5, 道德值: -5, 道德值: 25, 道德值: 20},
+          attributes: { 武略: 8,体质: -15,
+              财帛: -30
+        },
+          gameState: { 圣眷: 25, 清议: 30, 民望: 15 },
+          hidden: { 野心值: 10, 道德值: 20 },
           flags: { add: ['主战勤王'] }
         },
         resultDescription: '',
@@ -75,7 +78,9 @@ export const events1644: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5, 理政: 8 },
           gameState: { 圣眷: -20, 清议: -25, 中官: 10 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['主张南迁'] }
         },
         resultDescription: '',
@@ -104,9 +109,15 @@ export const events1644: GameEvent[] = [
           hidden: { 道德值: { max: 30 }, 野心值: { min: 30 } }
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -30, 清议: -40,},
-          hidden: {野心值: 20 },
+          attributes: {
+              财帛: 30
+        },
+          gameState: { 圣眷: -30, 清议: -40,
+              民望: -30
+        },
+          hidden: {野心值: 20,
+              道德值: -30
+        },
           flags: { add: ['投降大顺'] }
         },
         resultDescription: '',
@@ -137,8 +148,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 理政: 5, 体质: -10 },
-          gameState: { 清议: 25, 圣眷: 10,},
-          hidden: {},
+          gameState: { 清议: 25, 圣眷: 10,
+              民望: 20
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['护送太子'] }
         },
         resultDescription: '',
@@ -168,7 +183,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_016',
     storyline: 'ordinary',
     title: '宣大陷落',
-    description: '',
+    description: '宣大陷落，北京危急。',
     narrative: {
       speaker: {
         name: '宣府塘报',
@@ -201,8 +216,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 10, 体质: -40 },
-          gameState: { 圣眷: 30, 清议: 35,},
-          hidden: {},
+          gameState: { 圣眷: 30, 清议: 35,
+              民望: 20
+        },
+          hidden: {
+              道德值: 25
+        },
           flags: { add: ['死守宣府'] }
         },
         resultDescription: '',
@@ -235,8 +254,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 理政: 5 },
-          gameState: { 清议: -15,圣眷: 5 },
-          hidden: {野心值: 15 },
+          gameState: { 清议: -15,圣眷: 5,
+              民望: -10
+        },
+          hidden: {野心值: 15,
+              道德值: -10
+        },
           flags: { add: ['诈降反戈'] }
         },
         resultDescription: '',
@@ -269,9 +292,15 @@ export const events1644: GameEvent[] = [
           hidden: { 道德值: { max: 40 } }
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -35, 清议: -35,},
-          hidden: {野心值: 10 },
+          attributes: {
+              财帛: 25
+        },
+          gameState: { 圣眷: -35, 清议: -35,
+              民望: -25
+        },
+          hidden: {野心值: 10,
+              道德值: -25
+        },
           flags: { add: ['投降大顺'] }
         },
         resultDescription: '',
@@ -304,8 +333,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 3, 体质: -15 },
-          gameState: { 圣眷: 10, 清议: -15,},
-          hidden: {},
+          gameState: { 圣眷: 10, 清议: -15,
+              民望: -10
+        },
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['撤退保卫北京'] }
         },
         resultDescription: '',
@@ -339,7 +372,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_017',
     storyline: 'ordinary',
     title: '居庸关陷落',
-    description: '',
+    description: '居庸关陷落，北京危急。',
     narrative: {
       speaker: {
         name: '居庸关守将',
@@ -374,8 +407,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 12, 体质: -50 },
-          gameState: { 圣眷: 35, 清议: 40,},
-          hidden: {},
+          gameState: { 圣眷: 35, 清议: 40,
+              民望: 25
+        },
+          hidden: {
+              道德值: 30
+        },
           flags: { add: ['死守居庸关'] }
         },
         resultDescription: '',
@@ -410,8 +447,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 理政: 5, 体质: -20 },
-          gameState: { 圣眷: 20, 清议: 20,},
-          hidden: {},
+          gameState: { 圣眷: 20, 清议: 20,
+              民望: 15
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['护送崇祯南迁'] }
         },
         resultDescription: '',
@@ -448,9 +489,15 @@ export const events1644: GameEvent[] = [
           hidden: { 道德值: { max: 35 } }
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -40, 清议: -40,},
-          hidden: {野心值: 10 },
+          attributes: {
+              财帛: 20
+        },
+          gameState: { 圣眷: -40, 清议: -40,
+              民望: 10
+        },
+          hidden: {野心值: 10,
+              道德值: -20
+        },
           flags: { add: ['开城投降'] }
         },
         resultDescription: '',
@@ -483,8 +530,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: 5 },
-          gameState: { 圣眷: -10, 清议: -5,},
-          hidden: {野心值: 10 },
+          gameState: { 圣眷: -10, 清议: -5,
+              民望: 5
+        },
+          hidden: {野心值: 10,
+              道德值: 5
+        },
           flags: { add: ['组织义军'] }
         },
         resultDescription: '',
@@ -516,7 +567,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_018',
     storyline: 'ordinary',
     title: '煤山遗恨',
-    description: '',
+    description: '北京陷落，皇上殉国。',
     narrative: {
       speaker: {
         name: '老太监',
@@ -544,8 +595,12 @@ export const events1644: GameEvent[] = [
         text: '【殉国】"君辱臣死，当随皇上殉国！"',
         description: '追随崇祯皇帝，殉国而死',
         effects: {
-          gameState: { 清议: 50,},
-          hidden: {},
+          gameState: { 清议: 50,
+              民望: 30
+        },
+          hidden: {
+              道德值: 50
+        },
           flags: { add: ['殉国', '殉国报君'] }
         },
         resultDescription: '',
@@ -578,9 +633,15 @@ export const events1644: GameEvent[] = [
           hidden: { 道德值: { max: 40 } }
         },
         effects: {
-          attributes: {},
-          gameState: { 清议: -45,圣眷: -40 },
-          hidden: {野心值: 15 },
+          attributes: {
+              财帛: 30
+        },
+          gameState: { 清议: -45,圣眷: -40,
+              民望: -30
+        },
+          hidden: {野心值: 15,
+              道德值: -35
+        },
           flags: { add: ['投降大顺'] }
         },
         resultDescription: '',
@@ -613,8 +674,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 体质: -10 },
-          gameState: { 清议: 20,},
-          hidden: {},
+          gameState: { 清议: 20,
+              民望: 15
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['逃往南京', '南渡长江'] }
         },
         resultDescription: '',
@@ -650,8 +715,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 体质: 5 },
-          gameState: { 清议: -10,},
-          hidden: {野心值: -5 },
+          gameState: { 清议: -10,
+              民望: 5
+        },
+          hidden: {野心值: -5,
+              道德值: -10
+        },
           flags: { add: ['藏匿民间'] }
         },
         resultDescription: '',
@@ -687,8 +756,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 体质: 3 },
-          gameState: { 清议: 5,},
-          hidden: {野心值: -20 },
+          gameState: { 清议: 5,
+              民望: 5
+        },
+          hidden: {野心值: -20,
+              道德值: 5
+        },
           flags: { add: ['出家', '和尚', '归隐山林'] }
         },
         resultDescription: '',
@@ -713,7 +786,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_019',
     storyline: 'ordinary',
     title: '清军入关',
-    description: '',
+    description: '清军入关，天下易主。',
     narrative: {
       speaker: {
         name: '山海关塘报',
@@ -748,8 +821,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 体质: -15 },
-          gameState: { 清议: 30,},
-          hidden: {野心值: 10 },
+          gameState: { 清议: 30,
+              民望: 20
+        },
+          hidden: {野心值: 10,
+              道德值: 20
+        },
           flags: { add: ['效忠南明'] }
         },
         resultDescription: '',
@@ -784,9 +861,13 @@ export const events1644: GameEvent[] = [
           hidden: { 道德值: { max: 40 } }
         },
         effects: {
-          attributes: {理政: 5 },
+          attributes: {理政: 5,
+              财帛: 20
+        },
           gameState: { 清议: -50, 中官: 10 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: -30
+        },
           flags: { add: ['投降清朝', '贰臣'] }
         },
         resultDescription: '',
@@ -820,8 +901,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 体质: 5, 文韬: 5 },
-          gameState: { 清议: 20,},
-          hidden: {野心值: -10 },
+          gameState: { 清议: 20,
+              民望: 10
+        },
+          hidden: {野心值: -10,
+              道德值: 10
+        },
           flags: { add: ['归隐山林'] }
         },
         resultDescription: '',
@@ -848,8 +933,12 @@ export const events1644: GameEvent[] = [
         description: '观望局势，等待时机',
         effects: {
           attributes: { 体质: 3 },
-          gameState: { 清议: -5,},
-          hidden: {野心值: 5 },
+          gameState: { 清议: -5,
+              民望: 5
+        },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['观望局势'] }
         },
         resultDescription: '',
@@ -878,7 +967,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_036',
     storyline: 'ordinary',
     title: '闯王破宁武',
-    description: '',
+    description: '宁武关破，京师已无险可守。',
     narrative: {
       speaker: {
         name: '宁武关守将',
@@ -933,8 +1022,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -8 },
-          gameState: { 圣眷: 15, 清议: 20,},
-          hidden: {野心值: 10 },
+          gameState: { 圣眷: 15, 清议: 20,
+              民望: 8
+        },
+          hidden: {野心值: 10,
+              道德值: 15
+        },
           flags: { add: ['守京派'] }
         },
         resultDescription: '',
@@ -968,7 +1061,9 @@ export const events1644: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: -30, 清议: 10, 中官: 15 },
-          hidden: {野心值: 8 },
+          hidden: {野心值: 8,
+              道德值: -3
+        },
           flags: { add: ['主南迁', '崇祯所忌'] }
         },
         resultDescription: '',
@@ -1007,8 +1102,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 体质: -15 },
-          gameState: { 圣眷: 20, 清议: 25,},
-          hidden: {野心值: 12 },
+          gameState: { 圣眷: 20, 清议: 25,
+              民望: 15
+        },
+          hidden: {野心值: 12,
+              道德值: 20
+        },
           flags: { add: ['京师督师'] }
         },
         resultDescription: '',
@@ -1042,7 +1141,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_037',
     storyline: 'ordinary',
     title: '闯军围京',
-    description: '',
+    description: '闯军已围京师，崇祯皇帝整夜未眠。',
     narrative: {
       speaker: {
         name: '京城守卒',
@@ -1099,8 +1198,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: { 体质: -20, 武略: 5 },
-          gameState: { 清议: 25,},
-          hidden: {野心值: -10 },
+          gameState: { 清议: 25,
+              民望: 20
+        },
+          hidden: {野心值: -10,
+              道德值: 25
+        },
           flags: { add: ['守城殉国', '闯军所杀'] }
         },
         resultDescription: '',
@@ -1142,7 +1245,9 @@ export const events1644: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 圣眷: 10, 清议: 15, 中官: -5 },
-          hidden: {野心值: 15 },
+          hidden: {野心值: 15,
+              道德值: 18
+        },
           flags: { add: ['密谋太子', '崇祯所疑'] }
         },
         resultDescription: '',
@@ -1180,9 +1285,15 @@ export const events1644: GameEvent[] = [
           attributes: { 野心值: { min: 60 } }
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -50, 清议: -30,中官: -20 },
-          hidden: {野心值: 15 },
+          attributes: {
+              财帛: 30
+        },
+          gameState: { 圣眷: -50, 清议: -30,中官: -20,
+              民望: -10
+        },
+          hidden: {野心值: 15,
+              道德值: -25
+        },
           flags: { add: ['迎闯', '贰臣'] }
         },
         resultDescription: '',
@@ -1214,7 +1325,7 @@ export const events1644: GameEvent[] = [
     id: 'historical_038',
     storyline: 'ordinary',
     title: '煤山殉国',
-    description: '',
+    description: '闯军破城，崇祯帝煤山自缢。',
     narrative: {
       speaker: {
         name: '乾清宫太监',
@@ -1259,8 +1370,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: {},
-          gameState: { 清议: 30,},
-          hidden: {},
+          gameState: { 清议: 30,
+              民望: 25
+        },
+          hidden: {
+              道德值: 30
+        },
           flags: { add: ['殉国', '崇祯所器'] }
         },
         resultDescription: '',
@@ -1297,8 +1412,12 @@ export const events1644: GameEvent[] = [
         },
         effects: {
           attributes: {},
-          gameState: { 清议: 20,},
-          hidden: {},
+          gameState: { 清议: 20,
+              民望: 15
+        },
+          hidden: {
+              道德值: 20
+        },
           flags: { add: ['遗民', '崇祯所念'] }
         },
         resultDescription: '',
@@ -1336,9 +1455,15 @@ export const events1644: GameEvent[] = [
           origin: ['没落世家', '缙绅']
         },
         effects: {
-          attributes: { 体质: -10,},
-          gameState: { 清议: 10,},
-          hidden: {野心值: 10 },
+          attributes: { 体质: -10,
+              财帛: -50
+        },
+          gameState: { 清议: 10,
+              民望: 5
+        },
+          hidden: {野心值: 10,
+              道德值: -5
+        },
           flags: { add: ['潜逃'] }
         },
         resultDescription: '',

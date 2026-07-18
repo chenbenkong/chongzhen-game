@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { SaveSlot, getAllSaveSlots, deleteSaveSlot, hasAutosave, getAutosavePreview, deleteAutosave } from '../types/save'
+import { useConfirm } from '../hooks/useConfirm'
 import './SaveSlotsModal.css'
 
 interface SaveSlotsModalProps {
@@ -22,31 +24,50 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
   const [slots, setSlots] = useState<SaveSlot[]>([])
   const [autosavePresent, setAutosavePresent] = useState(false)
   const [autosavePreview, setAutosavePreviewState] = useState<ReturnType<typeof getAutosavePreview>>(null)
-  const [confirmDelete, setConfirmDelete] = useState<number | string | null>(null)
+  const { confirm, dialog: confirmDialog } = useConfirm()
 
   useEffect(() => {
     if (isOpen) {
       setSlots(getAllSaveSlots())
       setAutosavePresent(hasAutosave())
       setAutosavePreviewState(getAutosavePreview())
-      setConfirmDelete(null)
     }
   }, [isOpen])
 
   if (!isOpen) return null
 
-  const handleDelete = (slotId: number) => {
+  const handleDelete = useCallback(async (slotId: number) => {
+    const slot = slots.find(s => s.id === slotId)
+    const ok = await confirm({
+      title: '焚毁存档',
+      message: `确定要删除槽位 ${slotId} 的存档吗？`,
+      detail: slot?.preview
+        ? `${slot.preview.playerName} · ${slot.preview.year}年${slot.preview.month}月 · ${slot.preview.rank}`
+        : undefined,
+      warning: '删除后无法恢复，该进度将永久消失。',
+      confirmText: '删除',
+      cancelText: '保留',
+      variant: 'danger'
+    })
+    if (!ok) return
     deleteSaveSlot(slotId)
     setSlots(getAllSaveSlots())
-    setConfirmDelete(null)
-  }
+  }, [slots, confirm])
 
-  const handleDeleteAutosave = () => {
+  const handleDeleteAutosave = useCallback(async () => {
+    const ok = await confirm({
+      title: '焚毁存档',
+      message: '确定要删除自动存档吗？',
+      warning: '删除后无法恢复，最近进度将丢失。',
+      confirmText: '删除',
+      cancelText: '保留',
+      variant: 'danger'
+    })
+    if (!ok) return
     deleteAutosave()
     setAutosavePresent(false)
     setAutosavePreviewState(null)
-    setConfirmDelete(null)
-  }
+  }, [confirm])
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString)
@@ -67,13 +88,14 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
   const renderAutosaveSlot = () => (
     <div className={`save-slot autosave-slot ${autosavePresent ? 'has-data' : 'empty'}`}>
       <div className="slot-header">
-        <span className="slot-number">⏱️ 自动存档</span>
+        <span className="slot-number autosave-label">自动存档</span>
         {autosavePresent && (
           <button
             className="delete-btn"
-            onClick={(e) => { e.stopPropagation(); setConfirmDelete('autosave') }}
+            aria-label="删除自动存档"
+            onClick={(e) => { e.stopPropagation(); handleDeleteAutosave() }}
           >
-            🗑️
+            删
           </button>
         )}
       </div>
@@ -118,34 +140,21 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
         </div>
       ) : (
         <div className="slot-content empty-slot">
-          <div className="empty-icon">📝</div>
+          <div className="empty-icon" aria-hidden="true" />
           <div className="empty-text">
             {mode === 'save' ? '游戏中会自动保存进度' : '暂无自动存档'}
           </div>
         </div>
       )}
 
-      {confirmDelete === 'autosave' && (
-        <div className="confirm-delete">
-          <span>确定要删除自动存档吗？</span>
-          <div className="confirm-buttons">
-            <button onClick={(e) => { e.stopPropagation(); handleDeleteAutosave() }}>
-              确定
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(null) }}>
-              取消
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 
-  return (
+  const node = (
     <div className="save-slots-overlay" onClick={onClose}>
       <div className="save-slots-modal" onClick={e => e.stopPropagation()}>
         <div className="save-slots-header">
-          <h2>{mode === 'save' ? '💾 选择存档槽位' : '📂 选择存档'}</h2>
+          <h2>{mode === 'save' ? '选择存档槽位' : '选择存档'}</h2>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
@@ -171,11 +180,12 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
                 <div className="slot-header">
                   <span className="slot-number">槽位 {slotId}</span>
                   {hasData && (
-                    <button 
+                    <button
                       className="delete-btn"
-                      onClick={(e) => { e.stopPropagation(); setConfirmDelete(slotId) }}
+                      aria-label={`删除槽位 ${slotId}`}
+                      onClick={(e) => { e.stopPropagation(); handleDelete(slotId) }}
                     >
-                      🗑️
+                      删
                     </button>
                   )}
                 </div>
@@ -215,31 +225,21 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
                   </div>
                 ) : (
                   <div className="slot-content empty-slot" onClick={() => mode === 'save' && onSelect(slotId)}>
-                    <div className="empty-icon">📝</div>
+                    <div className="empty-icon" aria-hidden="true" />
                     <div className="empty-text">
                       {mode === 'save' ? '点击保存到该槽位' : '暂无存档'}
                     </div>
                   </div>
                 )}
 
-                {confirmDelete === slotId && (
-                  <div className="confirm-delete">
-                    <span>确定要删除此存档吗？</span>
-                    <div className="confirm-buttons">
-                      <button onClick={(e) => { e.stopPropagation(); handleDelete(slotId) }}>
-                        确定
-                      </button>
-                      <button onClick={(e) => { e.stopPropagation(); setConfirmDelete(null) }}>
-                        取消
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             )
           })}
         </div>
       </div>
+      {confirmDialog}
     </div>
   )
+
+  return createPortal(node, document.body)
 }

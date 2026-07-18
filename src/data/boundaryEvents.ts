@@ -9,7 +9,7 @@ import { debaucheryEndingEvents } from './events/ending/debauchery'
 const ENDING_BANKRUPT: GameEvent = {
   id: 'triggerable_bankrupt',
   title: '倾家荡产',
-  description: '',
+  description: '天色渐暗，你独自坐在空荡荡的厅堂里。',
   endingConfig: { category: 'personal_fate', tier: 'tragic' },
   narrative: {
     speaker: { title: '债主', name: '刘三' },
@@ -59,7 +59,7 @@ const ENDING_BANKRUPT: GameEvent = {
 const ENDING_DEATH_ILLNESS: GameEvent = {
   id: 'triggerable_death_illness',
   title: '病逝任上',
-  description: '',
+  description: '床边围满了人。夫人握着你的手，眼泪无声地往下掉。下属们站在门外，有人已经在低声啜泣。',
   endingConfig: { category: 'personal_fate', tier: 'bittersweet' },
   narrative: {
     speaker: { title: '太医', name: '王太医' },
@@ -108,7 +108,7 @@ const ENDING_DEATH_ILLNESS: GameEvent = {
 const ENDING_EMPEROR_HATE: GameEvent = {
   id: 'triggerable_emperor_hate',
   title: '龙颜震怒',
-  description: '',
+  description: '锦衣卫已经围住了整个府邸。',
   endingConfig: { category: 'ming_fate', tier: 'tragic' },
   narrative: {
     speaker: { title: '锦衣卫指挥使', name: '骆养性' },
@@ -154,7 +154,7 @@ const ENDING_EMPEROR_HATE: GameEvent = {
 const ENDING_EUNUCH: GameEvent = {
   id: 'triggerable_eunuch',
   title: '宦官构陷',
-  description: '',
+  description: '深夜，一个蒙面人敲开了你的房门。',
   endingConfig: { category: 'ming_fate', tier: 'dark' },
   narrative: {
     speaker: { title: '司礼监秉笔太监', name: '王承恩的同僚' },
@@ -202,7 +202,7 @@ const ENDING_EUNUCH: GameEvent = {
 const ENDING_SCHOLAR_OSTRACISM: GameEvent = {
   id: 'triggerable_scholar_ostracism',
   title: '士林唾弃',
-  description: '',
+  description: '朝堂之上，你已经感受不到明显的敌意——没有人公开弹劾你，没有人当面指责你。',
   endingConfig: { category: 'personal_fate', tier: 'controversial' },
   narrative: {
     speaker: { title: '翰林院编修', name: '张溥的门人' },
@@ -256,7 +256,7 @@ const ENDING_SCHOLAR_OSTRACISM: GameEvent = {
 const ENDING_GENTRY_REBELLION: GameEvent = {
   id: 'triggerable_gentry_rebellion',
   title: '乡绅反目',
-  description: '',
+  description: '联名的万言书送到了巡抚衙门。',
   endingConfig: { category: 'personal_fate', tier: 'tragic' },
   narrative: {
     speaker: { title: '县学教谕', name: '王举人' },
@@ -306,7 +306,7 @@ const ENDING_GENTRY_REBELLION: GameEvent = {
 const ENDING_POPULAR_UPROAR: GameEvent = {
   id: 'triggerable_popular_uproar',
   title: '民怨沸腾',
-  description: '',
+  description: '人群越聚越多。从一开始的几十人发展到几百上千人，他们包围了衙门，喊着"反贪官不反朝廷"的口号。有人开始往里面扔石头，有人在拆大门。',
   endingConfig: { category: 'ming_fate', tier: 'dark' },
   narrative: {
     speaker: { title: '百姓代表', name: '老张头' },
@@ -358,7 +358,7 @@ const ENDING_POPULAR_UPROAR: GameEvent = {
 const ENDING_MORAL_DEGENERACY: GameEvent = {
   id: 'triggerable_moral_degeneracy',
   title: '众叛亲离',
-  description: '',
+  description: '空荡荡的府邸。仆人们卷走了能带走的一切，夫人在三天前带着孩子回了娘家，留下一封信："我不想让孩子有一个这样的父亲。"',
   endingConfig: { category: 'personal_fate', tier: 'dark' },
   narrative: {
     speaker: { title: '心声', name: '' },
@@ -510,7 +510,7 @@ export const BOUNDARY_EVENTS: BoundaryEvent[] = [
     event: {
       id: 'boundary_serious_illness',
       title: '重病缠身',
-      description: '',
+      description: '政务堆积如山，你该如何抉择？',
       narrative: {
         speaker: { title: '太医', name: '李太医' },
         quote: '大人操劳过度，五脏俱损，需静养数月……否则……',
@@ -567,7 +567,7 @@ export const BOUNDARY_EVENTS: BoundaryEvent[] = [
     event: {
       id: 'triggerable_faction_martyr',
       title: '东林烈士',
-      description: '',
+      description: '牢门被撞开了。不是来救你的人——是满清的铁骑已经到了城下。看守们早就逃散了。你独自站在空荡荡的牢房里，听着远处传来的厮杀声和哭喊声。',
       endingConfig: { category: 'personal_fate', tier: 'saintly' },
       narrative: {
         speaker: { title: '史官', name: '后人' },
@@ -625,7 +625,7 @@ export const BOUNDARY_EVENTS: BoundaryEvent[] = [
     event: {
       id: 'triggerable_faction_tyrant_fall',
       title: '权奸末路',
-      description: '',
+      description: '一个雨夜，几个蒙面人闯入了你的府邸。',
       endingConfig: { category: 'ming_fate', tier: 'dark' },
       narrative: {
         speaker: { title: '旧友', name: '匿名' },
@@ -679,7 +679,7 @@ export const BOUNDARY_EVENTS: BoundaryEvent[] = [
     event: {
       id: 'triggerable_faction_sacrifice',
       title: '党争牺牲品',
-      description: '',
+      description: '最新的弹劾奏章送到了吏部。',
       endingConfig: { category: 'personal_fate', tier: 'tragic' },
       narrative: {
         speaker: { title: '心声', name: '' },

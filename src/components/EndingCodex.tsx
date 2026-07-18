@@ -2,6 +2,7 @@
 // 真实可触发的结局已在 BoundaryEventManager 注册，触发条件由 GameEvent.conditions 编译
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { GameEvent } from '../types/event'
 import { allEndingEvents } from '../data/events/ending'
 import { getUnlockedAchievements } from '../types/achievement'
@@ -95,13 +96,81 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
     return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`
   }
 
-  return (
-    <div className="ending-codex-overlay" onClick={onClose}>
-      <div className="ending-codex-modal" onClick={(e) => e.stopPropagation()}>
+  const detailNode = detail ? (
+    <div
+      className="codex-detail-overlay"
+      onClick={(e) => { if (e.target === e.currentTarget) setDetail(null) }}
+    >
+      <div
+        className={`codex-detail-modal ${unlockedIds.has(detail.id) ? '' : 'locked'} ${TIER_TONE[detail.endingConfig?.tier || 'mysterious']}`}
+      >
+        <button className="codex-detail-close" onClick={() => setDetail(null)} aria-label="关闭">关</button>
+        <div className="codex-detail-header">
+          <div className="codex-detail-tier-tag">
+            {TIER_LABEL[detail.endingConfig?.tier || ''] || '奇遇'}
+          </div>
+          <h3 className="codex-detail-title">{detail.title}</h3>
+          <div className="codex-detail-meta">
+            <span>ID: {detail.id}</span>
+            {unlockedIds.has(detail.id) ? (
+              <span className="codex-detail-unlocked">已达成</span>
+            ) : (
+              <span className="codex-detail-locked">未达成</span>
+            )}
+            {unlockedIds.has(detail.id) && unlockTimes[detail.id] && (
+              <span>· {formatTime(unlockTimes[detail.id])}</span>
+            )}
+          </div>
+        </div>
+
+        <div className="codex-detail-body">
+          {detail.narrative?.quote && (
+            <blockquote className="codex-detail-quote">
+              「{detail.narrative.quote}」
+              {detail.narrative.speaker && (
+                <cite>—— {detail.narrative.speaker.title}·{detail.narrative.speaker.name}</cite>
+              )}
+            </blockquote>
+          )}
+
+          {detail.narrative?.background && (
+            <div className="codex-detail-section">
+              <h4>前 事</h4>
+              <p>{detail.narrative.background}</p>
+            </div>
+          )}
+
+          {detail.narrative?.situation && (
+            <div className="codex-detail-section">
+              <h4>当 下</h4>
+              <p>{detail.narrative.situation}</p>
+            </div>
+          )}
+
+          {detail.choices?.[0]?.result?.echo && (
+            <div className="codex-detail-section">
+              <h4>结 局 演 绎</h4>
+              <pre className="codex-detail-echo">{detail.choices[0].result.echo}</pre>
+            </div>
+          )}
+
+          {!unlockedIds.has(detail.id) && (
+            <div className="codex-detail-hint">
+              达成该结局后可解锁时间戳与详细演绎。
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  ) : null
+
+  const node = (
+    <div className="ending-codex-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="ending-codex-modal">
         {/* 顶栏 */}
         <div className="codex-topbar">
           <div className="codex-title-area">
-            <div className="codex-title">📖 结 局 图 鉴</div>
+            <div className="codex-title">结 局 图 鉴</div>
             <div className="codex-subtitle">史 馆 藏 本</div>
           </div>
           <div className="codex-progress">
@@ -115,7 +184,7 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
             </div>
             <div className="codex-progress-label">已达成 {progressPercent}%</div>
           </div>
-          <button className="codex-close-btn" onClick={onClose}>×</button>
+          <button className="codex-close-btn" onClick={onClose}>关</button>
         </div>
 
         {/* 卷首 tab（8 大卷） */}
@@ -204,77 +273,9 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
       </div>
 
       {/* 详情弹窗 */}
-      {detail && (
-        <div
-          className="codex-detail-overlay"
-          onClick={(e) => {
-            e.stopPropagation()
-            setDetail(null)
-          }}
-        >
-          <div
-            className={`codex-detail-modal ${unlockedIds.has(detail.id) ? '' : 'locked'} ${TIER_TONE[detail.endingConfig?.tier || 'mysterious']}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button className="codex-detail-close" onClick={() => setDetail(null)} aria-label="关闭">×</button>
-            <div className="codex-detail-header">
-              <div className="codex-detail-tier-tag">
-                {TIER_LABEL[detail.endingConfig?.tier || ''] || '奇遇'}
-              </div>
-              <h3 className="codex-detail-title">{detail.title}</h3>
-              <div className="codex-detail-meta">
-                <span>ID: {detail.id}</span>
-                {unlockedIds.has(detail.id) ? (
-                  <span className="codex-detail-unlocked">✓ 已达成</span>
-                ) : (
-                  <span className="codex-detail-locked">未达成</span>
-                )}
-                {unlockedIds.has(detail.id) && unlockTimes[detail.id] && (
-                  <span>· {formatTime(unlockTimes[detail.id])}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="codex-detail-body">
-              {detail.narrative?.quote && (
-                <blockquote className="codex-detail-quote">
-                  「{detail.narrative.quote}」
-                  {detail.narrative.speaker && (
-                    <cite>—— {detail.narrative.speaker.title}·{detail.narrative.speaker.name}</cite>
-                  )}
-                </blockquote>
-              )}
-
-              {detail.narrative?.background && (
-                <div className="codex-detail-section">
-                  <h4>前 事</h4>
-                  <p>{detail.narrative.background}</p>
-                </div>
-              )}
-
-              {detail.narrative?.situation && (
-                <div className="codex-detail-section">
-                  <h4>当 下</h4>
-                  <p>{detail.narrative.situation}</p>
-                </div>
-              )}
-
-              {detail.choices?.[0]?.result?.echo && (
-                <div className="codex-detail-section">
-                  <h4>结 局 演 绎</h4>
-                  <pre className="codex-detail-echo">{detail.choices[0].result.echo}</pre>
-                </div>
-              )}
-
-              {!unlockedIds.has(detail.id) && (
-                <div className="codex-detail-hint">
-                  💡 达成该结局后可解锁时间戳与详细演绎。
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {detail && createPortal(detailNode, document.body)}
     </div>
   )
+
+  return createPortal(node, document.body)
 }

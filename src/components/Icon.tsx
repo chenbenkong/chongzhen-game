@@ -10,27 +10,27 @@ import { memo, CSSProperties } from 'react'
 
 export type IconName =
   // 通用
-  | 'scroll'      // 📜 卷轴
-  | 'check'       // ✓
-  | 'cross'       // ✗
-  | 'warning'     // ⚠️
-  | 'flower'      // ❀
-  | 'star'        // ★ 实心
-  | 'starOutline' // ☆ 空心
-  | 'shuffle'     // 🔀
-  | 'pin'         // 📌
-  | 'sparkle'     // ✦
-  | 'sparkleDim'  // ✧
+  | 'scroll'      // 卷轴
+  | 'check'       // 对勾
+  | 'cross'       // 叉号
+  | 'warning'     // 警告
+  | 'flower'      // 花
+  | 'star'        // 实心星
+  | 'starOutline' // 空心星
+  | 'shuffle'     // 交叉
+  | 'pin'         // 图钉
+  | 'sparkle'     // 四角星
+  | 'sparkleDim'  // 空心四角星
   // 人生时间线
-  | 'birth'       // 👶
-  | 'exam'        // 📜 考试
-  | 'promotion'   // 📈 升
-  | 'demotion'    // 📉 降
-  | 'document'    // 📋
-  | 'sword'       // ⚔️
-  | 'coffin'      // ⚰️
-  | 'marriage'    // 💑
-  | 'handshake'   // 🤝
+  | 'birth'       // 出生
+  | 'exam'        // 考试
+  | 'promotion'   // 升
+  | 'demotion'    // 降
+  | 'document'    // 公文
+  | 'sword'       // 剑
+  | 'coffin'      // 棺
+  | 'marriage'    // 婚姻
+  | 'handshake'   // 握手
 
 interface IconProps {
   name: IconName

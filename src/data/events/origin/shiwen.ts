@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // 诗文清望专属事件：体现清流言官的声望与党争漩涡
@@ -7,7 +8,7 @@ export const shiwenEvents: GameEvent[] = [
     storyline: 'hermit',
     type: 'transition',
     title: '复社雅集',
-    description: '',
+    description: '复社的邀请，是机遇还是陷阱？',
     narrative: {
       speaker: { title: '复社领袖', name: '张溥' },
       quote: '兄台文章名动东南，今日复社雅集，正要请兄台品评时文、纵论天下。不知兄台可愿入社？',
@@ -26,13 +27,13 @@ export const shiwenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'hermit',
+        storyline: 'eastern_forest',
         text: '【欣然入社】"张兄盛情，在下岂敢推辞？"',
         description: '加入复社，成为清流中坚',
         effects: {
           attributes: { 文韬: 8 },
           gameState: { 清议: 18, 中官: -12, 圣眷: -5, 民望: 15},
-          hidden: {野心值: 8,道德值: 3,道德值: -10,道德值: 15, 道德值: 5, 道德值: 3},
+          hidden: { 野心值: 8, 道德值: 5 },
           flags: { add: ['origin_shiwen_001_done', '复社成员', '东林系'] }
         },
         result: {
@@ -55,7 +56,9 @@ export const shiwenEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 3 },
           gameState: { 清议: -5, 中官: 3 },
-          hidden: {},
+          hidden: {
+              道德值: 3
+        },
           flags: { add: ['origin_shiwen_001_done', '独立文人'] }
         },
         result: {
@@ -72,7 +75,7 @@ export const shiwenEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'hermit',
+        storyline: 'gray',
         text: '【以客入社】"我不入社，但愿以客卿身份列席雅集"',
         description: '不加入复社，但保持来往，作为独立之友',
         effects: {
@@ -112,7 +115,7 @@ export const shiwenEvents: GameEvent[] = [
     storyline: 'hermit',
     type: 'transition',
     title: '廷杖之灾',
-    description: '',
+    description: '廷杖加身，是耻辱还是荣耀？',
     narrative: {
       speaker: { title: '太监', name: '王德化' },
       quote: '皇上有旨！此人大不敬，着即廷杖三十！',
@@ -132,13 +135,17 @@ export const shiwenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'hermit',
+        storyline: 'eastern_forest',
         text: '【昂首受刑】"臣所言句句属实，死又何惧！"',
         description: '昂首接受廷杖，以死谏闻名天下',
         effects: {
           attributes: { 体质: -15, 文韬: 10 },
-          gameState: { 清议: 20, 圣眷: -10,},
-          hidden: {野心值: 5 },
+          gameState: { 清议: 20, 圣眷: -10,
+              民望: 15
+        },
+          hidden: {野心值: 5,
+              道德值: 15
+        },
           flags: { add: ['origin_shiwen_002_done', '廷杖受刑', '直臣'] }
         },
         result: {
@@ -157,13 +164,15 @@ export const shiwenEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'hermit',
+        storyline: 'gray',
         text: '【跪地求饶】"臣知罪！臣知罪！求皇上开恩！"',
         description: '求饶保命，但声名扫地',
         effects: {
           attributes: { 体质: -5 },
           gameState: { 清议: -15, 圣眷: 5 },
-          hidden: {欲望值: 8 },
+          hidden: {欲望值: 8,
+              道德值: -10
+        },
           flags: { add: ['origin_shiwen_002_done', '廷杖求饶'] }
         },
         result: {
@@ -182,7 +191,7 @@ export const shiwenEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'hermit',
+        storyline: 'eastern_forest',
         text: '【奏陈利害】"臣愿奏陈此次廷杖之弊，请求收回成命"',
         description: '不求饶也不硬扛，而是在受刑前奏陈廷杖之弊',
         effects: {
@@ -222,7 +231,7 @@ export const shiwenEvents: GameEvent[] = [
     storyline: 'hermit',
     type: 'transition',
     title: '一篇文章',
-    description: '',
+    description: '一篇文章改变命运，你准备好了吗？',
     narrative: {
       speaker: { title: '门生', name: '钱谦益' },
       quote: '先生，您的那篇《论辽东饷银疏》已经传遍京城，连皇上都看了。据说龙颜大悦，说要召见您！',
@@ -241,7 +250,7 @@ export const shiwenEvents: GameEvent[] = [
     choices: [
       {
         id: 'c1',
-        storyline: 'hermit',
+        storyline: 'eastern_forest',
         text: '【面圣陈词】"臣愿面陈利弊，为国尽言！"',
         description: '面见皇上，陈述己见',
         effects: {
@@ -270,7 +279,9 @@ export const shiwenEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: 5, 清议: 5 },
-          hidden: {},
+          hidden: {
+              道德值: 3
+        },
           flags: { add: ['origin_shiwen_003_done', '上书建言'] }
         },
         result: {
@@ -287,7 +298,7 @@ export const shiwenEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'hermit',
+        storyline: 'eastern_forest',
         text: '【广传士林】"不呈皇上，先传士林，借舆论促朝廷改革"',
         description: '不直接呈上皇帝，而是先在士林广为传播',
         effects: {

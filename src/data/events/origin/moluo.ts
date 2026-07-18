@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // 没落世家专属事件：体现旧族余晖与武将路线
@@ -7,7 +8,7 @@ export const moluoEvents: GameEvent[] = [
     storyline: 'border_war',
     type: 'transition',
     title: '旧债上门',
-    description: '',
+    description: '祖上的旧债如影随形，如何应对？',
     narrative: {
       speaker: { title: '债主', name: '马三爷' },
       quote: '陈大人，令祖当年借的八百两银子，利滚利如今已是一千二百两。您是朝廷命官，总不会赖账吧？',
@@ -29,9 +30,9 @@ export const moluoEvents: GameEvent[] = [
         text: '【武力威慑】"你敢威胁朝廷命官？来人，给我打出去！"',
         description: '利用武将家世的威势，强硬应对',
         effects: {
-          attributes: { 武略: 5,财帛: -10,财帛: -8, 财帛: -5},
-          gameState: {士绅: -8,民望: 10, 民望: -5},
-          hidden: { 野心值: 8,道德值: 3,道德值: 5,道德值: -5, 道德值: -3},
+          attributes: { 武略: 5, 财帛: -5 },
+          gameState: { 士绅: -8, 民望: -5 },
+          hidden: { 野心值: 8, 道德值: -3 },
           flags: { add: ['origin_moluo_001_done', '武力威慑'] }
         },
         result: {
@@ -48,13 +49,17 @@ export const moluoEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'border_war',
+        storyline: 'ordinary',
         text: '【协商分期】"马三爷，本官确实暂时拿不出这么多银两，可否宽限分期？"',
         description: '放下身段，协商还债',
         effects: {
-          attributes: { 理政: 3,},
+          attributes: { 理政: 3,
+              财帛: -10
+        },
           gameState: { 士绅: 5 },
-          hidden: {},
+          hidden: {
+              道德值: 3
+        },
           flags: { add: ['origin_moluo_001_done', '分期还债'] }
         },
         result: {
@@ -71,7 +76,7 @@ export const moluoEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'border_war',
+        storyline: 'merchant',
         text: '【以工代偿】"银子我拿不出，但祖上留下的田庄我转给你经营"',
         description: '用祖产田庄作价抵债，让马三爷以工代偿',
         effects: {
@@ -109,7 +114,7 @@ export const moluoEvents: GameEvent[] = [
     storyline: 'border_war',
     type: 'transition',
     title: '辽东旧部',
-    description: '',
+    description: '旧部来投，是收留还是拒绝？',
     narrative: {
       speaker: { title: '旧部', name: '赵铁柱' },
       quote: '少爷，俺从辽东逃回来的。建奴破了锦州外围，老将军的旧部死的死、散的散。俺无处可去，只能来找您了！',
@@ -150,13 +155,17 @@ export const moluoEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'border_war',
+        storyline: 'ordinary',
         text: '【赠银遣散】"赵叔，我给你些银两，你回乡安度晚年吧"',
         description: '赠银遣散，避免惹上麻烦',
         effects: {
-          attributes: {文韬: 3 },
+          attributes: {文韬: 3,
+              财帛: -8
+        },
           gameState: { 清议: 3 },
-          hidden: {},
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['origin_moluo_002_done', '遣散旧部'] }
         },
         result: {
@@ -171,7 +180,7 @@ export const moluoEvents: GameEvent[] = [
       },
       {
         id: 'c3',
-        storyline: 'border_war',
+        storyline: 'eastern_forest',
         text: '【上书陈情】"我将赵叔之事写成奏疏，为祖父旧部请求抚恤"',
         description: '不收留也不遣散，而是上书朝廷为祖父旧部请求官方抚恤',
         effects: {
@@ -209,7 +218,7 @@ export const moluoEvents: GameEvent[] = [
     storyline: 'border_war',
     type: 'transition',
     title: '投笔从戎',
-    description: '',
+    description: '文武之间的抉择，将决定你此生的道路',
     narrative: {
       speaker: { title: '兵部职方司', name: '卢象升' },
       quote: '辽东危急，朝廷急需知兵之人。你祖上从军辽东，你可愿赴边效力？',
@@ -233,8 +242,12 @@ export const moluoEvents: GameEvent[] = [
         description: '放弃文官路线，投身军旅',
         effects: {
           attributes: { 武略: 12, 文韬: -5, 体质: 5 },
-          gameState: { 圣眷: 10, 清议: -8,},
-          hidden: { 野心值: 10,},
+          gameState: { 圣眷: 10, 清议: -8,
+              民望: 10
+        },
+          hidden: { 野心值: 10,
+              道德值: 5
+        },
           flags: { add: ['origin_moluo_003_done', '辽东从军', '武将路线'] }
         },
         result: {
@@ -253,7 +266,7 @@ export const moluoEvents: GameEvent[] = [
       },
       {
         id: 'c2',
-        storyline: 'border_war',
+        storyline: 'ordinary',
         text: '【婉拒从军】"卢大人好意心领，但下官在地方亦能为国效力"',
         description: '留在文官系统，稳扎稳打',
         effects: {

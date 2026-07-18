@@ -52,6 +52,7 @@ interface BuiltContext {
   timeOfDay: string              // 时辰
   playerDesc: string             // 玩家描述
   playerName: string
+  hometown: string
   rank: string
   title: string                  // 事件标题
   descSnippet: string            // 描述摘要
@@ -66,16 +67,6 @@ interface BuiltContext {
 
 // 工具：随机选一个
 const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]
-// 工具：随机选 N 个不重复
-const pickN = <T,>(arr: T[], n: number): T[] => {
-  const copy = [...arr]
-  const out: T[] = []
-  while (out.length < n && copy.length > 0) {
-    const idx = Math.floor(Math.random() * copy.length)
-    out.push(copy.splice(idx, 1)[0])
-  }
-  return out
-}
 
 /** 季节（按月分） */
 function getSeason(month: number): string {
@@ -86,7 +77,7 @@ function getSeason(month: number): string {
 }
 
 /** 时辰 */
-function getTimeOfDay(month: number): string {
+function getTimeOfDay(_month: number): string {
   // 早春晚秋偏冷，夏冬偏暖，随机抽一个
   return pick(['晨光初照', '日光正午', '午后斜阳', '黄昏时分', '夜幕降临', '月上柳梢', '夜深人静', '黎明将至'])
 }
@@ -117,6 +108,7 @@ function buildContext(input: EventPromptContext): BuiltContext {
     timeOfDay,
     playerDesc,
     playerName: input.playerName,
+    hometown: input.hometown || '',
     rank,
     title: input.currentEventTitle || '明末士子',
     descSnippet: getDescSnippet(input.currentEventDescription),

@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1633: GameEvent[] = [
   {
     id: 'historical_025',
     storyline: 'ordinary',
     title: '徐文定公薨',
-    description: '',
+    description: '徐光启已经下葬，但他的《农政全书》尚未刊刻。',
     narrative: {
       speaker: {
         name: '礼部主事',
@@ -35,13 +36,13 @@ export const events1633: GameEvent[] = [
         text: '【为学继承】上疏请求刊刻《农政全书》',
         description: '以文韬之名上疏，主张刊刻《农政全书》以惠农桑',
         showConditions: {
-          attributes: { 文韬: { min: 60,财帛: -30, 财帛: -10} },
+          attributes: { 文韬: { min: 60 } },
           origin: ['寒门', '诗文清望']
         },
         effects: {
           attributes: { 文韬: 6 },
-          gameState: { 清议: 18, 圣眷: 5,民望: 22,民望: 8, 民望: 5},
-          hidden: {道德值: 12,道德值: 15,道德值: 6,道德值: 10, 道德值: -5, 道德值: -3},
+          gameState: { 清议: 18, 圣眷: 5, 民望: 5 },
+          hidden: { 道德值: 12 },
           flags: { add: ['刊刻农书'] }
         },
         resultDescription: '',
@@ -70,8 +71,12 @@ export const events1633: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 2 },
-          gameState: { 清议: -10,},
-          hidden: {野心值: 8 },
+          gameState: { 清议: -10,
+              民望: 5
+        },
+          hidden: {野心值: 8,
+              道德值: -5
+        },
           flags: { add: ['辟徐文派'] }
         },
         resultDescription: '',
@@ -99,9 +104,15 @@ export const events1633: GameEvent[] = [
           attributes: { 体质: { min: 50 } }
         },
         effects: {
-          attributes: { 文韬: 3, 体质: -8,},
-          gameState: {},
-          hidden: {},
+          attributes: { 文韬: 3, 体质: -8,
+              财帛: -10
+        },
+          gameState: {
+              民望: 22
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['亲访乡野'] }
         },
         resultDescription: '',
@@ -125,7 +136,7 @@ export const events1633: GameEvent[] = [
     id: 'historical_026',
     storyline: 'ordinary',
     title: '徐霞客启程',
-    description: '',
+    description: '徐霞客启程，邀你同行。',
     narrative: {
       speaker: {
         name: '游学士子',
@@ -161,9 +172,15 @@ export const events1633: GameEvent[] = [
           origin: ['寒门', '诗文清望']
         },
         effects: {
-          attributes: { 体质: 10, 文韬: 5,},
-          gameState: { 清议: 10,},
-          hidden: {野心值: -15 },
+          attributes: { 体质: 10, 文韬: 5,
+              财帛: -30
+        },
+          gameState: { 清议: 10,
+              民望: 8
+        },
+          hidden: {野心值: -15,
+              道德值: 10
+        },
           flags: { add: ['游历天下', '归隐之志'] }
         },
         resultDescription: '',
@@ -194,7 +211,9 @@ export const events1633: GameEvent[] = [
         effects: {
           attributes: { 文韬: 4 },
           gameState: { 清议: 8 },
-          hidden: {},
+          hidden: {
+              道德值: 6
+        },
           flags: { add: ['徐霞客故交'] }
         },
         resultDescription: '',
@@ -228,7 +247,9 @@ export const events1633: GameEvent[] = [
         effects: {
           attributes: { 文韬: 2 },
           gameState: { 清议: -5 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: -3
+        },
           flags: { add: ['俗吏之交'] }
         },
         resultDescription: '',

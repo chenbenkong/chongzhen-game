@@ -68,20 +68,20 @@ const HistoryCard = memo(function HistoryCard({
   onClick: () => void
   onDelete: (e: React.MouseEvent) => void
 }) {
-  const src = item.url || (item.b64Json ? `data:image/png;base64,${item.b64Json}` : '')
+  const src = item.url || ''
   return (
     <div className="ig-history-card">
       <div className="ig-history-card-img" onClick={onClick} title="点击查看">
         <img src={src} alt="生成结果" loading="lazy" />
       </div>
       {item.eventTitle && (
-        <div className="ig-history-card-event" title={item.eventTitle}>📜 {item.eventTitle}</div>
+        <div className="ig-history-card-event" title={item.eventTitle}>{item.eventTitle}</div>
       )}
       <div className="ig-history-meta">
         <span className="ig-history-ratio">{item.ratio}</span>
         <span className="ig-history-time">{new Date(item.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span>
       </div>
-      <button className="ig-history-delete" onClick={onDelete} title="删除此画">✕</button>
+      <button className="ig-history-delete" onClick={onDelete} title="删除此画">删</button>
     </div>
   )
 })
@@ -135,12 +135,12 @@ function ImageViewer({
       <div className="ig-viewer-panel">
         <div className="ig-viewer-header">
           <div className="ig-viewer-title">
-            {eventTitle && <span className="ig-viewer-event">📜 {eventTitle}</span>}
+            {eventTitle && <span className="ig-viewer-event">{eventTitle}</span>}
             <span className="ig-viewer-prompt">{prompt.slice(0, 60)}{prompt.length > 60 ? '…' : ''}</span>
           </div>
           <div className="ig-viewer-actions">
-            <button className="ig-viewer-btn" onClick={(e) => { e.stopPropagation(); onDownload() }}>↓ 保存</button>
-            <button className="ig-viewer-btn close" onClick={(e) => { e.stopPropagation(); handleClose() }}>✕ 关闭 (Esc)</button>
+            <button className="ig-viewer-btn" onClick={(e) => { e.stopPropagation(); onDownload() }}>存 保存</button>
+            <button className="ig-viewer-btn close" onClick={(e) => { e.stopPropagation(); handleClose() }}>关闭 (Esc)</button>
           </div>
         </div>
         <div className="ig-viewer-image-wrap" onClick={(e) => e.stopPropagation()}>
@@ -152,7 +152,7 @@ function ImageViewer({
           )}
           {imgError ? (
             <div className="ig-viewer-error">
-              <div className="ig-viewer-error-icon">⚠</div>
+              <div className="ig-viewer-error-icon"></div>
               <div>图片加载失败</div>
               <div className="ig-viewer-error-url">{src.slice(0, 60)}…</div>
               <button className="ig-viewer-btn" onClick={onDownload}>下载源文件</button>
@@ -260,7 +260,6 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
       portrait: `${era}，${name}${courtesy}，${context.age}岁，${context.origin}出身，${context.degree}功名，明代官员装束（乌纱帽、圆领袍、束带、笏板），端坐于书房或衙署内，神情${context.degree === '进士' ? '儒雅自信' : '沉稳内敛'}，精细面部刻画，明代服饰花纹细节`,
       court: `${era}，紫禁城朝会场景，文武百官列队于太和殿前，崇祯帝高坐龙椅，宦官执拂尘侍立，日光穿透云层，气势恢宏，明代宫廷建筑细节，飞檐斗拱，琉璃瓦当`,
       street: `${era}，${context.hometown || '江南'}城郭街市，商贩叫卖，行人往来，客栈茶楼林立，远处城墙巍峨，街角有告示榜与算命摊，明代市井生活百态，黄昏暖光，烟火气十足`,
-      event: ''  // unreachable
     }
     return { prompt: map[kind] }
   }, [context])
@@ -346,7 +345,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
         const msg = err instanceof Error ? err.message : '生成失败'
         let display = msg
         if (msg.includes('(401)') || msg.includes('(403)')) {
-          display = 'API Key 无效或已过期，请点击右上角 ⚙ 重新设置（"谋士"中可设置）'
+          display = 'API Key 无效或已过期，请在"谋士"中重新设置'
         } else if (msg.includes('(429)')) {
           display = '请求过于频繁，请稍候片刻'
         } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
@@ -375,7 +374,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
 
   const handleDownload = useCallback(() => {
     if (!current) return
-    const src = current.url || (current.b64Json ? `data:image/png;base64,${current.b64Json}` : '')
+    const src = current.url || ''
     if (!src) return
     const a = document.createElement('a')
     a.href = src
@@ -392,7 +391,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
   }, [])
 
   const openViewer = useCallback((item: SavedImage) => {
-    const src = item.url || (item.b64Json ? `data:image/png;base64,${item.b64Json}` : '')
+    const src = item.url || ''
     if (!src) return
     setViewerSrc({ src, prompt: item.userPrompt, eventTitle: item.eventTitle })
   }, [])
@@ -403,7 +402,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
     const ok = await confirm({
       title: '焚毁此画',
       message: '确定要焚毁此卷吗？此操作不可恢复。',
-      detail: item.eventTitle ? `📜 关联事件：${item.eventTitle}` : (item.userPrompt.slice(0, 60) + (item.userPrompt.length > 60 ? '…' : '')),
+      detail: item.eventTitle ? `关联事件：${item.eventTitle}` : (item.userPrompt.slice(0, 60) + (item.userPrompt.length > 60 ? '…' : '')),
       warning: '焚毁后无法复原',
       confirmText: '焚毁',
       cancelText: '保留'
@@ -430,11 +429,9 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
 
   if (!isOpen) return null
 
-  const currentSrc = current
-    ? (current.url || (current.b64Json ? `data:image/png;base64,${current.b64Json}` : ''))
-    : ''
+  const currentSrc = current?.url || ''
 
-  return (
+  const node = (
     <div className="ig-overlay" onClick={onClose}>
       <div className="ig-panel" onClick={e => e.stopPropagation()}>
         <div className="ig-header">
@@ -457,7 +454,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
             </button>
           </div>
           <div className="ig-header-actions">
-            <button className="ig-header-btn" onClick={onClose} title="关闭">✕</button>
+            <button className="ig-header-btn" onClick={onClose} title="关闭">关</button>
           </div>
         </div>
 
@@ -548,7 +545,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
                       onClick={handleGenerate}
                       disabled={!prompt.trim()}
                     >
-                      <span className="ig-generate-icon">✦</span>
+                      <span className="ig-generate-icon"></span>
                       <span>落笔生花</span>
                     </button>
                   )}
@@ -574,14 +571,14 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
                       <div className="ig-result-zoom-hint">点击放大</div>
                     </div>
                     {current.eventTitle && (
-                      <div className="ig-result-event-tag">📜 {current.eventTitle}</div>
+                      <div className="ig-result-event-tag">{current.eventTitle}</div>
                     )}
                     <div className="ig-result-actions">
                       <button className="ig-result-btn" onClick={handleRedo} disabled={!prompt.trim()}>
-                        <span>↻</span> 重画一张
+                        <span>重</span> 重画一张
                       </button>
                       <button className="ig-result-btn primary" onClick={handleDownload}>
-                        <span>↓</span> 保存到本地
+                        <span>存</span> 保存到本地
                       </button>
                     </div>
                   </div>
@@ -611,7 +608,7 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
                   </div>
                   <div className="ig-recent-row">
                     {gallery.slice(0, 4).map(item => {
-                      const src = item.url || (item.b64Json ? `data:image/png;base64,${item.b64Json}` : '')
+                      const src = item.url || ''
                       return (
                         <div key={item.id} className="ig-recent-card" onClick={() => recallFromHistory(item)} title={item.userPrompt}>
                           <img src={src} alt="存档" loading="lazy" decoding="async" />
@@ -680,4 +677,6 @@ export default function ImageGenerator({ isOpen, onClose, context }: ImageGenera
       </div>
     </div>
   )
+
+  return createPortal(node, document.body)
 }

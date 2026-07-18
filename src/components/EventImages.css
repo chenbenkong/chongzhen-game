@@ -22,6 +22,12 @@
   letter-spacing: 2px;
 }
 
+.ei-title::before {
+  content: '卷';
+  margin-right: 5px;
+  color: #c9a227;
+}
+
 .ei-count {
   font-size: 0.7rem;
   color: #6b5a3a;
@@ -134,7 +140,7 @@
   border: 1px solid #2a2015;
   border-radius: 3px;
   color: #c97070;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.15s;
@@ -188,11 +194,16 @@
   border: 1px solid #5a4020;
   border-radius: 4px;
   color: #c9a227;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.ei-viewer-close::before {
+  content: '关';
+  font-family: 'Ma Shan Zheng', serif;
 }
 
 .ei-viewer-close:hover {

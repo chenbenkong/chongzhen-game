@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   getAllAchievements,
   Achievement,
@@ -60,15 +61,17 @@ export default function AchievementPanel({ isOpen, onClose }: AchievementPanelPr
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
   }
 
-  return (
-    <div className={`achievement-panel-overlay ${isOpen ? 'visible' : ''}`} onClick={onClose}>
+  if (!isOpen) return null
+
+  const node = (
+    <div className="achievement-panel-overlay visible" onClick={onClose}>
       <div className="achievement-panel" onClick={e => e.stopPropagation()}>
         <div className="achievement-panel-header">
-          <h2>🏆 成就系统</h2>
+          <h2>成就系统</h2>
           <div className="achievement-stats">
             已解锁: <span className="highlight">{unlockedCount}/{totalCount}</span>
           </div>
-          <button className="close-button" onClick={onClose}>✕</button>
+          <button className="close-button" onClick={onClose} aria-label="关闭">关</button>
         </div>
 
         <div className="achievement-filters">
@@ -102,7 +105,7 @@ export default function AchievementPanel({ isOpen, onClose }: AchievementPanelPr
                     key={achievement.id}
                     className={`achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'}`}
                   >
-                    <div className="card-icon">{achievement.icon}</div>
+                    <div className="card-icon" aria-hidden="true">{achievement.icon}</div>
                     <div className="card-content">
                       <div className="card-name">{achievement.name}</div>
                       <div className="card-description">{achievement.description}</div>
@@ -112,7 +115,7 @@ export default function AchievementPanel({ isOpen, onClose }: AchievementPanelPr
                         </div>
                       )}
                       {!achievement.unlocked && (
-                        <div className="card-locked">🔒 未解锁</div>
+                        <div className="card-locked">未解锁</div>
                       )}
                     </div>
                   </div>
@@ -130,4 +133,6 @@ export default function AchievementPanel({ isOpen, onClose }: AchievementPanelPr
       </div>
     </div>
   )
+
+  return createPortal(node, document.body)
 }

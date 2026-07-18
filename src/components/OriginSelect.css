@@ -147,6 +147,10 @@
   margin-bottom: 14px;
 }
 
+.features {
+  margin-bottom: 12px;
+}
+
 .attributes h4,
 .features h4 {
   color: #8b7540;
@@ -154,6 +158,35 @@
   font-size: 0.88rem;
   letter-spacing: 2.5px;
   font-weight: normal;
+}
+
+.features ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style-type: '· ';
+}
+
+.features li {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: #7a6a50;
+  margin-bottom: 4px;
+  padding-left: 4px;
+}
+
+.play-style {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #a08850;
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  background: rgba(139, 105, 20, 0.08);
+  border-left: 2px solid #6b5520;
+  border-radius: 0 3px 3px 0;
+}
+
+.play-style strong {
+  color: #c9a227;
 }
 
 .attr-row {

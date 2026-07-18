@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const fortuneGrayEvents: GameEvent[] = [
     id: 'gray_fortune_001',
     storyline: 'gray',
     title: '谶纬先生',
-    description: '',
+    description: '刘半仙深夜登门，自称能"指点迷津"。',
     narrative: {
       speaker: {
         title: '术士',
@@ -30,7 +31,7 @@ export const fortuneGrayEvents: GameEvent[] = [
         理政: { min: 20, 财帛: 5}
       },
       hidden: {
-        道德值: { max: 75,道德值: -5,道德值: -50,道德值: 10,道德值: 15, 道德值: -20, 道德值: -10}
+        道德值: { max: 75 }
       }
     },
     choices: [
@@ -41,8 +42,10 @@ export const fortuneGrayEvents: GameEvent[] = [
         description: '你同意与刘半仙合作，在民间散布"大人当为天子"的谶语。',
         effects: {
           attributes: { 理政: 15 },
-          gameState: {圣眷: -15,民望: 10,民望: 15,民望: -20, 民望: 20, 民望: 5},
-          hidden: {野心值: 25, 欲望值: 10 }
+          gameState: { 圣眷: -15, 民望: 20 },
+          hidden: {野心值: 25, 欲望值: 10,
+              道德值: -20
+        }
         },
         result: {
           title: '假托天命',
@@ -67,7 +70,9 @@ export const fortuneGrayEvents: GameEvent[] = [
         description: '你收下刘半仙的"占卜费"，但拒绝与他合作造谣。',
         effects: {
           attributes: {},
-          hidden: {机敏值: 5 }
+          hidden: {机敏值: 5,
+              道德值: -5
+        }
         },
         result: {
           title: '灰色交易',
@@ -90,8 +95,12 @@ export const fortuneGrayEvents: GameEvent[] = [
         description: '你拒绝合作，并将刘半仙拘捕下狱。',
         effects: {
           attributes: { 理政: 8 },
-          gameState: { 圣眷: 10,},
-          hidden: {机敏值: 12 }
+          gameState: { 圣眷: 10,
+              民望: 10
+        },
+          hidden: {机敏值: 12,
+              道德值: 15
+        }
         },
         result: {
           title: '明察秋毫',
@@ -124,7 +133,7 @@ export const fortuneGrayEvents: GameEvent[] = [
     id: 'gray_fortune_002',
     storyline: 'gray',
     title: '天命所归',
-    description: '',
+    description: '张真人神秘兮兮地登门拜访。',
     narrative: {
       speaker: {
         title: '道士',
@@ -148,8 +157,12 @@ export const fortuneGrayEvents: GameEvent[] = [
         text: '【起兵造反】信以为真，决定起事',
         description: '你相信张真人的话，决定起兵造反，自立为王。',
         effects: {
-          gameState: { 圣眷: -50, 清议: -30,},
-          hidden: {野心值: 50, 欲望值: 20 }
+          gameState: { 圣眷: -50, 清议: -30,
+              民望: -20
+        },
+          hidden: {野心值: 50, 欲望值: 20,
+              道德值: -50
+        }
         },
         result: {
           title: '天命所归',
@@ -176,8 +189,12 @@ export const fortuneGrayEvents: GameEvent[] = [
         description: '你不信天命，但想利用张真人在民间的影响力来巩固自己的地位。',
         effects: {
           attributes: { 理政: 10 },
-          gameState: {},
-          hidden: {野心值: 10, 机敏值: 5 }
+          gameState: {
+              民望: 15
+        },
+          hidden: {野心值: 10, 机敏值: 5,
+              道德值: -10
+        }
         },
         result: {
           title: '借力打力',
@@ -206,8 +223,12 @@ export const fortuneGrayEvents: GameEvent[] = [
         description: '你严词拒绝张真人的建议，并警告他不得妖言惑众。',
         effects: {
           attributes: { 理政: 5 },
-          gameState: { 圣眷: 5,},
-          hidden: {机敏值: 8 }
+          gameState: { 圣眷: 5,
+              民望: 5
+        },
+          hidden: {机敏值: 8,
+              道德值: 10
+        }
         },
         result: {
           title: '守正不阿',

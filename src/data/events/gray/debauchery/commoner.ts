@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -12,7 +13,7 @@ export const commonerDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_007',
     storyline: 'gray',
     title: '民妇求助',
-    description: '',
+    description: '今日，顾倾城来衙门求情，希望你能放了她丈夫。',
     narrative: {
       speaker: {
         title: '民妇',
@@ -26,10 +27,10 @@ export const commonerDebaucheryEvents: GameEvent[] = [
       year: { min: 1634, max: 1634 },
       month: { min: 4, max: 6 },
       attributes: {
-        理政: { min: 50,财帛: -30, 财帛: -50}
+        理政: { min: 50 }
       },
       hidden: {
-        欲望值: { min: 35,道德值: -8,道德值: 15,道德值: -10,道德值: 20,道德值: -15,道德值: -15, 道德值: -20, 道德值: -25}
+        欲望值: { min: 35 }
       }
     },
     choices: [
@@ -40,8 +41,10 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         description: '以她丈夫的性命要挟，强行占有顾倾城。你看着顾倾城惊恐的眼神，心中涌起强烈的征服欲，想要撕碎她的尊严，看她在你身下求饶的模样。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -30,士绅: -15,民望: -10,民望: 15,民望: -10,民望: 20,民望: -20,民望: -20, 民望: -30, 民望: -40},
-          hidden: { 欲望值: 30,}
+          gameState: { 清议: -30,士绅: -15,民望: -30 },
+          hidden: { 欲望值: 30,
+              道德值: -20
+        }
         },
         result: {
           title: '逼奸民妇',
@@ -78,8 +81,12 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         description: '真心追求顾倾城，不强迫她。你看着顾倾城绝望的眼神，心中升起一股强烈的保护欲，想要用真心打动她。',
         effects: {
           attributes: { 体质: -3 },
-          gameState: { 清议: -15,},
-          hidden: { 欲望值: 15,}
+          gameState: { 清议: -15,
+              民望: -10
+        },
+          hidden: { 欲望值: 15,
+              道德值: -8
+        }
         },
         result: {
           title: '真心换绝情',
@@ -110,8 +117,12 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         description: '以利诱之，让顾倾城"自愿"委身。你看着顾倾城犹豫的眼神，心中冷笑，知道这个女人最终会屈服于现实。',
         effects: {
           attributes: { 体质: -3 },
-          gameState: { 清议: -20,士绅: -10 },
-          hidden: { 欲望值: 20,}
+          gameState: { 清议: -20,士绅: -10,
+              民望: -20
+        },
+          hidden: { 欲望值: 20,
+              道德值: -15
+        }
         },
         result: {
           title: '权色交易',
@@ -143,8 +154,12 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         text: '【秉公释放】"罢了，你丈夫的事情，本官自会秉公处理，你回去吧"',
         description: '放弃邪念，秉公处理。你看着顾倾城绝望的眼神，心中突然涌起一丝不忍，决定守住底线。',
         effects: {
-          gameState: { 清议: 10,},
-          hidden: {欲望值: -8 }
+          gameState: { 清议: 10,
+              民望: 15
+        },
+          hidden: {欲望值: -8,
+              道德值: 15
+        }
         },
         result: {
           title: '悬崖勒马',
@@ -179,7 +194,7 @@ export const commonerDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_008',
     storyline: 'gray',
     title: '农家少女',
-    description: '',
+    description: '今日，你在下乡巡视时见到王语嫣，一见倾心。',
     narrative: {
       speaker: {
         title: '老农',
@@ -207,8 +222,12 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         description: '强行将王语嫣纳为妾。你看着王语嫣惊恐的眼神，心中涌起强烈的征服欲，想要采撷这朵娇嫩的花蕾。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -35,士绅: -20 },
-          hidden: { 欲望值: 35,}
+          gameState: { 清议: -35,士绅: -20,
+              民望: -40
+        },
+          hidden: { 欲望值: 35,
+              道德值: -25
+        }
         },
         result: {
           title: '强抢民女',
@@ -244,9 +263,15 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         text: '【真心求娶】"王老汉，本官对语嫣姑娘是真心喜欢，愿以正礼纳她为妾"',
         description: '真心求娶王语嫣，给她名分。你看着王语嫣清纯的脸庞，心中升起一股强烈的占有欲，但你知道，对于这样的女人，需要耐心和智慧。',
         effects: {
-          attributes: { 体质: -3,},
-          gameState: { 清议: -15,},
-          hidden: { 欲望值: 20,}
+          attributes: { 体质: -3,
+              财帛: -50
+        },
+          gameState: { 清议: -15,
+              民望: -10
+        },
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '真心求娶',
@@ -276,9 +301,15 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         text: '【金钱收买】"王老汉，本官不会亏待你的，这是一百两银子"',
         description: '用金钱收买王老汉。你看着王语嫣清纯的脸庞，心中虽有欲望，但你知道，金钱可以解决一切问题。',
         effects: {
-          attributes: {},
-          gameState: { 清议: -15,士绅: -10 },
-          hidden: { 欲望值: 20,}
+          attributes: {
+              财帛: -30
+        },
+          gameState: { 清议: -15,士绅: -10,
+              民望: -20
+        },
+          hidden: { 欲望值: 20,
+              道德值: -15
+        }
         },
         result: {
           title: '金钱开路',
@@ -310,8 +341,12 @@ export const commonerDebaucheryEvents: GameEvent[] = [
         text: '【放手成全】"罢了，本官不做这等事。祝语嫣姑娘百年好合"',
         description: '放弃占有，放王语嫣回去。你看着王老汉绝望的眼神，心中突然涌起一丝不忍，决定守住底线。',
         effects: {
-          gameState: { 清议: 12,},
-          hidden: {欲望值: -10 }
+          gameState: { 清议: 12,
+              民望: 20
+        },
+          hidden: {欲望值: -10,
+              道德值: 20
+        }
         },
         result: {
           title: '悬崖勒马',

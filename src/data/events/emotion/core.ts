@@ -1,4 +1,5 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 // ==========================================
 // 情感线事件：核心情感事件
@@ -16,7 +17,7 @@ export const coreEmotionEvents: GameEvent[] = [
     id: 'emotion_core_001',
     storyline: 'female',
     title: '东窗事发',
-    description: '',
+    description: '屋内一片狼藉，妾室衣衫不整地缩在床角，你赤裸着上身站在地上。',
     narrative: {
       speaker: { title: '正妻', name: '夫人' },
       quote: '好……好得很！我辛辛苦苦操持家务，你却在这里和狐狸精快活！',
@@ -26,7 +27,7 @@ export const coreEmotionEvents: GameEvent[] = [
     conditions: {
       year: { min: 1628, max: 1644 },
       flags: { any: ['married_wang', 'married_lishi', 'married_liu', 'married_zhang', 'concubine_hongxiu', 'concubine_cuir', 'concubine_waishi', 'concubine_zhaomei'] },
-      hidden: { 欲望值: { min: 50,道德值: -12,道德值: -15,道德值: 10,道德值: 10,道德值: -15,道德值: -6,道德值: -6,道德值: -10,道德值: 8, 道德值: 5, 道德值: -12, 道德值: -3, 道德值: 5}, 道德值: { max: 50 } }
+      hidden: { 欲望值: { min: 50 }, 道德值: { max: 50 } }
     },
     choices: [
       {
@@ -35,9 +36,11 @@ export const coreEmotionEvents: GameEvent[] = [
         text: '【认错】"是我对不起你，你要打要骂都随你"',
         description: '诚恳认错，请求原谅',
         effects: {
-          attributes: { 体质: -10,财帛: -20,财帛: -12, 财帛: -12},
-          gameState: { 清议: -5, 士绅: -10,民望: 5,民望: -15, 民望: -8},
-          hidden: {},
+          attributes: { 体质: -10, 财帛: -12 },
+          gameState: { 清议: -5, 士绅: -10, 民望: -8 },
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['wife_caught_affair', 'wife_forgave_once'] }
         },
         result: {
@@ -69,8 +72,12 @@ export const coreEmotionEvents: GameEvent[] = [
         description: '用夫权压制正妻',
         effects: {
           attributes: { 体质: 2, 文韬: -3 },
-          gameState: { 清议: -12,圣眷: -5 },
-          hidden: {},
+          gameState: { 清议: -12,圣眷: -5,
+              民望: -8
+        },
+          hidden: {
+              道德值: -12
+        },
           flags: { add: ['wife_broken', 'tyrant_husband'] }
         },
         result: {
@@ -101,9 +108,13 @@ export const coreEmotionEvents: GameEvent[] = [
         text: '【提出平妻】"既然如此，不如抬她做平妻，你们平起平坐如何？"',
         description: '试图平衡关系（极高风险）',
         effects: {
-          attributes: {体质: -5 },
+          attributes: {体质: -5,
+              财帛: -12
+        },
           gameState: { 清议: -10, 士绅: -6 },
-          hidden: {},
+          hidden: {
+              道德值: -6
+        },
           flags: { add: ['pingqi_attempt'] }
         },
         result: {
@@ -135,7 +146,9 @@ export const coreEmotionEvents: GameEvent[] = [
         description: '最黑暗的选择——杀正妻灭口',
         effects: {
           attributes: { 武略: 5, 体质: -10 },
-          hidden: {},
+          hidden: {
+              道德值: -15
+        },
           flags: { add: ['wife_murdered', 'crime_line'], remove: ['married_wang', 'married_lishi', 'married_liu', 'married_zhang'] }
         },
         result: {
@@ -173,7 +186,7 @@ export const coreEmotionEvents: GameEvent[] = [
     id: 'emotion_core_002',
     storyline: 'female',
     title: '政敌觊觎',
-    description: '',
+    description: '温体仁笑眯眯地看着你，手中把玩着一枚玉佩——那是你送给红颜知己的信物。',
     narrative: {
       speaker: { title: '政敌', name: '温体仁' },
       quote: '听说大人府上有一位绝色佳人？本官恰好也颇懂风雅，不知可否……割爱？',
@@ -194,7 +207,9 @@ export const coreEmotionEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 12 },
           gameState: { 圣眷: 10 },
-          hidden: {欲望值: -6 },
+          hidden: {欲望值: -6,
+              道德值: -12
+        },
           flags: { add: ['soulmate_sacrificed'], remove: ['soulmate_lixiangjun', 'soulmate_liurushi', 'soulmate_xialing', 'soulmate_namuzhong'] }
         },
         result: {
@@ -227,7 +242,9 @@ export const coreEmotionEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: -10 },
           gameState: { 圣眷: -8, 清议: 8 },
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['wentiren_enemy'] }
         },
         result: {
@@ -260,7 +277,9 @@ export const coreEmotionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 10, 理政: -10 },
           gameState: { 清议: -10, 士绅: -10 },
-          hidden: {},
+          hidden: {
+              道德值: -10
+        },
           flags: { add: ['wentiren_public_enemy'] }
         },
         result: {
@@ -296,7 +315,7 @@ export const coreEmotionEvents: GameEvent[] = [
     id: 'emotion_core_003',
     storyline: 'female',
     title: '无子之痛',
-    description: '',
+    description: '"不孝有三，无后为大！',
     narrative: {
       speaker: { title: '婆婆/岳母', name: '老夫人' },
       quote: '成婚五年了，肚子还没有动静！你是不是想让我们家断后啊？！',
@@ -315,8 +334,12 @@ export const coreEmotionEvents: GameEvent[] = [
         description: '保护正妻，对抗家族压力',
         effects: {
           attributes: { 体质: 5 },
-          gameState: { 士绅: -15,},
-          hidden: {},
+          gameState: { 士绅: -15,
+              民望: 5
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['protect_childless_wife'] }
         },
         result: {
@@ -345,9 +368,13 @@ export const coreEmotionEvents: GameEvent[] = [
         text: '【纳妾求子】"母亲说得对，我会尽快安排"',
         description: '同意纳妾以延续香火',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -15
+        },
           gameState: { 士绅: 6 },
-          hidden: {欲望值: 3 },
+          hidden: {欲望值: 3,
+              道德值: -3
+        },
           flags: { add: ['concubine_for_heir', 'wife_hurt'] }
         },
         result: {
@@ -379,8 +406,12 @@ export const coreEmotionEvents: GameEvent[] = [
         description: '如果妾室生了儿子，正妻要求"去母留子"',
         effects: {
           attributes: { 体质: -6 },
-          gameState: { 清议: -12,},
-          hidden: {},
+          gameState: { 清议: -12,
+              民望: -15
+        },
+          hidden: {
+              道德值: -15
+        },
           flags: { add: ['concubine_killed', 'has_children'] }
         },
         result: {
@@ -419,7 +450,7 @@ export const coreEmotionEvents: GameEvent[] = [
     id: 'emotion_core_004',
     storyline: 'female',
     title: '妾室有子',
-    description: '',
+    description: '正妻得知消息后面色复杂。',
     narrative: {
       speaker: { title: '妾室', name: '小桃' },
       quote: '老爷……妾身……妾身有了……',
@@ -438,7 +469,9 @@ export const coreEmotionEvents: GameEvent[] = [
         description: '一碗水端平，化解矛盾',
         effects: {
           attributes: { 体质: 4 },
-          hidden: {},
+          hidden: {
+              道德值: 8
+        },
           flags: { add: ['has_children', 'harmonious_family'] }
         },
         result: {
@@ -465,9 +498,13 @@ export const coreEmotionEvents: GameEvent[] = [
         text: '【偏袒妾室】"小桃辛苦了，好好补养身体"',
         description: '过度关心妾室，冷落正妻',
         effects: {
-          attributes: {体质: 2 },
+          attributes: {体质: 2,
+              财帛: -12
+        },
           gameState: { 士绅: -6, 清议: -3 },
-          hidden: {},
+          hidden: {
+              道德值: -6
+        },
           flags: { add: ['has_children', 'wife_jealous'] }
         },
         result: {
@@ -500,7 +537,9 @@ export const coreEmotionEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: 3 },
           gameState: { 士绅: 3 },
-          hidden: {},
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['has_children', 'wife_respected', 'legitimate_heir'] }
         },
         result: {

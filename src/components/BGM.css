@@ -52,6 +52,25 @@
 }
 
 .bgm-icon { font-size: 0.9rem; line-height: 1; }
+.bgm-icon::before {
+  display: inline-block;
+  font-family: 'Ma Shan Zheng', serif;
+}
+.bgm-icon.is-on::before { content: '乐'; }
+.bgm-icon.is-off::before { content: '静'; }
+.bgm-icon.is-error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background: rgba(201, 32, 32, 0.2);
+  color: #ff4040;
+  font-weight: 900;
+  line-height: 1;
+}
 .bgm-label { font-size: 0.75rem; }
 
 .bgm-toggle.is-error {

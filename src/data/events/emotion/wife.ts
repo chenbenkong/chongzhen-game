@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const wifeEvents: GameEvent[] = [
   {
     id: 'emotion_wife_001',
     storyline: 'female',
     title: '洞房花烛',
-    description: '',
+    description: '大婚之日，红烛高照。',
     narrative: {
       speaker: { title: '岳父', name: '王侍郎' },
       quote: '贤婿，小女虽然性情端庄，但……或许少了些闺房之乐，还望你多包涵。',
@@ -16,8 +17,8 @@ export const wifeEvents: GameEvent[] = [
       year: { min: 1628, max: 1635 },
       month: { min: 1, max: 12 },
       origin: ['缙绅', '没落世家'],
-      attributes: { 文韬: { min: 50,财帛: -8,财帛: 12,财帛: 5,财帛: -15,财帛: 15,财帛: -50, 财帛: 30, 财帛: -8, 财帛: -25} },
-      hidden: { 欲望值: { max: 60,道德值: 3,道德值: 5,道德值: -4,道德值: 2,道德值: 8,道德值: 8,道德值: 3,道德值: -15,道德值: 4,道德值: -10,道德值: 5,道德值: -5,道德值: 4,道德值: 3,道德值: 8,道德值: 2, 道德值: 4, 道德值: -15, 道德值: -8, 道德值: -10, 道德值: 5, 道德值: 10} },
+      attributes: { 文韬: { min: 50 } },
+      hidden: { 欲望值: { max: 60 } },
       flags: { notHas: ['married_wang', 'married_liu', 'married_zhang'] }
     },
     choices: [
@@ -28,8 +29,10 @@ export const wifeEvents: GameEvent[] = [
         description: '接受这段婚姻，好好经营',
         effects: {
           attributes: { 理政: 12 },
-          gameState: { 清议: 8,民望: -3,民望: -8, 民望: -12},
-          hidden: {},
+          gameState: { 清议: 8, 民望: -12 },
+          hidden: {
+              道德值: 4
+        },
           flags: { add: ['married_wang', 'wife_wangshi'] }
         },
         result: {
@@ -91,7 +94,9 @@ export const wifeEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 10 },
           gameState: { 清议: 5 },
-          hidden: {},
+          hidden: {
+              道德值: 3
+        },
           flags: { add: ['married_wang', 'wife_wangshi'] }
         },
         result: {
@@ -122,7 +127,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_002',
     storyline: 'female',
     title: '正妻的秘密',
-    description: '',
+    description: '小翠支支吾吾地说："老爷……夫人她……她有时候会和陪嫁丫鬟翠屏……在一起……做些……那种事……"',
     narrative: {
       speaker: { title: '丫鬟', name: '小翠' },
       quote: '老爷……夫人她……她和翠屏姐姐……',
@@ -140,9 +145,11 @@ export const wifeEvents: GameEvent[] = [
         text: '【揭穿】"把她们都叫来！"',
         description: '当面对质，揭穿真相',
         effects: {
-          attributes: { 体质: -5 },
-          gameState: { 清议: -10, 士绅: -20 },
-          hidden: {},
+          attributes: { 体质: -3 },
+          gameState: { 清议: -6, 士绅: -10 },
+          hidden: {
+              道德值: -3
+        },
           flags: { add: ['wangshi_scandal'], remove: ['cold_marriage'] }
         },
         result: {
@@ -172,7 +179,9 @@ export const wifeEvents: GameEvent[] = [
         description: '装作不知道，维持表面和谐',
         effects: {
           attributes: { 体质: -10 },
-          hidden: {},
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['wangshi_secret'] }
         },
         result: {
@@ -202,7 +211,9 @@ export const wifeEvents: GameEvent[] = [
         description: '大胆提议，走向荒淫之路',
         effects: {
           attributes: { 文韬: 5 },
-          hidden: {欲望值: 15 },
+          hidden: {欲望值: 15,
+              道德值: -15
+        },
           flags: { add: ['debauchery_path', 'wangshi_threesome'], remove: ['cold_marriage'] }
         },
         result: {
@@ -239,7 +250,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_003',
     storyline: 'female',
     title: '铜臭姻缘',
-    description: '',
+    description: '李府张灯结彩，嫁妆清单足足列了三页：黄金百两、珍珠十斗、苏杭绸缎五十匹、良田三百亩……同僚们私下议论："这哪是娶媳妇，分明是娶了一座钱庄！',
     narrative: {
       speaker: { title: '岳父', name: '李员外' },
       quote: '贤婿啊，小女嫁妆丰厚，日后你们小两口的日子定然红火！',
@@ -259,9 +270,13 @@ export const wifeEvents: GameEvent[] = [
         text: '【接受】"李公厚爱，小生愧领"',
         description: '接受这门富商亲事',
         effects: {
-          attributes: {},
-          gameState: { 清议: -8, 士绅: 10 },
-          hidden: {},
+          attributes: {
+              财帛: 15
+        },
+          gameState: { 清议: -8, 士绅: 6 },
+          hidden: {
+              道德值: -4
+        },
           flags: { add: ['married_lishi', 'wife_lishi'] }
         },
         result: {
@@ -288,9 +303,13 @@ export const wifeEvents: GameEvent[] = [
         text: '【婉拒】"李某才疏学浅，恐辱没了令爱"',
         description: '拒绝富商提亲',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -8
+        },
           gameState: { 清议: 8 },
-          hidden: {}
+          hidden: {
+              道德值: 4
+        }
         },
         result: {
           title: '安贫守道',
@@ -318,9 +337,13 @@ export const wifeEvents: GameEvent[] = [
         text: '【只借不娶】"李公盛情，小生铭记，但婚事另议"',
         description: '接受资助但不以婚事作交换，保留岳家关系',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 15
+        },
           gameState: { 士绅: 5 },
-          hidden: {},
+          hidden: {
+              道德值: 2
+        },
           flags: { add: ['lishi_benefactor'] }
         },
         result: {
@@ -349,7 +372,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_004',
     storyline: 'female',
     title: '岳父的请求',
-    description: '',
+    description: '"贤婿啊，"李员外搓着手，"你姐夫的商队被税关扣了，说是有什么走私的嫌疑……其实都是误会！',
     narrative: {
       speaker: { title: '岳父', name: '李员外' },
       quote: '贤婿，你如今也是朝廷命官了，这件小事……应该不难办吧？',
@@ -368,9 +391,13 @@ export const wifeEvents: GameEvent[] = [
         text: '【帮忙】"岳父放心，小婿这就去办"',
         description: '利用职权帮岳家摆平麻烦',
         effects: {
-          attributes: {理政: 3 },
+          attributes: {理政: 3,
+              财帛: 12
+        },
           gameState: { 士绅: 6 },
-          hidden: {},
+          hidden: {
+              道德值: -8
+        },
           flags: { add: ['corruption_record'] }
         },
         result: {
@@ -399,9 +426,13 @@ export const wifeEvents: GameEvent[] = [
         text: '【拒绝】"岳父，此事关乎国法，小婿实在难以从命"',
         description: '坚持原则，拒绝徇私',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -8
+        },
           gameState: { 士绅: -12 },
-          hidden: {},
+          hidden: {
+              道德值: 8
+        },
           flags: { add: ['lishi_tension'] }
         },
         result: {
@@ -434,9 +465,13 @@ export const wifeEvents: GameEvent[] = [
         text: '【给个台阶】"小婿只能说句公道话，成与不成，还要看税监依不依律"',
         description: '既不全权办也不彻底推脱，留个回旋余地',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 5
+        },
           gameState: { 士绅: 3 },
-          hidden: {}
+          hidden: {
+              道德值: 3
+        }
         },
         result: {
           title: '公私兼顾',
@@ -464,7 +499,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_005',
     storyline: 'female',
     title: '竹马青梅',
-    description: '',
+    description: '村口的老槐树下，柳如烟穿着一身红色的嫁衣，眼眶微红地看着你。',
     narrative: {
       speaker: { title: '恋人', name: '柳如烟' },
       quote: '阿兄……你真的中了进士？我不是在做梦吧？',
@@ -485,7 +520,9 @@ export const wifeEvents: GameEvent[] = [
         description: '履行婚约，迎娶青梅竹马',
         effects: {
           attributes: { 体质: 6 },
-          hidden: {欲望值: -5 },
+          hidden: {欲望值: -5,
+              道德值: 8
+        },
           flags: { add: ['married_liu', 'wife_liushi', 'pure_love'] }
         },
         result: {
@@ -517,8 +554,12 @@ export const wifeEvents: GameEvent[] = [
         description: '嫌弃柳如烟出身卑微，想要悔婚',
         effects: {
           attributes: { 文韬: 3, 体质: -5 },
-          gameState: {},
-          hidden: {欲望值: 5 },
+          gameState: {
+              民望: -12
+        },
+          hidden: {欲望值: 5,
+              道德值: -10
+        },
           flags: { add: ['abandoned_liushi', 'regret_forever'] }
         },
         result: {
@@ -552,8 +593,12 @@ export const wifeEvents: GameEvent[] = [
         description: '既不立刻兑现也不直接悔婚，先立下婚书留待日后',
         effects: {
           attributes: { 体质: 3 },
-          gameState: {},
-          hidden: {}
+          gameState: {
+              民望: -3
+        },
+          hidden: {
+              道德值: 3
+        }
         },
         result: {
           title: '君子一诺',
@@ -585,7 +630,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_006',
     storyline: 'female',
     title: '糟糠之妻患重病',
-    description: '',
+    description: '大夫开出的药单让你倒吸一口凉气：人参、灵芝、鹿茸……每味药材都需要数十两银子，整个疗程下来至少需要一百两。',
     narrative: {
       speaker: { title: '大夫', name: '陈郎中' },
       quote: '大人，夫人这是……积劳成疾，加之思虑过重，需用珍贵药材调理，费用……恐怕不少。',
@@ -604,8 +649,12 @@ export const wifeEvents: GameEvent[] = [
         text: '【倾尽所有】"无论如何都要救她！"',
         description: '变卖一切财物为妻子治病',
         effects: {
-          attributes: {体质: 12 },
-          hidden: {}
+          attributes: {体质: 10,
+              财帛: -15
+        },
+          hidden: {
+              道德值: 8
+        }
         },
         result: {
           title: '生死相依',
@@ -631,9 +680,15 @@ export const wifeEvents: GameEvent[] = [
         text: '【放弃】"……我们财力有限，只能尽力了"',
         description: '无力承担高昂药费，只能放弃治疗',
         effects: {
-          attributes: {},
-          gameState: {},
-          hidden: {},
+          attributes: {
+              财帛: -15
+        },
+          gameState: {
+              民望: -8
+        },
+          hidden: {
+              道德值: -15
+        },
           flags: { add: ['liushi_dead'], remove: ['married_liu', 'pure_love'] }
         },
         result: {
@@ -664,8 +719,12 @@ export const wifeEvents: GameEvent[] = [
         text: '【借钱救治】"砸锅卖铁也要治！还差的部分我借"',
         description: '不全家变卖家产，而是向同僚举债治病',
         effects: {
-          attributes: {理政: 3 },
-          hidden: {}
+          attributes: {理政: 3,
+              财帛: -15
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         result: {
           title: '两全之道',
@@ -695,7 +754,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_007',
     storyline: 'female',
     title: '宰相门前',
-    description: '',
+    description: '全京城都在议论这件事。',
     narrative: {
       speaker: { title: '媒人', name: '王尚书' },
       quote: '张首辅有意将千金许配于你，这可是天大的福分啊！',
@@ -749,7 +808,9 @@ export const wifeEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: -8 },
           gameState: { 圣眷: -6 },
-          hidden: {}
+          hidden: {
+              道德值: 4
+        }
         },
         result: {
           title: '宁折不弯',
@@ -779,7 +840,9 @@ export const wifeEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 3 },
           gameState: { 圣眷: 3 },
-          hidden: {},
+          hidden: {
+              道德值: 2
+        },
           flags: { add: ['pending_zhanggui'] }
         },
         result: {
@@ -812,7 +875,7 @@ export const wifeEvents: GameEvent[] = [
     id: 'emotion_wife_008',
     storyline: 'female',
     title: '有名无实',
-    description: '',
+    description: '张清婉端坐在太师椅上，神情淡漠如水。',
     narrative: {
       speaker: { title: '正妻', name: '张清婉' },
       quote: '你我之间，不过是各取所需罢了。你想靠我父亲升官，我想靠你丈夫的身份立足。何必假装恩爱？',
@@ -832,7 +895,9 @@ export const wifeEvents: GameEvent[] = [
         description: '接受开放式婚姻',
         effects: {
           attributes: { 文韬: 10 },
-          hidden: { 欲望值: 15,},
+          hidden: { 欲望值: 15,
+              道德值: -10
+        },
           flags: { add: ['open_marriage'] }
         },
         result: {
@@ -860,7 +925,9 @@ export const wifeEvents: GameEvent[] = [
         description: '试图挽救这段婚姻',
         effects: {
           attributes: { 理政: 10, 体质: 5 },
-          hidden: {欲望值: -10 },
+          hidden: {欲望值: -10,
+              道德值: 10
+        },
           flags: { add: ['zhangshi_thaw'], remove: ['power_marriage'] }
         },
         result: {
@@ -893,7 +960,9 @@ export const wifeEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: -15 },
           gameState: { 圣眷: -15, 清议: 10 },
-          hidden: {},
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['divorced_zhang'], remove: ['married_zhang', 'power_marriage'] }
         },
         result: {

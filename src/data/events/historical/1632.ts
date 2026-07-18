@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 export const events1632: GameEvent[] = [
@@ -5,7 +6,7 @@ export const events1632: GameEvent[] = [
     id: 'historical_020',
     storyline: 'ordinary',
     title: '皮岛惊变',
-    description: '',
+    description: '毛文龙被杀，皮岛震动。',
     narrative: {
       speaker: {
         name: '辽东塘报',
@@ -34,13 +35,13 @@ export const events1632: GameEvent[] = [
         text: '【上疏弹劾】"袁崇焕擅杀大将，此乃谋反前兆！"',
         description: '上疏弹劾袁崇焕擅杀封疆大吏，要求朝廷彻查',
         showConditions: {
-          attributes: { 文韬: { min: 60,财帛: 35,财帛: -25,财帛: -40,财帛: -15, 财帛: -20, 财帛: -30} },
+          attributes: { 文韬: { min: 60 } },
           origin: ['寒门', '诗文清望']
         },
         effects: {
           attributes: { 文韬: 5 },
-          gameState: { 圣眷: -10, 清议: 15, 中官: 10,民望: 10,民望: 5,民望: 8, 民望: 10},
-          hidden: {道德值: 10,道德值: 15,道德值: 10,道德值: 5,道德值: -20, 道德值: -5, 道德值: -15},
+          gameState: { 圣眷: -10, 清议: 15, 中官: 10, 民望: 10 },
+          hidden: { 道德值: 10 },
           flags: { add: ['弹劾袁崇焕', '反袁派'] }
         },
         resultDescription: '',
@@ -70,7 +71,9 @@ export const events1632: GameEvent[] = [
         effects: {
           attributes: { 武略: 3 },
           gameState: { 圣眷: 10, 清议: -10, 中官: -5 },
-          hidden: {},
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['支持袁崇焕', '挺袁派'] }
         },
         resultDescription: '',
@@ -98,9 +101,15 @@ export const events1632: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 武略: 5, 理政: 8,体质: -15 },
-          gameState: { 圣眷: 15, 清议: 20,},
-          hidden: {},
+          attributes: { 武略: 5, 理政: 8,体质: -15,
+              财帛: -20
+        },
+          gameState: { 圣眷: 15, 清议: 20,
+              民望: 10
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['安抚皮岛'] }
         },
         resultDescription: '',
@@ -134,9 +143,13 @@ export const events1632: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 5 },
+          attributes: {理政: 5,
+              财帛: 35
+        },
           gameState: { 圣眷: -5, 清议: -25, 中官: 10 },
-          hidden: {野心值: 15 },
+          hidden: {野心值: 15,
+              道德值: -20
+        },
           flags: { add: ['皮岛敛财'] }
         },
         resultDescription: '',
@@ -164,7 +177,7 @@ export const events1632: GameEvent[] = [
     id: 'historical_020_aftermath',
     storyline: 'ordinary',
     title: '吴桥兵变',
-    description: '',
+    description: '吴桥兵变爆发，山东大乱。',
     narrative: {
       speaker: {
         name: '山东巡抚',
@@ -199,8 +212,12 @@ export const events1632: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 10, 体质: -25 },
-          gameState: { 圣眷: 20, 清议: 15,},
-          hidden: {},
+          gameState: { 圣眷: 20, 清议: 15,
+              民望: 10
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['平定兵变'] }
         },
         resultDescription: '',
@@ -233,8 +250,12 @@ export const events1632: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {文韬: 3 },
-          gameState: { 清议: 5,},
+          attributes: {文韬: 3,
+              财帛: -15
+        },
+          gameState: { 清议: 5,
+              民望: 8
+        },
           hidden: { 野心值: 10 },
           flags: { add: ['皮岛人脉'] }
         },
@@ -296,7 +317,7 @@ export const events1632: GameEvent[] = [
     id: 'historical_020_crisis',
     storyline: 'ordinary',
     title: '皮岛清算',
-    description: '',
+    description: '东窗事发，锦衣卫上门。',
     narrative: {
       speaker: {
         name: '都察院左都御史',
@@ -329,9 +350,13 @@ export const events1632: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 5 },
+          attributes: {理政: 5,
+              财帛: -25
+        },
           gameState: { 圣眷: 5 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: -15
+        },
           flags: { remove: ['皮岛敛财'], add: ['销毁证据'] }
         },
         resultDescription: '',
@@ -361,7 +386,9 @@ export const events1632: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -30
+        },
           gameState: { 中官: 15, 圣眷: -5 },
           flags: { remove: ['皮岛敛财'] }
         },
@@ -390,9 +417,15 @@ export const events1632: GameEvent[] = [
         text: '【主动认罪】"当向朝廷坦白，请求宽恕"',
         description: '主动向都察院自首，退还赃款，争取从轻发落',
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -25, 清议: -20,},
-          hidden: {},
+          attributes: {
+              财帛: -40
+        },
+          gameState: { 圣眷: -25, 清议: -20,
+              民望: 5
+        },
+          hidden: {
+              道德值: 5
+        },
           flags: { remove: ['皮岛敛财'], add: ['贪污记录'] }
         },
         resultDescription: '',

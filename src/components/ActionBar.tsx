@@ -26,7 +26,7 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
           onClick={onNextMonth}
           disabled={!canProceed}
         >
-          <span className="btn-icon">▸</span>
+          <span className="btn-icon">进</span>
           <span>下 月</span>
         </button>
       </div>
@@ -39,16 +39,16 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
             title="返回主菜单（自动存档会被保留）"
             aria-label="返回主菜单"
           >
-            <span className="btn-icon">↩</span>
+            <span className="btn-icon">返</span>
             <span>主菜单</span>
           </button>
         )}
         <button className="action-btn secondary" onClick={onOpenAchievements}>
-          <span className="btn-icon">🏆</span>
+          <span className="btn-icon">功</span>
           <span>成就</span>
         </button>
         <button className="action-btn secondary" onClick={onOpenHelp}>
-          <span className="btn-icon">❓</span>
+          <span className="btn-icon">问</span>
           <span>帮助</span>
         </button>
         {onOpenAIAdvisor && (
@@ -74,7 +74,7 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
           </button>
         )}
         <button className="action-btn secondary" onClick={onSave}>
-          <span className="btn-icon">💾</span>
+          <span className="btn-icon">存</span>
           <span>存 档</span>
         </button>
       </div>

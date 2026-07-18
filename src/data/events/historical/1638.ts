@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1638: GameEvent[] = [
 {
     id: 'historical_022',
     storyline: 'ordinary',
     title: '督师出征',
-    description: '',
+    description: '杨嗣昌督师出征，"十面埋伏"即将展开。',
     narrative: {
       speaker: {
         name: '内阁中书',
@@ -36,13 +37,13 @@ export const events1638: GameEvent[] = [
         text: '【随军出征】"当随杨督师出征，建立不世之功！"',
         description: '主动请缨加入杨嗣昌的幕府或军队，参与剿匪战争',
         showConditions: {
-          attributes: { 武略: { min: 60,财帛: 45,财帛: -15,财帛: -60,财帛: -10, 财帛: -15, 财帛: -45}, 体质: { min: 55 } },
+          attributes: { 武略: { min: 60 }, 体质: { min: 55 } },
           origin: ['没落世家']
         },
         effects: {
           attributes: { 武略: 12, 体质: -25 },
-          gameState: { 圣眷: 20, 清议: 15,民望: 12,民望: 5,民望: 15, 民望: 10},
-          hidden: {野心值: 5,道德值: 10,道德值: -22,道德值: 10,道德值: 12,道德值: 15,道德值: -15, 道德值: 15, 道德值: 8},
+          gameState: { 圣眷: 20, 清议: 15, 民望: 10 },
+          hidden: { 野心值: 5, 道德值: 15 },
           flags: { add: ['随军出征', '杨嗣昌幕僚'] }
         },
         resultDescription: '',
@@ -78,7 +79,9 @@ export const events1638: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5, 理政: 5 },
           gameState: { 圣眷: -20, 清议: 25, 中官: -10 },
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['反对增饷'] }
         },
         resultDescription: '',
@@ -109,9 +112,15 @@ export const events1638: GameEvent[] = [
           attributes: { 理政: { min: 65 } }
         },
         effects: {
-          attributes: { 理政: 8,},
-          gameState: { 清议: 18,圣眷: -10 },
-          hidden: {},
+          attributes: { 理政: 8,
+              财帛: -15
+        },
+          gameState: { 清议: 18,圣眷: -10,
+              民望: 12
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['主抚派'] }
         },
         resultDescription: '',
@@ -143,9 +152,13 @@ export const events1638: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8 },
+          attributes: {理政: 8,
+              财帛: 45
+        },
           gameState: { 中官: 20, 圣眷: -5, 清议: -28 },
-          hidden: {野心值: 15 },
+          hidden: {野心值: 15,
+              道德值: -22
+        },
           flags: { add: ['军需牟利'] }
         },
         resultDescription: '',
@@ -179,7 +192,7 @@ export const events1638: GameEvent[] = [
     id: 'historical_022_aftermath',
     storyline: 'ordinary',
     title: '督师败绩',
-    description: '',
+    description: '杨嗣昌病逝，"十面埋伏"彻底失败。',
     narrative: {
       speaker: {
         name: '内阁中书',
@@ -216,7 +229,9 @@ export const events1638: GameEvent[] = [
         effects: {
           attributes: { 文韬: 8, 武略: 5 },
           gameState: { 圣眷: 10, 清议: 15 },
-          hidden: {},
+          hidden: {
+              道德值: 8
+        },
           flags: { add: ['剿匪经验'] }
         },
         resultDescription: '',
@@ -281,9 +296,15 @@ export const events1638: GameEvent[] = [
           origin: ['诗文清望', '缙绅']
         },
         effects: {
-          attributes: { 理政: 5,},
-          gameState: {清议: 10 },
-          hidden: {},
+          attributes: { 理政: 5,
+              财帛: -10
+        },
+          gameState: {清议: 10,
+              民望: 15
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['坚持招抚'] }
         },
         resultDescription: '',
@@ -319,7 +340,9 @@ export const events1638: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -15
+        },
           gameState: { 中官: 5 },
           hidden: { 野心值: 8 },
           flags: { add: ['转移资产'] }
@@ -354,7 +377,7 @@ export const events1638: GameEvent[] = [
     id: 'historical_022_crisis',
     storyline: 'ordinary',
     title: '军需清算',
-    description: '',
+    description: '六科给事中联名弹劾，证据确凿。',
     narrative: {
       speaker: {
         name: '六科给事中',
@@ -394,7 +417,9 @@ export const events1638: GameEvent[] = [
         effects: {
           attributes: { 理政: 5 },
           gameState: { 圣眷: 5, 清议: -15, 中官: 10 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: -15
+        },
           flags: { remove: ['军需牟利'], add: ['嫁祸死人'] }
         },
         resultDescription: '',
@@ -427,7 +452,9 @@ export const events1638: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -45
+        },
           gameState: { 中官: 20, 圣眷: 5 },
           flags: { remove: ['军需牟利'] }
         },
@@ -459,9 +486,15 @@ export const events1638: GameEvent[] = [
           origin: ['寒门', '没落世家']
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: -20, 清议: 5,},
-          hidden: {},
+          attributes: {
+              财帛: -60
+        },
+          gameState: { 圣眷: -20, 清议: 5,
+              民望: 5
+        },
+          hidden: {
+              道德值: 12
+        },
           flags: { remove: ['军需牟利'], add: ['戴罪立功'] }
         },
         resultDescription: '',

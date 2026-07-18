@@ -85,6 +85,14 @@
   text-transform: uppercase;
 }
 
+.achievement-badge::before {
+  content: '功';
+  display: inline-block;
+  margin-right: 6px;
+  font-family: 'Ma Shan Zheng', serif;
+  color: #d4af37;
+}
+
 .achievement-name {
   color: #fff;
   font-size: 24px;

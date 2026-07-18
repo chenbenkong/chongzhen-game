@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Character, GameStateValues } from '../types/game'
 import { GameEvent, EventChoice } from '../types/event'
 import { initialEvents, allGrayChoiceEvents, allEndingEvents } from '../data/events/index'
@@ -181,8 +182,8 @@ export default function CheatMode({
     emotion: '情感线', gray: '灰色选择'
   }
   const eventTypeIcons: Record<string, string> = {
-    historical: '📜', transition: '🔄',
-    emotion: '💕', gray: '⚖️'
+    historical: '史', transition: '转',
+    emotion: '情', gray: '灰'
   }
   const categoryLabels: Record<string, string> = {
     personal_fate: '个人命运', ming_fate: '大明国运', special: '特殊结局'
@@ -219,8 +220,8 @@ export default function CheatMode({
   if (selectedEvent) {
     const narrative = selectedEvent.narrative
     
-    return (
-      <div className="cheat-modal-overlay" key={`event-detail-${selectedEvent.id}`}>
+    const node = (
+    <div className="cheat-modal-overlay" key={`event-detail-${selectedEvent.id}`}>
         <div className="cheat-modal cheat-detail-modal">
           <div className="cheat-modal-header">
             <div className="cheat-modal-title">
@@ -397,9 +398,11 @@ export default function CheatMode({
         </div>
       </div>
     )
+
+    return createPortal(node, document.body)
   }
 
-  return (
+  const node = (
     <div className="cheat-modal-overlay">
       <div className="cheat-modal">
         <div className="cheat-modal-header">
@@ -435,7 +438,7 @@ export default function CheatMode({
               <div className="cheat-event-list">
                 {filteredEvents.map((event) => (
                   <div key={`${event.type}_${event.id}`} className={`cheat-event-item ${event.type}`} onClick={() => handleEventClick(event)}>
-                    <span className="cheat-event-type-badge">{eventTypeIcons[event.type] || '📄'}</span>
+                    <span className="cheat-event-type-badge">{eventTypeIcons[event.type] || '文'}</span>
                     <div className="cheat-event-content">
                       <div className="cheat-event-title-row">
                         <span className="cheat-event-title">{event.title}</span>
@@ -513,7 +516,9 @@ export default function CheatMode({
             </>
           )}
         </div>
-      </div>
     </div>
+  </div>
   )
+
+  return createPortal(node, document.body)
 }

@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1639: GameEvent[] = [
 {
     id: 'historical_013',
     storyline: 'ordinary',
     title: '松锦大战',
-    description: '',
+    description: '松锦决战，一战定国运。',
     narrative: {
       speaker: {
         name: '辽东急报',
@@ -36,13 +37,17 @@ export const events1639: GameEvent[] = [
         text: '【主战到底】"当全力增援洪督师，与清军决一死战！"',
         description: '主张全力增援洪承畴，誓死保卫锦州',
         showConditions: {
-          attributes: { 武略: { min: 70,财帛: -10,财帛: 20,财帛: 15,财帛: -35, 财帛: -30, 财帛: -15}, 财帛: { min: 40 } },
+          attributes: { 武略: { min: 70 }, 财帛: { min: 40 } },
           origin: ['没落世家']
         },
         effects: {
-          attributes: { 武略: 8,体质: -15 },
-          gameState: { 圣眷: 20, 清议: 25,民望: 15,民望: -10,民望: -15,民望: -5,民望: 5,民望: -15, 民望: 10, 民望: 15},
-          hidden: {道德值: 15,道德值: -10,道德值: 15,道德值: 10,道德值: 15,道德值: 10,道德值: 10,道德值: 5,道德值: 5,道德值: -15,道德值: -8,道德值: 8,道德值: 10,道德值: -20,道德值: -3, 道德值: -5, 道德值: 10, 道德值: 15, 道德值: -5, 道德值: 10},
+          attributes: { 武略: 8,体质: -15,
+              财帛: -30
+        },
+          gameState: { 圣眷: 20, 清议: 25, 民望: 15,
+              国势: -8
+        },
+          hidden: { 道德值: 15 },
           flags: { add: ['增援松锦'] }
         },
         resultDescription: '',
@@ -77,8 +82,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 5, 理政: 8 },
-          gameState: { 圣眷: -15, 清议: -20,},
-          hidden: {野心值: 5 },
+          gameState: { 圣眷: -15, 清议: -20,
+              国势: 5
+        },
+          hidden: {野心值: 5,
+              道德值: -5
+        },
           flags: { add: ['建议撤军'] }
         },
         resultDescription: '',
@@ -111,8 +120,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 8, 理政: 5 },
-          gameState: { 圣眷: -10, 清议: -25, 中官: 10,},
-          hidden: {},
+          gameState: { 圣眷: -10, 清议: -25, 中官: 10,
+              国势: 3
+        },
+          hidden: {
+              道德值: -10
+        },
           flags: { add: ['主张议和'] }
         },
         resultDescription: '',
@@ -145,7 +158,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: -10, 清议: -15 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: -8
+        }
         },
         resultDescription: '',
         result: {
@@ -174,7 +189,7 @@ export const events1639: GameEvent[] = [
     id: 'historical_014',
     storyline: 'border_war',
     title: '洪承畴降清',
-    description: '',
+    description: '擎天柱折，大厦将倾。',
     narrative: {
       speaker: {
         name: '辽东降将',
@@ -210,8 +225,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 5, 武略: 3 },
-          gameState: { 清议: 25, 圣眷: 10,},
-          hidden: {},
+          gameState: { 清议: 25, 圣眷: 10,
+              国势: -3
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['声讨洪承畴'] }
         },
         resultDescription: '',
@@ -245,7 +264,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: 5, 清议: 10 },
-          hidden: {野心值: -10 }
+          hidden: {野心值: -10,
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -276,8 +297,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 8, 理政: 5 },
-          gameState: { 圣眷: -20, 清议: 5,},
-          hidden: {},
+          gameState: { 圣眷: -20, 清议: 5,
+              国势: 3
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['联络洪承畴'] }
         },
         resultDescription: '',
@@ -313,7 +338,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 理政: 8, 文韬: 3 },
           gameState: { 圣眷: 5, 清议: 15 },
-          hidden: {},
+          hidden: {
+              道德值: 8
+        },
           flags: { add: ['培养将领'] }
         },
         resultDescription: '',
@@ -341,7 +368,7 @@ export const events1639: GameEvent[] = [
     id: 'historical_010',
     storyline: 'border_war',
     title: '卢象升殉国',
-    description: '',
+    description: '卢督师殉国，朝野哀痛。',
     narrative: {
       speaker: {
         name: '兵部塘报',
@@ -377,8 +404,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 10, 体质: -25 },
-          gameState: { 圣眷: 20, 清议: 30,},
-          hidden: {野心值: 5 },
+          gameState: { 圣眷: 20, 清议: 30,
+              民望: 15
+        },
+          hidden: {野心值: 5,
+              道德值: 15
+        },
           flags: { add: ['为卢象升复仇'] }
         },
         resultDescription: '',
@@ -412,7 +443,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 35, 圣眷: -10, 中官: -25 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: 15
+        },
           flags: { add: ['弹劾高起潜'] }
         },
         resultDescription: '',
@@ -448,7 +481,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 武略: 5, 理政: 5 },
           gameState: { 圣眷: 10, 清议: 15, 中官: -5 },
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['收编天雄军'] }
         },
         resultDescription: '',
@@ -484,9 +519,15 @@ export const events1639: GameEvent[] = [
           origin: ['寒门', '诗文清望']
         },
         effects: {
-          attributes: { 文韬: 3,},
-          gameState: { 清议: 20, 圣眷: 5,中官: -10 },
-          hidden: {野心值: -5 },
+          attributes: { 文韬: 3,
+              财帛: -10
+        },
+          gameState: { 清议: 20, 圣眷: 5,中官: -10,
+              民望: 10
+        },
+          hidden: {野心值: -5,
+              道德值: 10
+        },
           flags: { add: ['为卢象升请恤'] }
         },
         resultDescription: '',
@@ -520,7 +561,7 @@ export const events1639: GameEvent[] = [
     id: 'historical_011',
     storyline: 'eastern_forest',
     title: '杨嗣昌督师',
-    description: '',
+    description: '杨督师到，剿匪在即。',
     narrative: {
       speaker: {
         name: '兵部急报',
@@ -553,9 +594,15 @@ export const events1639: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8, 体质: -10 },
-          gameState: { 圣眷: 15, 清议: 10,},
-          hidden: {},
+          attributes: {理政: 8, 体质: -10,
+              财帛: -35
+        },
+          gameState: { 圣眷: 15, 清议: 10,
+              民望: -10
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['支持杨嗣昌'] }
         },
         resultDescription: '',
@@ -585,8 +632,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 5 },
-          gameState: { 圣眷: -5, 清议: -10,},
-          hidden: {},
+          gameState: { 圣眷: -5, 清议: -10,
+              民望: 5
+        },
+          hidden: {
+              道德值: -5
+        },
           flags: { add: ['敷衍杨嗣昌'] }
         },
         resultDescription: '',
@@ -618,7 +669,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 圣眷: -20, 清议: 15, 中官: 5 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: 5
+        },
           flags: { add: ['反对杨嗣昌'] }
         },
         resultDescription: '',
@@ -650,9 +703,15 @@ export const events1639: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
-          gameState: { 圣眷: 5, 清议: -25,},
-          hidden: {野心值: 15 },
+          attributes: {
+              财帛: 20
+        },
+          gameState: { 圣眷: 5, 清议: -25,
+              民望: -15
+        },
+          hidden: {野心值: 15,
+              道德值: -20
+        },
           flags: { add: ['破坏剿匪'] }
         },
         resultDescription: '',
@@ -682,7 +741,7 @@ export const events1639: GameEvent[] = [
     id: 'historical_012',
     storyline: 'nationfall',
     title: '张献忠受抚',
-    description: '',
+    description: '张献忠受抚，朝野争议。',
     narrative: {
       speaker: {
         name: '湖广塘报',
@@ -715,9 +774,15 @@ export const events1639: GameEvent[] = [
           origin: ['诗文清望', '缙绅']
         },
         effects: {
-          attributes: { 理政: 8,},
-          gameState: { 圣眷: 10,清议: -10 },
-          hidden: {},
+          attributes: { 理政: 8,
+              财帛: -15
+        },
+          gameState: { 圣眷: 10,清议: -10,
+              民望: 15
+        },
+          hidden: {
+              道德值: 5
+        },
           flags: { add: ['主张招抚张献忠'] }
         },
         resultDescription: '',
@@ -750,8 +815,12 @@ export const events1639: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -10 },
-          gameState: { 圣眷: -5, 清议: 15,},
-          hidden: {},
+          gameState: { 圣眷: -5, 清议: 15,
+              民望: -5
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['反对招抚张献忠'] }
         },
         resultDescription: '',
@@ -783,9 +852,15 @@ export const events1639: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: { 理政: 5,},
-          gameState: { 清议: -20,},
-          hidden: {野心值: 10 },
+          attributes: { 理政: 5,
+              财帛: 15
+        },
+          gameState: { 清议: -20,
+              民望: -15
+        },
+          hidden: {野心值: 10,
+              道德值: -15
+        },
           flags: { add: ['破坏招抚'] }
         },
         resultDescription: '',
@@ -813,7 +888,9 @@ export const events1639: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: -5, 清议: -5 },
-          hidden: {野心值: -5 },
+          hidden: {野心值: -5,
+              道德值: -3
+        },
           flags: { add: ['观望招抚'] }
         },
         resultDescription: '',

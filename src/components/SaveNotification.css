@@ -50,7 +50,13 @@
 
 .save-icon {
   font-size: 2rem;
+  color: #c9a227;
   animation: iconPulse 0.5s ease-in-out;
+}
+
+.save-icon::before {
+  content: '存';
+  font-family: 'Ma Shan Zheng', serif;
 }
 
 @keyframes iconPulse {

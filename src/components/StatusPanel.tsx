@@ -73,7 +73,7 @@ function StatusPanel({ gameState }: StatusPanelProps) {
                 <span className={`status-num status-num-${level}`}>{Math.round(Math.max(value, 0))}</span>
                 <span className={`status-hint status-hint-${level}`}>{hint(value)}</span>
                 {(level === 'danger' || level === 'critical') && (
-                  <span className="status-warning">⚠️</span>
+                  <span className="status-warning" aria-label="警告" />
                 )}
               </div>
             )
@@ -82,7 +82,7 @@ function StatusPanel({ gameState }: StatusPanelProps) {
 
         <div className="national-fortune-bar">
           <div className="fortune-header">
-            <span className="fortune-title">⚖️ 国势</span>
+            <span className="fortune-title">国势</span>
             <span className={`fortune-value ${getFortuneLevel(gameState.国势 ?? 75)}`}>
               {gameState.国势 ?? 75}
             </span>

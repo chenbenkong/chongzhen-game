@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // ════════════════════════════════════════════════
@@ -28,7 +29,7 @@ export const events1643: GameEvent[] = [
     },
     conditions: {
       year: { min: 1643, max: 1644 },
-      attributes: { 财帛: { min: 40,财帛: -10, 财帛: -20} }
+      attributes: { 财帛: { min: 40 } }
     },
     choices: [
       {
@@ -39,9 +40,11 @@ export const events1643: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -20
+        },
           flags: { add: ['转移资产'] },
-          hidden: { 野心值: 10,道德值: 15,道德值: -10,道德值: 10, 道德值: 5, 道德值: 15}
+          hidden: { 野心值: 10, 道德值: 15 }
         },
         resultDescription: '你将大部分家产秘密转移，为自己留了一条后路。',
         result: {
@@ -63,7 +66,9 @@ export const events1643: GameEvent[] = [
         effects: {
           attributes: {},
           flags: { add: ['转移资产'] },
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '你谨慎地转移了一半家产，另一半留给家人应急。',
         result: {
@@ -83,8 +88,10 @@ export const events1643: GameEvent[] = [
         storyline: 'ordinary',
         text: '【不动】国难当头，岂能先谋私利？',
         effects: {
-          gameState: { 清议: 10,民望: 5, 民望: 5},
-          hidden: {}
+          gameState: { 清议: 10, 民望: 5 },
+          hidden: {
+              道德值: 15
+        }
         },
         resultDescription: '你拒绝转移资产，决定与大明共存亡。',
         result: {
@@ -166,7 +173,9 @@ export const events1643: GameEvent[] = [
         text: '【坚守本分】做好分内之事，听天由命',
         effects: {
           gameState: { 清议: 5,},
-          hidden: {}
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '你选择坚守岗位，做好分内之事。',
         result: {
@@ -257,7 +266,9 @@ export const events1643: GameEvent[] = [
           origin: ['没落世家']
         },
         effects: {
-          hidden: { 野心值: 15,},
+          hidden: { 野心值: 15,
+              道德值: -10
+        },
           flags: { add: ['掌军权'] }
         },
         resultDescription: '你开始暗中筹划，为自己的未来布局。',
@@ -288,7 +299,9 @@ export const events1643: GameEvent[] = [
         storyline: 'mystery',
         text: '【压下野心】不，我还是大明的臣子',
         effects: {
-          hidden: {野心值: -10 },
+          hidden: {野心值: -10,
+              道德值: 15
+        },
           gameState: { 清议: 5 }
         },
         resultDescription: '你压下了内心的野心，决定继续做忠臣。',

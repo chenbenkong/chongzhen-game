@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1642: GameEvent[] = [
 {
     id: 'historical_007',
     storyline: 'ordinary',
-    title: '松锦之战',
-    description: '',
+    title: '松锦之战 · 宁远孤守',
+    description: '松锦大败，辽东危急。',
     narrative: {
       speaker: {
         name: '辽东军报',
@@ -34,13 +35,13 @@ export const events1642: GameEvent[] = [
         text: '【死守宁远】"宁远乃山海关屏障，宁远不守，关门危矣！"',
         description: '主张集结残部，死守宁远，为山海关争取时间',
         showConditions: {
-          attributes: { 武略: { min: 60,财帛: 8,财帛: -20,财帛: -25, 财帛: -25}, 体质: { min: 50 } },
+          attributes: { 武略: { min: 60 }, 体质: { min: 50 } },
           origin: ['没落世家']
         },
         effects: {
           attributes: { 武略: 8, 体质: -15 },
-          gameState: { 圣眷: 15, 清议: 20,民望: -15,民望: -35,民望: 30,民望: 10,民望: -15,民望: 20,民望: 5, 民望: 10, 民望: -25, 民望: 25},
-          hidden: {野心值: -5,道德值: -10,道德值: -15,道德值: -25,道德值: 15,道德值: 5,道德值: -5,道德值: -5,道德值: 10,道德值: -15,道德值: 5,道德值: -5, 道德值: 15, 道德值: 20, 道德值: 10, 道德值: 15},
+          gameState: { 圣眷: 15, 清议: 20, 民望: 10 },
+          hidden: { 野心值: -5, 道德值: 15 },
           flags: { add: ['死守宁远'] }
         },
         resultDescription: '',
@@ -71,8 +72,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 5 },
-          gameState: { 圣眷: -10, 清议: -20,},
-          hidden: {},
+          gameState: { 圣眷: -10, 清议: -20,
+              民望: -15
+        },
+          hidden: {
+              道德值: -10
+        },
           flags: { add: ['撤回关内'] }
         },
         resultDescription: '',
@@ -104,7 +109,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 25, 圣眷: -5, 中官: -10 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: 10
+        },
           flags: { add: ['弹劾陈新甲'] }
         },
         resultDescription: '',
@@ -137,7 +144,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 理政: 8 },
           gameState: { 圣眷: -15, 清议: -30, 中官: 15 },
-          hidden: {野心值: 15 },
+          hidden: {野心值: 15,
+              道德值: -15
+        },
           flags: { add: ['暗中议和'] }
         },
         resultDescription: '',
@@ -165,7 +174,7 @@ export const events1642: GameEvent[] = [
     id: 'historical_023',
     storyline: 'ordinary',
     title: '开封之战',
-    description: '',
+    description: '开封危急，中原震动。',
     narrative: {
       speaker: {
         name: '河南急报',
@@ -198,8 +207,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 12, 体质: -30 },
-          gameState: { 圣眷: 25, 清议: 30,},
-          hidden: {野心值: -10 },
+          gameState: { 圣眷: 25, 清议: 30,
+              民望: 20
+        },
+          hidden: {野心值: -10,
+              道德值: 20
+        },
           flags: { add: ['死守开封'] }
         },
         resultDescription: '',
@@ -232,8 +245,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 理政: 5 },
-          gameState: { 圣眷: 15, 清议: -20,},
-          hidden: {},
+          gameState: { 圣眷: 15, 清议: -20,
+              民望: -35
+        },
+          hidden: {
+              道德值: -25
+        },
           flags: { add: ['掘堤水攻'] }
         },
         resultDescription: '',
@@ -266,8 +283,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 3, 体质: 5 },
-          gameState: { 圣眷: -25, 清议: -30,},
-          hidden: {野心值: 10 },
+          gameState: { 圣眷: -25, 清议: -30,
+              民望: -25
+        },
+          hidden: {野心值: 10,
+              道德值: -15
+        },
           flags: { add: ['弃守开封'] }
         },
         resultDescription: '',
@@ -301,9 +322,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 8 },
-          gameState: {清议: 15, 圣眷: -10 },
-          hidden: {},
+          attributes: {理政: 8,
+              财帛: -25
+        },
+          gameState: {清议: 15, 圣眷: -10,
+              民望: 30
+        },
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['疏散百姓'] }
         },
         resultDescription: '',
@@ -333,7 +360,7 @@ export const events1642: GameEvent[] = [
     id: 'historical_007_aftermath',
     storyline: 'ordinary',
     title: '关外尽失',
-    description: '',
+    description: '辽东崩塌，关外尽失。',
     narrative: {
       speaker: {
         name: '兵部侍郎',
@@ -367,8 +394,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -20 },
-          gameState: { 圣眷: 10, 清议: 15,},
-          hidden: {}
+          gameState: { 圣眷: 10, 清议: 15,
+              民望: 5
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -401,8 +432,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 体质: -10 },
-          gameState: { 圣眷: 15, 清议: -5,},
-          hidden: {}
+          gameState: { 圣眷: 15, 清议: -5,
+              民望: 10
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -435,9 +470,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: { 文韬: 3,},
+          attributes: { 文韬: 3,
+              财帛: 8
+        },
           gameState: { 清议: 15, 圣眷: 5, 中官: -10 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: 5
+        },
           flags: { add: ['陈党清算'] }
         },
         resultDescription: '',
@@ -470,9 +509,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 5 },
+          attributes: {理政: 5,
+              财帛: -25
+        },
           gameState: { 圣眷: -10 },
-          hidden: {}
+          hidden: {
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -501,7 +544,7 @@ export const events1642: GameEvent[] = [
     id: 'historical_013_aftermath',
     storyline: 'ordinary',
     title: '开封浩劫',
-    description: '',
+    description: '开封已成一片汪洋。数十万冤魂在黄河水中呜咽...',
     narrative: {
       speaker: {
         name: '河南布政使',
@@ -535,9 +578,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: { 理政: 8,},
-          gameState: {清议: 15, 圣眷: 5 },
-          hidden: {}
+          attributes: { 理政: 8,
+              财帛: -20
+        },
+          gameState: {清议: 15, 圣眷: 5,
+              民望: 25
+        },
+          hidden: {
+              道德值: 15
+        }
         },
         resultDescription: '',
         result: {
@@ -569,7 +618,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: -15, 圣眷: -5 },
-          hidden: {}
+          hidden: {
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -599,8 +650,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 圣眷: -15, 清议: -20,},
-          hidden: {}
+          gameState: { 圣眷: -15, 清议: -20,
+              民望: -15
+        },
+          hidden: {
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {

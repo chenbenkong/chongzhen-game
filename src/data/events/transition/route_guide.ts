@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 // ════════════════════════════════════════════════
@@ -27,7 +28,7 @@ export const eventsRouteGuide: GameEvent[] = [
     },
     conditions: {
       year: { min: 1635, max: 1642 },
-      hidden: { 道德值: { min: 55,道德值: -10,道德值: 5,道德值: 5,道德值: 15,道德值: 15,道德值: 15,道德值: 10,道德值: 5,道德值: 15,道德值: 10,道德值: -5,道德值: 5,道德值: -5,道德值: -10,道德值: 10,道德值: 15,道德值: 5,道德值: 10,道德值: 5,道德值: -5,道德值: 5,道德值: -5,道德值: 10,道德值: 5,道德值: 10,道德值: 5,道德值: -15,道德值: -15,道德值: 10,道德值: 10,道德值: -15,道德值: 10,道德值: 10,道德值: 10,道德值: 10,道德值: 5,道德值: -5,道德值: 10, 道德值: 10, 道德值: 10, 道德值: -10, 道德值: 15, 道德值: 15, 道德值: 15, 道德值: -15, 道德值: -20, 道德值: -10, 道德值: 15, 道德值: -5, 道德值: 15, 道德值: 15} }
+      hidden: { 道德值: { min: 55 } }
     },
     choices: [
       {
@@ -35,8 +36,10 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【据理力争】坚持弹劾，不畏权贵',
         effects: {
-          hidden: {},
-          gameState: { 清议: 15, 圣眷: -10, 中官: -10,民望: 10,民望: 10,民望: 15,民望: 20,民望: -10,民望: 10,民望: 20,民望: 15,民望: 5, 民望: 10, 民望: 10, 民望: 15}
+          hidden: {
+              道德值: 10
+        },
+          gameState: { 清议: 15, 圣眷: -10, 中官: -10, 民望: 15 }
         },
         resultDescription: '你坚持弹劾，虽然得罪了权贵，但赢得了清议的尊重。',
         result: {
@@ -56,7 +59,9 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【明哲保身】收回奏疏，假装什么都没看到',
         effects: {
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: -10
+        },
           gameState: { 圣眷: 5, 中官: 5, 清议: -10 }
         },
         resultDescription: '你收回了奏疏，保住了自己的位置。',
@@ -130,7 +135,7 @@ export const eventsRouteGuide: GameEvent[] = [
     },
     conditions: {
       year: { min: 1636, max: 1642 },
-      attributes: { 武略: { min: 25,财帛: -5,财帛: -10,财帛: -20,财帛: -30,财帛: 50,财帛: -20,财帛: 5,财帛: -10,财帛: 10,财帛: 40,财帛: -20,财帛: 70,财帛: -10,财帛: -10, 财帛: 25, 财帛: -20, 财帛: -10, 财帛: -30, 财帛: -20}, 体质: { min: 35 } }
+      attributes: { 武略: { min: 25 }, 体质: { min: 35 } }
     },
     choices: [
       {
@@ -238,7 +243,7 @@ export const eventsRouteGuide: GameEvent[] = [
 你开始怀疑：这一切，有意义吗？
 
 老友来找你喝酒。他看你一脸愁容，问你怎么了。`,
-      situation: '老友在等你说话。'
+      situation: '老友端着酒杯，目光里有关切，也有不解。他等你说出那句酝酿已久的话。'
     },
     conditions: {
       year: { min: 1636, max: 1642 },
@@ -251,7 +256,9 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【心灰意冷】这官场……我不想待了',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           gameState: { 圣眷: -15, 清议: 10 },
           attributes: { 文韬: 5 }
         },
@@ -279,7 +286,9 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【坚守岗位】不，我还要继续做下去',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: 5
+        },
           gameState: { 圣眷: 5, 清议: 5 },
           attributes: { 理政: 5 }
         },
@@ -364,8 +373,12 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【收受贿赂】好吧，就这一次……',
         effects: {
-          attributes: {},
-          hidden: {欲望值: 10 },
+          attributes: {
+              财帛: 25
+        },
+          hidden: {欲望值: 10,
+              道德值: -15
+        },
           gameState: { 中官: 5, 清议: -10 }
         },
         resultDescription: '你收下了银子，从此踏上了一条不归路。',
@@ -390,7 +403,9 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【拒绝贿赂】拿走你的脏钱！',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: 15
+        },
           gameState: { 清议: 10, 中官: -10 },
           attributes: {}
         },
@@ -479,7 +494,9 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'eastern_forest',
         text: '【攀附权贵】好，我帮你',
         effects: {
-          hidden: { 野心值: 15,},
+          hidden: { 野心值: 15,
+              道德值: -10
+        },
           gameState: { 中官: 20, 圣眷: 10, 清议: -15 },
           attributes: { 理政: 5 }
         },
@@ -505,7 +522,9 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'power',
         text: '【拒绝交易】我不会做你的棋子',
         effects: {
-          hidden: {野心值: -10 },
+          hidden: {野心值: -10,
+              道德值: 15
+        },
           gameState: { 中官: -15, 清议: 10 },
           attributes: { 文韬: 5 }
         },
@@ -583,8 +602,8 @@ export const eventsRouteGuide: GameEvent[] = [
     narrative: {
       speaker: { name: '商人', title: '徽商代表' },
       quote: '某大人，您在朝中为官，可知这盐引生意一本万利？',
-      background: '你偶然得知，盐引生意利润惊人。',
-      situation: '徽商在等你的答复。'
+      background: `崇祯年间，朝廷财政拮据，加征三饷仍难补窟窿，盐引便成了天下最炙手可热的特许生意。你偶然从一位卸任的盐政官员口中得知，小小一张盐引，在江浙转手便是数倍利润；若与衙门里的胥吏通声气，更是几乎无本的买卖。银子、权势、人情，都系在这方寸纸片上。`,
+      situation: '徽商放下茶盏，目光灼灼地望着你，书房里一时只剩更漏声声。'
     },
     conditions: {
       year: { min: 1632, max: 1642 },
@@ -597,15 +616,25 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【合作】好吧，我们一起干',
         effects: {
-          attributes: {},
-          hidden: {野心值: 10 },
+          attributes: {
+              财帛: 40
+        },
+          hidden: {野心值: 10,
+              道德值: -15
+        },
           gameState: { 清议: -10 }
         },
         resultDescription: '你与徽商合作，赚了不少银子。',
         result: {
           title: '弃官从商 · 官商勾结',
           tags: ['财帛+40', '道德-15', '清议-10'],
-          echo: '你与徽商合作了......'
+          echo: `你答应了徽商的提议。
+
+起初只是小打小闹：你利用职务之便，为他的盐引批复发些便利，他则按"规矩"分你三成利润。第一笔银子到手时，你彻夜未眠，反复告诉自己"就这一次"。
+
+但银子这东西，一旦开闸便难收束。三个月后，你案头堆满了各路商人的请托；半年后，你竟开始主动为盐商们"牵线搭桥"，从中抽取佣金。清议对你的风评急转直下，同僚们看你的眼神多了几分鄙夷，也有几分嫉妒。
+
+你的钱柜日渐充盈，可你心里的某个角落，渐渐空了。`
         }
       },
       {
@@ -613,14 +642,24 @@ export const eventsRouteGuide: GameEvent[] = [
         storyline: 'ordinary',
         text: '【拒绝】我不会做这种事',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: 15
+        },
           attributes: {}
         },
         resultDescription: '你拒绝了徽商的提议，守住了清白。',
         result: {
           title: '弃官从商 · 守住底线',
           tags: ['道德+15', '守住清白'],
-          echo: '你拒绝了......'
+          echo: `你拒绝了徽商。
+
+他没有生气，只是淡淡一笑，把银票收回袖中："大人果然清正。只是这世道，清官难做，某拭目以待。"
+
+此后数月，你几次听闻那位徽商与其他官员"合作"的消息，心里不是没有动摇。但每当夜深人静，你看着案头那方端砚、那盏清茶，便觉得守住底线比什么都踏实。
+
+清议中有人提起你，赞你"不为利诱"；也有同僚笑你"迂腐不识时务"。你只是埋头处理公务，不再多想。
+
+许多年后，当那些曾与盐商勾结的官员纷纷落马时，你才发现——当年拒绝的，不只是一笔银子，而是一条通往深渊的路。`
         }
       },
       {
@@ -692,7 +731,9 @@ export const eventsRouteGuide: GameEvent[] = [
         description: '拜老郎中为师，习医救人',
         effects: {
           attributes: { 体质: -5 },
-          hidden: {},
+          hidden: {
+              道德值: 15
+        },
           gameState: {},
           flags: { add: ['习医', '行医'] }
         },
@@ -720,7 +761,9 @@ export const eventsRouteGuide: GameEvent[] = [
         effects: {
           attributes: {},
           hidden: {欲望值: -10 },
-          gameState: {},
+          gameState: {
+              民望: 20
+        },
           flags: { add: ['开馆行医', '仁心仁术', '赈灾行医'] }
         },
         resultDescription: '你出资办了一间医馆，雇请郎中为百姓看病。',
@@ -784,7 +827,7 @@ export const eventsRouteGuide: GameEvent[] = [
 他在信中说："某兄，人生不过百年。做官是一辈子，讲学也是一辈子。区别只在于——前者为别人活，后者为自己活。"
 
 你放下信，沉默了很久。`,
-      situation: '老友在等你的回信。'
+      situation: '老友放下信笺，望着窗外山色，等你的回信，也等你余生的选择。'
     },
     conditions: {
       year: { min: 1640, max: 1643 },
@@ -895,7 +938,7 @@ export const eventsRouteGuide: GameEvent[] = [
 弹劾权臣，可能身败名裂；不弹劾，对不起自己读了半辈子的圣贤书。
 
 "某公，"同事看着你，"你说，怎么办？"`,
-      situation: '同僚在等你的回答。'
+      situation: '同僚屏住呼吸，手握弹劾奏疏的副本，等你的回答，仿佛在等待朝堂上又一声惊雷。'
     },
     conditions: {
       year: { min: 1635, max: 1642 },
@@ -1137,7 +1180,7 @@ export const eventsRouteGuide: GameEvent[] = [
 你沉默了。
 
 这意味着什么？意味着你开始为"大明亡了"做准备。`,
-      situation: '闽商在等你的回答。'
+      situation: '闽商将南洋海图轻轻推到你面前，烛火摇曳，等你的回答。'
     },
     conditions: {
       year: { min: 1637, max: 1643 },
@@ -1151,7 +1194,9 @@ export const eventsRouteGuide: GameEvent[] = [
         text: '【转移资产】先送家眷与部分银两去南洋',
         description: '转移部分家产去南洋，留个后路',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -20
+        },
           hidden: { 野心值: 5, 欲望值: 5 },
           flags: { add: ['转移资产'] }
         },
@@ -1204,7 +1249,9 @@ export const eventsRouteGuide: GameEvent[] = [
         text: '【婉拒】不与闽商来往',
         description: '婉拒闽商，安分守己',
         effects: {
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '你婉拒了闽商的提议。',
         result: {
@@ -1318,7 +1365,9 @@ export const eventsRouteGuide: GameEvent[] = [
         text: '【退隐】算了，咱们散了吧',
         description: '解散亲信，自己隐匿',
         effects: {
-          hidden: {野心值: -10 },
+          hidden: {野心值: -10,
+              道德值: 10
+        },
           attributes: {}
         },
         resultDescription: '你解散了亲信，独自隐匿。',
@@ -1364,7 +1413,7 @@ export const eventsRouteGuide: GameEvent[] = [
 你心中一动。
 
 这意味着什么？意味着你可以在做官的同时，积累一笔可观的财富。`,
-      situation: '晋商在等你的回答。'
+      situation: '晋商将算盘拨到一边，压低声音，等你的回答。'
     },
     conditions: {
       year: { min: 1635, max: 1642 },
@@ -1378,7 +1427,9 @@ export const eventsRouteGuide: GameEvent[] = [
         text: '【盐引生意】拿下盐引，做大买卖',
         description: '与晋商合作经营盐引生意',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 50
+        },
           hidden: { 野心值: 10,欲望值: 10 },
           gameState: { 清议: -15, 中官: 5 },
           flags: { add: ['皮岛敛财', '盐引生意'] }
@@ -1405,7 +1456,9 @@ export const eventsRouteGuide: GameEvent[] = [
         description: '与边将勾结，倒卖军需',
         showConditions: { hidden: { 道德值: { max: 30 } } },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 70
+        },
           hidden: { 野心值: 10,欲望值: 15 },
           gameState: { 清议: -25, 中官: 10 },
           flags: { add: ['军需牟利', '赈灾敛财'] }
@@ -1433,7 +1486,9 @@ export const eventsRouteGuide: GameEvent[] = [
         text: '【婉拒】君子爱财，取之有道',
         description: '婉拒晋商，坚守清白',
         effects: {
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           gameState: { 清议: 5 }
         },
         resultDescription: '你婉拒了晋商的提议。',
@@ -1613,7 +1668,7 @@ export const eventsRouteGuide: GameEvent[] = [
 这意味着什么？意味着你必须先发制人，弹劾对方。否则你就会被弹劾下狱。
 
 但你心里清楚：这场党争里，没有真正的赢家。`,
-      situation: '同党在等你的决定。'
+      situation: '同党凑近一步，眼神焦灼，等你点头或摇头。'
     },
     conditions: {
       year: { min: 1635, max: 1642 },
@@ -1656,7 +1711,9 @@ export const eventsRouteGuide: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 圣眷: -5, 清议: 5 },
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '你决定静观其变。',
         result: {
@@ -1727,7 +1784,7 @@ export const eventsRouteGuide: GameEvent[] = [
 你沉默了。
 
 这是另一条路——不是治国平天下，而是光宗耀祖。`,
-      situation: '长老在等你的回信。'
+      situation: '长老的信摊在案上，墨迹已干，等你落下决定家族命运的一笔。'
     },
     conditions: {
       year: { min: 1637, max: 1643 },
@@ -1743,7 +1800,9 @@ export const eventsRouteGuide: GameEvent[] = [
         description: '捐资修族谱、建宗祠',
         effects: {
           attributes: {},
-          gameState: {清议: 10 },
+          gameState: {清议: 10,
+              民望: 15
+        },
           hidden: {野心值: -10 },
           flags: { add: ['持续仁政', '修族谱'] }
         },
@@ -1770,7 +1829,9 @@ export const eventsRouteGuide: GameEvent[] = [
         showConditions: { attributes: { 财帛: { min: 50 } } },
         effects: {
           attributes: {},
-          gameState: {清议: 15 },
+          gameState: {清议: 15,
+              民望: 20
+        },
           hidden: {},
           flags: { add: ['士绅联盟', '义田', '开仓赈灾'] }
         },
@@ -1796,7 +1857,9 @@ export const eventsRouteGuide: GameEvent[] = [
         description: '婉拒操持族务',
         effects: {
           attributes: {},
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '你婉拒了操持族务的请求。',
         result: {
@@ -1840,7 +1903,7 @@ export const eventsRouteGuide: GameEvent[] = [
 你笑了笑："你们做，我不放心。"
 
 但你的身体，已经开始发出警告了——夜不能寐、食不知味、走路开始喘。`,
-      situation: '属官在等你的回答。'
+      situation: '属官们垂手站在一旁，案上的公文堆得像山，等你的回答。'
     },
     conditions: {
       year: { min: 1635, max: 1642 },
@@ -1961,7 +2024,7 @@ export const eventsRouteGuide: GameEvent[] = [
 同事们都说你"是个好人"，但也"没什么大用"。
 
 酒醒之后，你躺在书房里想了很久。`,
-      situation: '你还在想这个问题。'
+      situation: '酒已经醒了，烛火将尽，你还在想这个问题。'
     },
     conditions: {
       year: { min: 1635, max: 1645 },
@@ -2086,7 +2149,7 @@ export const eventsRouteGuide: GameEvent[] = [
 你的圣眷已经崩塌、清议已经崩溃、国势已经崩塌——你不再是朝廷信任的官员，不再是士林敬仰的清流。你只是一个即将被清算的人。
 
 你的选择不多：要么殉国，要么投降，要么……消失。`,
-      situation: '亲随在等你的决定。'
+      situation: '亲随牵着马，背着包袱，等你的决定，也等一个生死未卜的黎明。'
     },
     conditions: {
       year: { min: 1637, max: 1643 },
@@ -2126,7 +2189,9 @@ export const eventsRouteGuide: GameEvent[] = [
         description: '转移资产，出海避难',
         showConditions: { attributes: { 财帛: { min: 30 } } },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -20
+        },
           flags: { add: ['转移资产'] }
         },
         resultDescription: '你乘船出海，移居南洋。',
@@ -2194,7 +2259,7 @@ export const eventsRouteGuide: GameEvent[] = [
 是啊，半辈子过去了。你的孩子还小，你的身体已不如前，你的俸禄还够养家……
 
 也许，是时候退一步了。`,
-      situation: '夫人在等你的决定。'
+      situation: '夫人替你拢了拢披风，目光温柔却藏着忧虑，等你开口。'
     },
     conditions: {
       year: { min: 1635, max: 1643 },
@@ -2314,7 +2379,7 @@ export const eventsRouteGuide: GameEvent[] = [
 吏部天官私下召见你："某公，皇上属意你入阁。这是你这辈子最大的机会。"
 
 你沉默了。`,
-      situation: '天官在等你的回答。'
+      situation: '天官将入阁荐书放在案上，目光如炬，等你的回答。'
     },
     conditions: {
       year: { min: 1638, max: 1643 },
@@ -2386,7 +2451,9 @@ export const eventsRouteGuide: GameEvent[] = [
         showConditions: { attributes: { 文韬: { min: 50 } } },
         effects: {
           attributes: { 文韬: 5, 理政: 5 },
-          gameState: { 圣眷: -10, 清议: 10,},
+          gameState: { 圣眷: -10, 清议: 10,
+              民望: 10
+        },
           hidden: {野心值: -10 },
           flags: { add: ['请调外任'] }
         },

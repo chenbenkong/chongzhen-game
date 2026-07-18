@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import './AchievementUnlock.css'
 
 interface AchievementUnlockProps {
@@ -49,23 +50,20 @@ export default function AchievementUnlock({
 
   if (!isOpen && !visible) return null
 
-  return (
+  const node = (
     <div
       className={`achievement-unlock-overlay ${visible ? 'visible' : ''} ${leaving ? 'leaving' : ''}`}
-      onClick={handleClose}
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
       role="dialog"
       aria-modal="true"
       aria-label={`成就解锁：${achievementName}`}
     >
-      <div
-        className="achievement-unlock-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="achievement-unlock-modal">
         <div className="achievement-icon-container">
           <div className="achievement-icon">{achievementIcon}</div>
         </div>
         <div className="achievement-content">
-          <div className="achievement-badge">🏆 成就解锁！</div>
+          <div className="achievement-badge">成就解锁！</div>
           <div className="achievement-name">{achievementName}</div>
           <div className="achievement-description">{achievementDescription}</div>
         </div>
@@ -74,9 +72,10 @@ export default function AchievementUnlock({
           onClick={handleClose}
           autoFocus
         >
-          ✕ 关闭
+          关闭
         </button>
       </div>
     </div>
   )
+  return createPortal(node, document.body)
 }

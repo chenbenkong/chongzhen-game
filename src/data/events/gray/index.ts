@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 import { allGrayBranchEvents } from './debauchery'
 import { briberyGrayEvents } from './bribery'

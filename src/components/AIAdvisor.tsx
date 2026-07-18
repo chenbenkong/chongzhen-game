@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback, memo, useTransition, useDeferredValue } from 'react'
-import { streamChat, getApiKey, setApiKey, hasApiKey, type ChatMessage, type GameContext } from '../services/aiService'
+import { createPortal } from 'react-dom'
+import { streamChat, setApiKey, hasApiKey, type ChatMessage, type GameContext } from '../services/aiService'
 import './AIAdvisor.css'
 
 interface AIAdvisorProps {
@@ -204,7 +205,7 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
         if (msg.includes('upstream error') || msg.includes('(500)')) {
           displayMsg = 'API 服务暂时繁忙，请稍后重试（已自动重试 3 次）'
         } else if (msg.includes('(401)') || msg.includes('(403)')) {
-          displayMsg = 'API Key 无效或已过期，请点击 ⚙ 重新设置'
+          displayMsg = 'API Key 无效或已过期，请点击设置按钮重新设置'
         } else if (msg.includes('(429)')) {
           displayMsg = '请求过于频繁，请稍候片刻'
         } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
@@ -254,9 +255,9 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
   const streamingText = streamingTextRef.current
   const showStreamingBubble = deferredIsStreaming || (isStreaming && streamingText.length > 0)
 
-  return (
-    <div className="ai-advisor-overlay" onClick={onClose}>
-      <div className="ai-advisor-panel" onClick={e => e.stopPropagation()}>
+  const node = (
+    <div className="ai-advisor-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="ai-advisor-panel">
         <div className="ai-header">
           <div className="ai-header-title">
             <span className="ai-header-icon">策</span>
@@ -268,10 +269,10 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
               onClick={() => setShowSettings(!showSettings)}
               title="设置 API Key"
             >
-              ⚙
+              设
             </button>
             <button className="ai-header-btn" onClick={onClose} title="关闭">
-              ✕
+              关
             </button>
           </div>
         </div>
@@ -372,4 +373,6 @@ export default function AIAdvisor({ isOpen, onClose, gameContext }: AIAdvisorPro
       </div>
     </div>
   )
+
+  return createPortal(node, document.body)
 }

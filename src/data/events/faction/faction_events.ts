@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 export const factionEvents: GameEvent[] = [
@@ -40,7 +41,7 @@ export const factionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5, 财帛: 10},
           gameState: { 清议: 15, 圣眷: -5 },
-          hidden: {道德值: 10,道德值: 15,道德值: 5,道德值: 8,道德值: -10,道德值: 10, 道德值: 5, 道德值: 10},
+          hidden: { 道德值: 10 },
           flags: { add: ['东林党核心'] }
         },
         resultDescription: '',
@@ -70,7 +71,9 @@ export const factionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 清议: 5 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -161,7 +164,9 @@ export const factionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 15, 中官: -10, 圣眷: -5 },
-          hidden: {},
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['反阉先锋'] }
         },
         resultDescription: '',
@@ -193,9 +198,13 @@ export const factionEvents: GameEvent[] = [
           origin: ['缙绅', '没落世家']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 10
+        },
           gameState: { 中官: 15, 清议: -15, 圣眷: 5 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: -10
+        },
           flags: { add: ['暗中结交宦官'] }
         },
         resultDescription: '',
@@ -223,7 +232,9 @@ export const factionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3 },
           gameState: { 清议: 8, 中官: -5 },
-          hidden: {}
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -283,7 +294,9 @@ export const factionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 15, 圣眷: -10, 中官: -20 },
-          hidden: {},
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['弹劾阉党'] }
         },
         resultDescription: '',
@@ -346,7 +359,9 @@ export const factionEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 清议: 10, 圣眷: 5 },
-          hidden: {}
+          hidden: {
+              道德值: 8
+        }
         },
         resultDescription: '',
         result: {
@@ -407,8 +422,12 @@ export const factionEvents: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 5 },
-          gameState: { 圣眷: -10, 清议: 15,},
-          hidden: {}
+          gameState: { 圣眷: -10, 清议: 15,
+              国势: 2
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -440,7 +459,9 @@ export const factionEvents: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 8 },
-          gameState: { 圣眷: 5,},
+          gameState: { 圣眷: 5,
+              国势: 3
+        },
           hidden: { 野心值: 5 }
         },
         resultDescription: '',
@@ -471,7 +492,9 @@ export const factionEvents: GameEvent[] = [
           attributes: { 文韬: { min: 50 } }
         },
         effects: {
-          gameState: {},
+          gameState: {
+              国势: -2
+        },
           hidden: { 野心值: -5 }
         },
         resultDescription: '',

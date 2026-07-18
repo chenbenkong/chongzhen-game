@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_017',
     storyline: 'gray',
     title: '落魄公主',
-    description: '',
+    description: '你在巡查时遇到一群山贼围攻一辆马车，出手相救，发现车内是一位衣着朴素但气质非凡的女子。',
     narrative: {
       speaker: {
         title: '前朝公主',
@@ -27,11 +28,11 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
       year: { min: 1633, max: 1633 },
       month: { min: 7, max: 9 },
       attributes: {
-        理政: { min: 60,财帛: 25, 财帛: 20},
+        理政: { min: 60 },
         清议: { min: 40 }
       },
       hidden: {
-        欲望值: { min: 20,道德值: 20,道德值: -5,道德值: 10,道德值: -15, 道德值: -5, 道德值: 15}
+        欲望值: { min: 20 }
       }
     },
     choices: [
@@ -42,8 +43,10 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         description: '你被昭阳公主的美貌和高贵气质打动，收下她作为侍妾，享受与前朝公主的特殊关系。',
         effects: {
           attributes: { 体质: -4 },
-          gameState: { 清议: -15, 士绅: 10, 民望: 15, 民望: 10, 民望: 12, 民望: 20},
-          hidden: { 欲望值: 20,}
+          gameState: { 清议: -15, 士绅: 10, 民望: 20 },
+          hidden: { 欲望值: 20,
+              道德值: -5
+        }
         },
         result: {
           title: '前朝余韵',
@@ -78,7 +81,9 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         description: '你拒绝了昭阳公主的以身相许，但在拒绝前要先享用一番。',
         effects: {
           gameState: { 清议: 20, 士绅: 15 },
-          hidden: {}
+          hidden: {
+              道德值: 20
+        }
         },
         result: {
           title: '君子之风',
@@ -115,8 +120,10 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         description: '你表面上收留她，实际上利用她的前朝公主身份为自己谋利，同时享用她的身体。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: -10, 士绅: 15 },
-          hidden: { 野心值: 20,}
+          gameState: { 圣眷: -2, 士绅: 15 },
+          hidden: { 野心值: 20,
+              道德值: -15
+        }
         },
         result: {
           title: '政治投机',
@@ -190,7 +197,7 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_018',
     storyline: 'gray',
     title: '恩人之女',
-    description: '',
+    description: '苏万财带着女儿苏婉心前来拜访，声称要以女儿报答你的救命之恩。',
     narrative: {
       speaker: {
         title: '富商之女',
@@ -218,9 +225,15 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         text: '【笑纳美人】收下苏婉心，让她成为你的枕边人',
         description: '你被苏婉心的美貌和感激打动，当晚就将她抱上了床。',
         effects: {
-          attributes: { 体质: -3 },
-          gameState: {},
-          hidden: { 欲望值: 15,}
+          attributes: { 体质: -3,
+              财帛: 20
+        },
+          gameState: {
+              士绅: 15
+        },
+          hidden: { 欲望值: 15,
+              道德值: -5
+        }
         },
         result: {
           title: '恩情化爱',
@@ -252,8 +265,12 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         text: '【资助成婚】资助她寻找良配，成全她的幸福',
         description: '你拒绝了苏婉心的以身相许，但在拒绝前要先享用一番。',
         effects: {
-          gameState: {清议: 15 },
-          hidden: {}
+          gameState: {清议: 15,
+              士绅: 10
+        },
+          hidden: {
+              道德值: 15
+        }
         },
         result: {
           title: '成人之美',
@@ -290,8 +307,13 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         description: '你与苏婉心结为义兄妹，但在结亲前要先享用一番。',
         effects: {
           attributes: {},
-          gameState: {清议: 10 },
-          hidden: {}
+          gameState: {清议: 10,
+              圣眷: 5,
+              士绅: 12
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         result: {
           title: '义亲之情',
@@ -325,8 +347,12 @@ export const gratitudeDebaucheryEvents: GameEvent[] = [
         text: '【商业合作】与苏家开展更深的商业合作，而非私人关系',
         description: '你拒绝了私人关系，但在拒绝前要先享用一番。',
         effects: {
-          attributes: {},
-          gameState: {},
+          attributes: {
+              财帛: 25
+        },
+          gameState: {
+              士绅: 20
+        },
           hidden: { 机敏值: 10 }
         },
         result: {

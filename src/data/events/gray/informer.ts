@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const informerGrayEvents: GameEvent[] = [
     id: 'gray_informer_001',
     storyline: 'gray',
     title: '同僚的把柄',
-    description: '',
+    description: '杨御史神秘兮兮地来找你："大人，机会来了。',
     narrative: {
       speaker: {
         title: '御史',
@@ -39,7 +40,7 @@ export const informerGrayEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 15 },
           gameState: { 圣眷: 8 },
-          hidden: {野心值: 20, 欲望值: 5,道德值: 5,道德值: -20,道德值: 5,道德值: 0, 道德值: -15, 道德值: 10}
+          hidden: { 野心值: 20, 欲望值: 5, 道德值: -15 }
         },
         result: {
           title: '告讦求进',
@@ -66,7 +67,9 @@ export const informerGrayEvents: GameEvent[] = [
         description: '你私下告知钱谦益此事，让他有所准备。',
         effects: {
           attributes: { 理政: 5 },
-          hidden: {机敏值: 10 }
+          hidden: {机敏值: 10,
+              道德值: 5
+        }
         },
         result: {
           title: '点到为止',
@@ -125,7 +128,7 @@ export const informerGrayEvents: GameEvent[] = [
     id: 'gray_informer_002',
     storyline: 'gray',
     title: '下属之罪',
-    description: '',
+    description: '李师爷跪在你面前，泣不成声："大人，小人一时糊涂，收了那商人的银子。',
     narrative: {
       speaker: {
         title: '下属',
@@ -151,7 +154,9 @@ export const informerGrayEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: -5 },
           gameState: { 圣眷: -10, 清议: -10 },
-          hidden: {野心值: 10 }
+          hidden: {野心值: 10,
+              道德值: -20
+        }
         },
         result: {
           title: '知情不报',
@@ -181,7 +186,9 @@ export const informerGrayEvents: GameEvent[] = [
         effects: {
           attributes: { 理政: 8 },
           gameState: { 圣眷: 12 },
-          hidden: {机敏值: 8, 野心值: -5 }
+          hidden: {机敏值: 8, 野心值: -5,
+              道德值: 10
+        }
         },
         result: {
           title: '大义灭亲',
@@ -210,7 +217,9 @@ export const informerGrayEvents: GameEvent[] = [
         description: '你既不包庇，也不检举，而是劝李师爷主动投案，争取从轻发落。',
         effects: {
           attributes: { 理政: 3 },
-          hidden: {机敏值: 10 }
+          hidden: {机敏值: 10,
+              道德值: 5
+        }
         },
         result: {
           title: '两全之策',

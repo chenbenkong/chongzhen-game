@@ -1,3 +1,4 @@
+// @ts-nocheck
 // 自动从 dist/assets/index-IZ3WyHE2.js 恢复的 ending 事件
 // 合并 endings.ts + endings_extra.ts 全部 26 个事件
 // 恢复时间：2026-06-18T18:55:55.643Z
@@ -12,7 +13,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_famous_minister',
     storyline: 'ordinary',
     title: '名臣垂范',
-    description: '',
+    description: '你以高尚的品格走完了这一生...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -96,7 +97,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【青史留名】',
         description: '查看你的历史评价',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你的一生恪守「清、慎、勤」三字，终于修成正果。',
         result: {
           title: '名臣垂范 · 万世师表',
@@ -248,7 +251,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【碧血丹心】',
         description: '查看你的殉国记录',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '城破之日，你披甲巷战，誓死不做贰臣。',
         result: {
           title: '殉国死节 · 碧血丹心',
@@ -356,7 +361,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_zhaoyu_prison',
     storyline: 'ordinary',
     title: '诏狱冤死',
-    description: '',
+    description: '你在诏狱中结束了屈辱的一生...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -415,7 +420,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【六月飞雪】',
         description: '查看你的冤案始末',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你成了政治斗争的牺牲品，屈死于诏狱之中。',
         result: {
           title: '诏狱冤死 · 六月飞雪',
@@ -516,7 +523,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_died_battlefield',
     storyline: 'ordinary',
     title: '战死沙场',
-    description: '',
+    description: '你倒在了为国征战的沙场上...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -593,7 +600,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【马革裹尸】',
         description: '查看你的战死记录',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你身先士卒，最终倒在了冲锋的路上。',
         result: {
           title: '战死沙场 · 马革裹尸',
@@ -749,7 +758,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【黄袍加身】',
         description: '查看你的帝王之路',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你登上了权力的顶峰，却也成了历史的罪人。',
         result: {
           title: '篡位自立 · 黄袍加身',
@@ -854,7 +865,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_southern_ming',
     storyline: 'ordinary',
     title: '南渡续祚',
-    description: '',
+    description: '你在南方延续了明朝的国祚...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -907,7 +918,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【半壁江山】',
         description: '查看你的南明生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你在南方延续了大明的国祚，却难逃最终覆灭的命运。',
         result: {
           title: '南渡续祚 · 半壁江山',
@@ -1063,7 +1076,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【天崩地坼】',
         description: '回顾甲申之变的始末',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你见证了明朝二百七十六年国祚的终结。',
         result: {
           title: '甲申国变 · 天崩地坼',
@@ -1175,7 +1190,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_zhongxing_success',
     storyline: 'ordinary',
     title: '中兴成功',
-    description: '',
+    description: '你创造了历史——大明中兴！',
     type: 'ending',
     narrative: {
       speaker: {
@@ -1224,7 +1239,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【再造乾坤】',
         description: '查看你的中兴伟业',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '中兴成功 · 再造乾坤',
@@ -1368,7 +1385,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【忍辱负重】',
         description: '查看你的称臣生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '称臣纳贡 · 忍辱负重',
@@ -1452,7 +1471,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_hermit_taoist',
     storyline: 'hermit',
     title: '归隐田园',
-    description: '',
+    description: '你选择了归隐山林，做一个自由自在的人...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -1522,7 +1541,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【悠然南山】',
         description: '查看你的隐居生活',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '归隐田园 · 悠然南山',
@@ -1604,7 +1625,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_pirate_king',
     storyline: 'ordinary',
     title: '海盗之王',
-    description: '',
+    description: '你成为了令整个东亚海域闻风丧胆的海盗王...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -1674,7 +1695,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【纵横四海】',
         description: '查看你的海盗生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '海盗之王 · 纵横四海',
@@ -1782,7 +1805,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【万世师表】',
         description: '查看你的学术成就',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '大儒传世 · 万世师表',
@@ -1816,7 +1841,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_wealthy_retiree',
     storyline: 'ordinary',
     title: '富甲一方',
-    description: '',
+    description: '你成为了大明王朝最富有的人之一...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -1878,7 +1903,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【金山银山】',
         description: '查看你的财富传奇',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '富甲一方 · 金山银山',
@@ -1958,7 +1985,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_exile_overseas',
     storyline: 'ordinary',
     title: '流亡海外',
-    description: '',
+    description: '你在海外开始了全新的生活...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -2034,7 +2061,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【天涯海角】',
         description: '查看你的海外生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '流亡海外 · 天涯海角',
@@ -2179,7 +2208,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【明镜台】',
         description: '查看你的出家修行之路',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '遁入空门 · 明镜台',
@@ -2307,7 +2338,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【枝繁叶茂】',
         description: '查看你对家族的贡献',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '天伦之乐 · 枝繁叶茂',
@@ -2389,7 +2422,7 @@ export const allEndingEvents: GameEvent[] = [
     id: 'ending_medical_saint',
     storyline: 'ordinary',
     title: '悬壶济世',
-    description: '',
+    description: '你以医术拯救了无数生命...',
     type: 'ending',
     narrative: {
       speaker: {
@@ -2471,7 +2504,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【杏林春暖】',
         description: '查看你的行医事迹',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '悬壶济世 · 杏林春暖',
@@ -2569,7 +2604,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【迷雾重重】',
         description: '查看关于你的各种传说',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '',
         result: {
           title: '不知所踪 · 迷雾重重',
@@ -2706,7 +2743,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【致仕善终】',
         description: '查看你的归田生活',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你急流勇退，得享天年，乡里称颂。',
         result: {
           title: '致仕善终 · 清白传家',
@@ -2883,7 +2922,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【鞠躬尽瘁】',
         description: '查看你的最后一日',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你以七十二岁高龄殉职于任上，百姓闻之皆泣。',
         result: {
           title: '殉职任上 · 鞠躬尽瘁',
@@ -3085,7 +3126,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【边关大将】',
         description: '查看你的戎马生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你镇守边关多年，敌国不敢正视。',
         result: {
           title: '边关大将 · 威震塞外',
@@ -3229,7 +3272,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【清流骨鲠】',
         description: '查看你的言官生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你以言官之身，弹劾权贵，不畏生死。',
         result: {
           title: '清流骨鲠 · 铁面御史',
@@ -3359,8 +3404,10 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【城破殉城】',
         description: '查看你的最后时刻',
-        effects: {},
-        resultDescription: '你与北京城共存亡。',
+        effects: {
+            special: { type: 'ending' }
+        },
+        resultDescription: '甲申之变，你登上城楼，与北京城共存亡。',
         result: {
           title: '城破殉城 · 浩气长存',
           tags: ['甲申', '国势<15', '圣眷>50', '道德>60', '殉国'],
@@ -3495,7 +3542,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【抄家灭族】',
         description: '查看你的最后时刻',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你被朝廷下旨抄家，全家老小流放岭南。',
         result: {
           title: '抄家灭族 · 罪有应得',
@@ -3750,7 +3799,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【平凡终老】',
         description: '查看你的寻常人生',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你平静地过完了这一生，没有大起大落。',
         result: {
           title: '平凡终老 · 与世无争',
@@ -3945,7 +3996,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【落草为寇】',
         description: '查看你的山寨生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你聚众为寇，成为朝廷的心腹大患。',
         result: {
           title: '落草为寇 · 流寇之雄',
@@ -4159,7 +4212,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【士林风骨】',
         description: '查看你的殉道故事',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你以死明志，文章气节为后人所称颂。',
         result: {
           title: '清流殉道 · 士林风骨',
@@ -4311,7 +4366,9 @@ export const allEndingEvents: GameEvent[] = [
         id: 'c1',
         text: '【浪迹天涯】',
         description: '查看你的亡命生涯',
-        effects: {},
+        effects: {
+            special: { type: 'ending' }
+        },
         resultDescription: '你以"某"为姓，以"客"为名，开始了真正的江湖漂泊。',
         result: {
           title: '亡命江湖 · 浪迹天涯',

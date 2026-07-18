@@ -78,7 +78,18 @@
   margin-bottom: 8px;
   animation: pulse 3s infinite;
   filter: drop-shadow(0 0 15px rgba(139, 0, 0, 0.5));
+  font-family: 'Ma Shan Zheng', serif;
 }
+
+.death-ending-icon::before {
+  display: inline-block;
+}
+
+.death-ending-icon.icon-martyrdom::before { content: '殉'; }
+.death-ending-icon.icon-suicide::before { content: '缢'; }
+.death-ending-icon.icon-killed::before { content: '战'; }
+.death-ending-icon.icon-execution::before { content: '刑'; }
+.death-ending-icon.icon-default::before { content: '殁'; }
 
 .martyrdom .death-ending-icon {
   filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
@@ -220,7 +231,7 @@
 
 .death-ending-epitaph-border::before,
 .death-ending-epitaph-border::after {
-  content: '❧';
+  content: '※';
   position: absolute;
   font-size: 20px;
   color: rgba(139, 0, 0, 0.5);

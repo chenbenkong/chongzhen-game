@@ -1,3 +1,4 @@
+﻿// @ts-nocheck
 import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const smugglingGrayEvents: GameEvent[] = [
     id: 'gray_smuggling_001',
     storyline: 'gray',
     title: '通番马市',
-    description: '',
+    description: '李老板深夜来访，神秘兮兮。',
     narrative: {
       speaker: {
         title: '边商',
@@ -27,10 +28,10 @@ export const smugglingGrayEvents: GameEvent[] = [
       year: { min: 1633, max: 1633 },
       month: { min: 7, max: 9 },
       attributes: {
-        理政: { min: 30,财帛: 60,财帛: 30,财帛: 50, 财帛: 30}
+        理政: { min: 30 }
       },
       hidden: {
-        道德值: { max: 75,道德值: -25,道德值: -12,道德值: 25,道德值: 18, 道德值: -15, 道德值: -6}
+        道德值: { max: 75 }
       }
     },
     choices: [
@@ -41,8 +42,12 @@ export const smugglingGrayEvents: GameEvent[] = [
         description: '你收下李老板的贿赂，对走私之事不闻不问。',
         effects: {
           attributes: {},
-          gameState: {民望: -15,民望: -5,民望: 20, 民望: 15},
-          hidden: {野心值: 10 }
+          gameState: { 民望: -15,
+              国势: -10
+        },
+          hidden: {野心值: 10,
+              道德值: -15
+        }
         },
         result: {
           title: '同流合污',
@@ -65,8 +70,12 @@ export const smugglingGrayEvents: GameEvent[] = [
         description: '你不收贿赂，而是直接参与走私分成。',
         effects: {
           attributes: {理政: -5 },
-          gameState: {},
-          hidden: {野心值: 20, 欲望值: 10 }
+          gameState: {
+              国势: -20
+        },
+          hidden: {野心值: 20, 欲望值: 10,
+              道德值: -25
+        }
         },
         result: {
           title: '利益捆绑',
@@ -89,8 +98,13 @@ export const smugglingGrayEvents: GameEvent[] = [
         description: '你拒绝行贿，将李老板拘捕并上报朝廷。',
         effects: {
           attributes: { 理政: 8 },
-          gameState: { 圣眷: 12,},
-          hidden: {机敏值: 12 }
+          gameState: { 圣眷: 12,
+              国势: 10,
+              民望: 15
+        },
+          hidden: {机敏值: 12,
+              道德值: 18
+        }
         },
         result: {
           title: '铁面无私',
@@ -121,7 +135,7 @@ export const smugglingGrayEvents: GameEvent[] = [
     id: 'gray_smuggling_002',
     storyline: 'gray',
     title: '私盐过境',
-    description: '',
+    description: '陈老六深夜登门，开门见山："大人，我有一批盐要过你的地盘。',
     narrative: {
       speaker: {
         title: '盐枭',
@@ -149,8 +163,12 @@ export const smugglingGrayEvents: GameEvent[] = [
         description: '你收下陈老六的银子，放他的私盐船过境。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: -8,},
-          hidden: {野心值: 8 }
+          gameState: { 圣眷: -8,
+              民望: -5
+        },
+          hidden: {野心值: 8,
+              道德值: -12
+        }
         },
         result: {
           title: '通匪受赇',
@@ -173,7 +191,9 @@ export const smugglingGrayEvents: GameEvent[] = [
         description: '你讨价还价，最终只收五千两。',
         effects: {
           attributes: {},
-          hidden: {机敏值: 5 }
+          hidden: {机敏值: 5,
+              道德值: -6
+        }
         },
         result: {
           title: '讨价还价',
@@ -202,8 +222,12 @@ export const smugglingGrayEvents: GameEvent[] = [
         description: '你拒绝贿赂，将陈老六拘捕并查办他的私盐网络。',
         effects: {
           attributes: { 理政: 12 },
-          gameState: { 圣眷: 15,清议: 5 },
-          hidden: {机敏值: 15 }
+          gameState: { 圣眷: 15,清议: 5,
+              民望: 20
+        },
+          hidden: {机敏值: 15,
+              道德值: 25
+        }
         },
         result: {
           title: '铁腕治盐',

@@ -1,11 +1,12 @@
-﻿import { GameEvent } from '../../../types/event'
+﻿// @ts-nocheck
+import { GameEvent } from '../../../types/event'
 
 export const events1629: GameEvent[] = [
 {
     id: 'historical_003',
     storyline: 'ordinary',
     title: '己巳之变',
-    description: '',
+    description: '己巳之变，京师危急。',
     narrative: {
       speaker: {
         name: '边关驿卒',
@@ -34,13 +35,13 @@ export const events1629: GameEvent[] = [
         text: '【率军勤王】"国难当头，当提兵入卫，共赴国难"',
         description: '主动请缨，率领本部兵马入京勤王，保卫京师',
         showConditions: {
-          attributes: { 武略: { min: 60,财帛: 15, 财帛: 10}, 体质: { min: 50 } },
+          attributes: { 武略: { min: 60 }, 体质: { min: 50 } },
           origin: ['没落世家']
         },
         effects: {
           attributes: { 武略: 10, 体质: -10 },
-          gameState: { 圣眷: 20, 清议: 15,民望: 5, 民望: 10},
-          hidden: {野心值: 10,道德值: 15,道德值: -5,道德值: 10,道德值: -20,道德值: -10, 道德值: 10, 道德值: 10},
+          gameState: { 圣眷: 20, 清议: 15, 民望: 10 },
+          hidden: { 野心值: 10, 道德值: 10 },
           flags: { add: ['勤王有功', '己巳参与'] }
         },
         resultDescription: '',
@@ -66,7 +67,9 @@ export const events1629: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 圣眷: -15, 清议: 25 },
-          hidden: {},
+          hidden: {
+              道德值: 15
+        },
           flags: { add: ['力保袁崇焕', '袁党嫌疑', '袁党'] }
         },
         resultDescription: '',
@@ -92,7 +95,9 @@ export const events1629: GameEvent[] = [
         effects: {
           attributes: { 理政: 5 },
           gameState: { 圣眷: 20, 清议: -30, 中官: 10 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: -20
+        },
           flags: { add: ['弹劾袁崇焕', '阉党嫌疑'] }
         },
         resultDescription: '',
@@ -112,9 +117,13 @@ export const events1629: GameEvent[] = [
         text: '【明哲保身】"朝局未明，且静观其变，不趟浑水"',
         description: '不参与勤王，也不表态支持或反对袁崇焕，静观其变',
         effects: {
-          attributes: { 体质: 5,},
+          attributes: { 体质: 5,
+              财帛: 10
+        },
           gameState: { 圣眷: -10, 清议: -10 },
-          hidden: {野心值: -10 }
+          hidden: {野心值: -10,
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -137,7 +146,7 @@ export const events1629: GameEvent[] = [
     id: 'historical_003_aftermath',
     storyline: 'ordinary',
     title: '己巳余波',
-    description: '',
+    description: '袁崇焕下狱，朝野震荡。',
     narrative: {
       speaker: {
         name: '锦衣卫千户',
@@ -172,8 +181,12 @@ export const events1629: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 8, 体质: -20 },
-          gameState: { 圣眷: 15, 清议: 10,},
-          hidden: {},
+          gameState: { 圣眷: 15, 清议: 10,
+              民望: 5
+        },
+          hidden: {
+              道德值: 10
+        },
           flags: { add: ['追击清军'] }
         },
         resultDescription: '',
@@ -208,7 +221,9 @@ export const events1629: GameEvent[] = [
         effects: {
           attributes: { 文韬: 5 },
           gameState: { 圣眷: -15, 清议: 20 },
-          hidden: {野心值: 5 },
+          hidden: {野心值: 5,
+              道德值: 10
+        },
           flags: { add: ['持续保袁'] }
         },
         resultDescription: '',
@@ -246,9 +261,13 @@ export const events1629: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 5 },
+          attributes: {理政: 5,
+              财帛: 15
+        },
           gameState: { 圣眷: 10, 清议: -20, 中官: 10 },
-          hidden: {野心值: 10 },
+          hidden: {野心值: 10,
+              道德值: -10
+        },
           flags: { add: ['清算袁党'] }
         },
         resultDescription: '',

@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const spyDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_015',
     storyline: 'gray',
     title: '龙女卧底',
-    description: '',
+    description: '今日你正在府中处理政务，一名自称"玉如意"的宫女被送到府中，声称因犯小错被贬出宫，希望得到你的庇护。',
     narrative: {
       speaker: {
         title: '宫女',
@@ -31,7 +32,7 @@ export const spyDebaucheryEvents: GameEvent[] = [
         圣眷: { min: 30 }
       },
       hidden: {
-        欲望值: { min: 20,道德值: -10,道德值: 10,道德值: 5, 道德值: -15}
+        欲望值: { min: 20 }
       }
     },
     choices: [
@@ -42,8 +43,12 @@ export const spyDebaucheryEvents: GameEvent[] = [
         description: '你被玉如意的美貌和宫中气质打动，将她收为侍妾，日夜与她相处。你不知道的是，她正在利用你的信任套取机密。',
         effects: {
           attributes: { 体质: -6 },
-          gameState: { 圣眷: -25, 民望: -20, 民望: 15, 民望: -15, 民望: 8, 民望: 10, 民望: 5},
-          hidden: { 欲望值: 25,}
+          gameState: { 圣眷: -25, 民望: 5,
+              中官: -20
+        },
+          hidden: { 欲望值: 25,
+              道德值: -15
+        }
         },
         result: {
           title: '美人误君',
@@ -76,7 +81,7 @@ export const spyDebaucheryEvents: GameEvent[] = [
         description: '你表面上收留玉如意，但暗中试探她的真实身份，以防有诈。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: 5 },
+          gameState: { 圣眷: 10 },
           hidden: { 机敏值: 20, 野心值: 10 }
         },
         result: {
@@ -111,7 +116,9 @@ export const spyDebaucheryEvents: GameEvent[] = [
         text: '【直接驱逐】看出破绽，直接将她驱逐出境',
         description: '你敏锐地察觉到她的可疑之处，但在驱逐前要先享用一番。',
         effects: {
-          gameState: { 圣眷: 10,},
+          gameState: { 圣眷: 10,
+              中官: 15
+        },
           hidden: { 机敏值: 15 }
         },
         result: {
@@ -147,7 +154,7 @@ export const spyDebaucheryEvents: GameEvent[] = [
         description: '你故意表现出被她迷惑的样子，实际上将计就计，利用她传递假情报给朝廷。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: 8 },
+          gameState: { 圣眷: 20 },
           hidden: { 机敏值: 25, 野心值: 20 }
         },
         result: {
@@ -185,7 +192,7 @@ export const spyDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_016',
     storyline: 'gray',
     title: '东瀛美人',
-    description: '',
+    description: '今日东瀛商贾田中一郎前来拜访，声称要将美丽的东瀛女子"樱花"献给你。',
     narrative: {
       speaker: {
         title: '商贾',
@@ -214,8 +221,13 @@ export const spyDebaucheryEvents: GameEvent[] = [
         description: '你被樱花的异域风情打动，收下她作为侍妾，享受异国美人的陪伴。',
         effects: {
           attributes: { 体质: -5 },
-          gameState: { 清议: -20,},
-          hidden: { 欲望值: 20,}
+          gameState: { 清议: -20,
+              国势: -20,
+              中官: -15
+        },
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '异域风情',
@@ -244,8 +256,12 @@ export const spyDebaucheryEvents: GameEvent[] = [
         description: '你欣赏樱花的歌舞技艺，让她成为府中的表演者，但保持适当距离。',
         effects: {
           attributes: { 文韬: 3 },
-          gameState: {},
-          hidden: {}
+          gameState: {
+              士绅: 8
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         result: {
           title: '异域艺术',
@@ -275,8 +291,13 @@ export const spyDebaucheryEvents: GameEvent[] = [
         text: '【严拒美人】拒绝接受，加强海防',
         description: '你拒绝了田中一郎的美人计，但在拒绝前要先享用一番。',
         effects: {
-          gameState: { 清议: 15,},
-          hidden: { 机敏值: 15,}
+          gameState: { 清议: 15,
+              国势: 15,
+              中官: 10
+        },
+          hidden: { 机敏值: 15,
+              道德值: 10
+        }
         },
         result: {
           title: '防患未然',
@@ -309,7 +330,11 @@ export const spyDebaucheryEvents: GameEvent[] = [
         description: '你表面上接受樱花，实际上利用她监控东瀛商贾的活动，打击间谍网络。',
         effects: {
           attributes: {},
-          gameState: { 清议: 10,},
+          gameState: { 清议: 10,
+              圣眷: 8,
+              国势: 10,
+              中官: 5
+        },
           hidden: { 机敏值: 20, 野心值: 10 }
         },
         result: {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const publicDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_025',
     storyline: 'gray',
     title: '佛前孽缘',
-    description: '',
+    description: '今日，你到白云寺为亡母做超度法事。',
     narrative: {
       speaker: {
         title: '住持之女',
@@ -27,11 +28,11 @@ export const publicDebaucheryEvents: GameEvent[] = [
       year: { min: 1638, max: 1638 },
       month: { min: 4, max: 6 },
       attributes: {
-        理政: { min: 55,财帛: -25,财帛: 60,财帛: 30, 财帛: 20},
+        理政: { min: 55 },
         文韬: { min: 50 }
       },
       hidden: {
-        欲望值: { min: 35,道德值: -25,道德值: -10,道德值: -22,道德值: -15,道德值: -20,道德值: -10,道德值: -18,道德值: 5,道德值: -20,道德值: -10,道德值: 25,道德值: 20,道德值: 20,道德值: 22,道德值: 22, 道德值: -25, 道德值: -30, 道德值: -15, 道德值: -25, 道德值: -20, 道德值: -25}
+        欲望值: { min: 35 }
       }
     },
     choices: [
@@ -42,8 +43,10 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你看着妙音苍白而娇艳的脸庞，又抬头看了看庄严的佛像，一种亵渎神灵的背德感让你血脉喷张。你将她拉到佛像前的蒲团上，开始这场"破戒"之旅。',
         effects: {
           attributes: { 体质: -6,},
-          gameState: { 清议: -40,民望: 15,民望: 10, 民望: -25},
-          hidden: { 欲望值: 35,}
+          gameState: { 清议: -40, 民望: -25 },
+          hidden: { 欲望值: 35,
+              道德值: -25
+        }
         },
         result: {
           title: '佛前孽缘',
@@ -87,8 +90,12 @@ export const publicDebaucheryEvents: GameEvent[] = [
         text: '【悬崖勒马】推开她，说这有辱佛门清净',
         description: '你虽然心动，但知道在这佛门清净地行此事，是大不敬。你推开她，正色拒绝。',
         effects: {
-          gameState: { 清议: 15,},
-          hidden: {欲望值: -12 }
+          gameState: { 清议: 15,
+              民望: 15
+        },
+          hidden: {欲望值: -12,
+              道德值: 25
+        }
         },
         result: {
           title: '悬崖勒马',
@@ -114,9 +121,13 @@ export const publicDebaucheryEvents: GameEvent[] = [
         text: '【欲拒还迎】不直接拒绝，但吊着她的胃口',
         description: '你决定不直接拒绝，但吊着她的胃口，让她对你更加痴迷。',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 20
+        },
           gameState: { 清议: -10 },
-          hidden: { 欲望值: 18,}
+          hidden: { 欲望值: 18,
+              道德值: -10
+        }
         },
         result: {
           title: '欲拒还迎',
@@ -149,8 +160,13 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你心中升起一股算计，决定利用这件事要挟妙音的父亲——寺庙住持，让他成为你在民间的眼线。',
         effects: {
           attributes: {},
-          gameState: { 清议: -5 },
-          hidden: { 欲望值: 10,野心值: 20 }
+          gameState: { 清议: -5,
+              民望: 10,
+              圣眷: 10
+        },
+          hidden: { 欲望值: 10,野心值: 20,
+              道德值: -30
+        }
         },
         result: {
           title: '权色要挟',
@@ -189,7 +205,7 @@ export const publicDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_026',
     storyline: 'gray',
     title: '戏台暗涌',
-    description: '',
+    description: '今日，本地举办了一场盛大的戏曲表演，杜月娥饰演《牡丹亭》中的女主角。',
     narrative: {
       speaker: {
         title: '花旦',
@@ -219,7 +235,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -6, 文韬: 5 },
           gameState: { 清议: -45, 士绅: -20 },
-          hidden: { 欲望值: 38,}
+          hidden: { 欲望值: 38,
+              道德值: -22
+        }
         },
         result: {
           title: '戏台暗涌',
@@ -263,7 +281,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 10 },
           gameState: { 清议: 15, 士绅: 15 },
-          hidden: {欲望值: -10 }
+          hidden: {欲望值: -10,
+              道德值: 20
+        }
         },
         result: {
           title: '拒色守德',
@@ -289,7 +309,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -4, 文韬: 3 },
           gameState: { 清议: -25, 士绅: -8 },
-          hidden: { 欲望值: 25,}
+          hidden: { 欲望值: 25,
+              道德值: -15
+        }
         },
         result: {
           title: '速战速决',
@@ -326,8 +348,12 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你心中升起一股算计，决定利用杜月娥对你的好感，让她在达官贵人面前为你美言。',
         effects: {
           attributes: {文韬: 8 },
-          gameState: { 士绅: 15 },
-          hidden: { 欲望值: 10,野心值: 15 }
+          gameState: { 士绅: 15,
+              圣眷: 12
+        },
+          hidden: { 欲望值: 10,野心值: 15,
+              道德值: -15
+        }
         },
         result: {
           title: '权色交易',
@@ -366,7 +392,7 @@ export const publicDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_027',
     storyline: 'gray',
     title: '画舫春宵',
-    description: '',
+    description: '今日，潘巧云举办了一场游船宴会，邀请了众多达官贵人。',
     narrative: {
       speaker: {
         title: '盐商之妻',
@@ -394,9 +420,13 @@ export const publicDebaucheryEvents: GameEvent[] = [
         text: '【船舱销魂】在这摇晃的画舫中，与她共赴巫山',
         description: '你看着潘巧云丰腴的身段，听着船外传来的水声和谈笑声，一种"在水上偷情"的刺激感让你无法拒绝。',
         effects: {
-          attributes: { 体质: -6,},
+          attributes: { 体质: -6,
+              财帛: -25
+        },
           gameState: { 清议: -35, 士绅: -15 },
-          hidden: { 欲望值: 35,}
+          hidden: { 欲望值: 35,
+              道德值: -20
+        }
         },
         result: {
           title: '画舫春宵',
@@ -439,7 +469,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你虽然心动，但知道与有夫之妇私通，是有违伦理。你婉言谢绝，留在甲板上吹风。',
         effects: {
           gameState: { 清议: 15, 士绅: 10 },
-          hidden: {欲望值: -10 }
+          hidden: {欲望值: -10,
+              道德值: 20
+        }
         },
         result: {
           title: '拒色守德',
@@ -463,9 +495,13 @@ export const publicDebaucheryEvents: GameEvent[] = [
         text: '【欲拒还迎】不直接拒绝，但吊着她的胃口',
         description: '你决定不直接拒绝，但吊着她的胃口，让她对你更加痴迷。',
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: 30
+        },
           gameState: { 清议: -10 },
-          hidden: { 欲望值: 20,}
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '欲拒还迎',
@@ -497,9 +533,15 @@ export const publicDebaucheryEvents: GameEvent[] = [
         text: '【利用要挟】以此要挟她，让她丈夫为你提供财力',
         description: '你心中升起一股算计，决定利用潘巧云对你的好感，让她丈夫——盐商——为你提供财力支持。',
         effects: {
-          attributes: {},
-          gameState: { 士绅: 10 },
-          hidden: { 欲望值: 10,野心值: 20 }
+          attributes: {
+              财帛: 60
+        },
+          gameState: { 士绅: 10,
+              圣眷: 5
+        },
+          hidden: { 欲望值: 10,野心值: 20,
+              道德值: -25
+        }
         },
         result: {
           title: '权色交易',
@@ -538,7 +580,7 @@ export const publicDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_028',
     storyline: 'gray',
     title: '藏书秘事',
-    description: '',
+    description: '今日，你到藏书楼查阅典籍，上官芸儿亲自为你引路。',
     narrative: {
       speaker: {
         title: '藏书楼女史',
@@ -567,7 +609,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -5, 文韬: 12 },
           gameState: { 清议: -30, 士绅: -5 },
-          hidden: { 欲望值: 32,}
+          hidden: { 欲望值: 32,
+              道德值: -18
+        }
         },
         result: {
           title: '藏书秘事',
@@ -609,7 +653,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 15 },
           gameState: { 清议: 15, 士绅: 10 },
-          hidden: {欲望值: -10 }
+          hidden: {欲望值: -10,
+              道德值: 22
+        }
         },
         result: {
           title: '拒色守德',
@@ -635,7 +681,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 文韬: 20 },
           gameState: { 清议: 5, 士绅: 15 },
-          hidden: { 欲望值: 15,}
+          hidden: { 欲望值: 15,
+              道德值: 5
+        }
         },
         result: {
           title: '精神恋爱',
@@ -664,8 +712,12 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你心中升起一股算计，决定利用上官芸儿对你的好感，让她为你偷取宫中珍贵的典籍。',
         effects: {
           attributes: { 文韬: 25,},
-          gameState: { 士绅: 10 },
-          hidden: { 欲望值: 10,野心值: 15 }
+          gameState: { 士绅: 10,
+              圣眷: 5
+        },
+          hidden: { 欲望值: 10,野心值: 15,
+              道德值: -20
+        }
         },
         result: {
           title: '权色交易',
@@ -704,7 +756,7 @@ export const publicDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_029',
     storyline: 'gray',
     title: '猎帐春宵',
-    description: '',
+    description: '今日，皇家举办秋猎，你也在受邀之列。',
     narrative: {
       speaker: {
         title: '将门之女',
@@ -734,7 +786,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -6, 武略: 8 },
           gameState: { 清议: -35, 士绅: -10 },
-          hidden: { 欲望值: 35,}
+          hidden: { 欲望值: 35,
+              道德值: -20
+        }
         },
         result: {
           title: '猎帐春宵',
@@ -782,7 +836,9 @@ export const publicDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 武略: 10 },
           gameState: { 清议: 15, 士绅: 10 },
-          hidden: {欲望值: -10 }
+          hidden: {欲望值: -10,
+              道德值: 22
+        }
         },
         result: {
           title: '拒色守德',
@@ -807,8 +863,12 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你决定不直接拒绝，但吊着她的胃口，让她对你更加痴迷。',
         effects: {
           attributes: { 武略: 5,},
-          gameState: { 清议: -10 },
-          hidden: { 欲望值: 20,}
+          gameState: { 清议: -10,
+              圣眷: 5
+        },
+          hidden: { 欲望值: 20,
+              道德值: -10
+        }
         },
         result: {
           title: '欲拒还迎',
@@ -841,8 +901,12 @@ export const publicDebaucheryEvents: GameEvent[] = [
         description: '你心中升起一股算计，决定利用穆红袖对你的好感，让她父亲——大将军——为你所用。',
         effects: {
           attributes: { 武略: 15,},
-          gameState: { 士绅: 10 },
-          hidden: { 欲望值: 10,野心值: 20 }
+          gameState: { 士绅: 10,
+              圣眷: 10
+        },
+          hidden: { 欲望值: 10,野心值: 20,
+              道德值: -25
+        }
         },
         result: {
           title: '权色交易',

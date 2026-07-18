@@ -38,6 +38,12 @@
   margin-bottom: 12px;
   opacity: 0.5;
 }
+.empty-icon::before {
+  content: '卷';
+  display: inline-block;
+  font-family: 'Ma Shan Zheng', serif;
+  color: #5a4830;
+}
 
 .empty-text {
   font-size: 1rem;
@@ -255,20 +261,28 @@
   position: absolute;
   top: -4px;
   left: 4px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #5a4830;
   line-height: 1;
-  font-family: Georgia, serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+}
+
+.quote-mark-compact::before {
+  content: '「';
 }
 
 .quote-end-compact {
   position: absolute;
   bottom: -8px;
   right: 4px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #5a4830;
   line-height: 1;
-  font-family: Georgia, serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+}
+
+.quote-end-compact::before {
+  content: '」';
 }
 
 .quote-text-compact {
@@ -451,14 +465,27 @@
 }
 
 .choice-card.locked {
-  opacity: 0.35;
+  opacity: 0.55;
   border-color: #2a1510;
-  background: linear-gradient(180deg, #12100a 0%, #0a0806 100%);
+  background: linear-gradient(180deg, #15120c 0%, #0c0a07 100%);
+  position: relative;
+}
+
+.choice-card.locked::before {
+  content: '锁';
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-family: 'Ma Shan Zheng', serif;
+  font-size: 0.75rem;
+  color: #5a3020;
+  letter-spacing: 1px;
 }
 
 .choice-card.locked:hover {
   transform: none;
   border-color: #2a1510;
+  opacity: 0.65;
 }
 
 .choice-content {
@@ -472,11 +499,30 @@
   color: #c9b896;
   letter-spacing: 0.5px;
   line-height: 1.5;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-storyline-shift {
+  font-size: 0.72rem;
+  color: #8b7540;
+  background: rgba(139, 105, 20, 0.1);
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  padding: 2px 8px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
 @media (max-width: 480px) {
   .choice-title {
     font-size: 0.88rem;
+  }
+  .choice-storyline-shift {
+    font-size: 0.68rem;
+    padding: 1px 6px;
   }
 }
 
@@ -541,13 +587,20 @@
   flex-direction: column;
   gap: 10px;
   animation: fadeIn 0.4s ease;
-  max-height: calc(100vh - 200px);
+  max-height: min(680px, calc(100vh - 220px));
   overflow-y: auto;
+  padding-right: 4px;
 }
 
 @media (max-width: 768px) {
   .result-section {
-    max-height: calc(100vh - 160px);
+    max-height: min(560px, calc(100vh - 180px));
+  }
+}
+
+@media (max-width: 480px) {
+  .result-section {
+    max-height: min(480px, calc(100vh - 160px));
   }
 }
 

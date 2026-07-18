@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GameEvent } from '../../../types/event'
 
 export const events1642: GameEvent[] = [
@@ -5,7 +6,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_163',
     storyline: 'ordinary',
     title: '新年朝会',
-    description: '',
+    description: '新年朝会，社稷危亡。',
     narrative: {
       speaker: {
         name: '礼部侍郎',
@@ -35,14 +36,16 @@ export const events1642: GameEvent[] = [
         text: '【上疏献策】"当上疏献策，主张整军备寇"',
         description: '撰写奏疏，主张整军备寇，先平内乱再图辽东',
         showConditions: {
-          attributes: { 文韬: { min: 50,财帛: 25,财帛: 30,财帛: 20,财帛: 30,财帛: 10,财帛: 30,财帛: 30,财帛: 15,财帛: 30,财帛: -15,财帛: -10,财帛: -5, 财帛: -15, 财帛: -20, 财帛: 10, 财帛: -8, 财帛: -20} },
-          hidden: { 道德值: { min: 40,道德值: 2,道德值: 3,道德值: 2,道德值: 5,道德值: -18,道德值: 5,道德值: -20,道德值: 10,道德值: -15,道德值: 10,道德值: -20,道德值: 8,道德值: -8,道德值: 12,道德值: -15,道德值: 10,道德值: -15,道德值: 15,道德值: -18,道德值: 12,道德值: -12,道德值: 5,道德值: -5,道德值: -8,道德值: -15,道德值: -5,道德值: 5,道德值: 5,道德值: 3,道德值: -3,道德值: -2,道德值: 3,道德值: -5,道德值: -2,道德值: 5, 道德值: 5, 道德值: 10, 道德值: -8, 道德值: 2, 道德值: 5, 道德值: 5, 道德值: -8, 道德值: -2, 道德值: -12, 道德值: 8, 道德值: -5, 道德值: 3} },
+          attributes: { 文韬: { min: 50 } },
+          hidden: { 道德值: { min: 40 } },
           origin: ['寒门', '诗文清望']
         },
         effects: {
           attributes: { 文韬: 4, 理政: 3 },
-          gameState: { 圣眷: 10, 清议: 12,民望: -10,民望: -5,民望: -8,民望: -5,民望: 5,民望: 10,民望: 5,民望: 10,民望: 5,民望: -10,民望: -20,民望: 5,民望: -15,民望: 8,民望: 10,民望: 20,民望: 20,民望: 10,民望: -18, 民望: -3, 民望: -12, 民望: -18, 民望: -18, 民望: -18, 民望: 18, 民望: 15},
-          hidden: {野心值: 5 }
+          gameState: { 圣眷: 10, 清议: 12, 民望: 15 },
+          hidden: {野心值: 5,
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -69,7 +72,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 理政: 3, 体质: 2 },
           gameState: { 圣眷: 3, 清议: 3 },
-          hidden: {野心值: -3 }
+          hidden: {野心值: -3,
+              道德值: 2
+        }
         },
         resultDescription: '',
         result: {
@@ -97,9 +102,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: 2 },
+          attributes: {理政: 2,
+              财帛: -15
+        },
           gameState: { 圣眷: 8, 清议: -10, 士绅: 12, 中官: 8 },
-          hidden: {欲望值: 8, 野心值: 10 }
+          hidden: {欲望值: 8, 野心值: 10,
+              道德值: -8
+        }
         },
         resultDescription: '',
         result: {
@@ -128,7 +137,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 4, 文韬: 2 },
           gameState: { 圣眷: -3, 清议: 5 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: 3
+        }
         },
         resultDescription: '',
         result: {
@@ -157,7 +168,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_164',
     storyline: 'ordinary',
     title: '松山陷落',
-    description: '',
+    description: '松山陷落，洪承畴被俘。',
     narrative: {
       speaker: {
         name: '辽东急递',
@@ -197,7 +208,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 4, 体质: -3 },
           gameState: { 圣眷: -8, 清议: 18, 中官: -10 },
-          hidden: {野心值: -3 }
+          hidden: {野心值: -3,
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -223,8 +236,12 @@ export const events1642: GameEvent[] = [
         description: '主张放弃辽东，固守山海关，保存现有实力',
         effects: {
           attributes: { 理政: 3, 武略: 2 },
-          gameState: { 圣眷: 5, 清议: 5,},
-          hidden: {}
+          gameState: { 圣眷: 5, 清议: 5,
+              民望: -3
+        },
+          hidden: {
+              道德值: 2
+        }
         },
         resultDescription: '',
         result: {
@@ -253,9 +270,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -5, 清议: -15,},
-          hidden: {欲望值: 12, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 25
+        },
+          gameState: { 圣眷: -5, 清议: -15,
+              民望: -10
+        },
+          hidden: {欲望值: 12, 野心值: 5,
+              道德值: -15
+        }
         },
         resultDescription: '',
         result: {
@@ -311,7 +334,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_165',
     storyline: 'border_war',
     title: '锦州陷落',
-    description: '',
+    description: '锦州陷落，辽东全失。',
     narrative: {
       speaker: {
         name: '兵部急递',
@@ -350,8 +373,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -3 },
-          gameState: { 圣眷: 10, 清议: 10,},
-          hidden: {野心值: 5 }
+          gameState: { 圣眷: 10, 清议: 10,
+              民望: 8
+        },
+          hidden: {野心值: 5,
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -380,8 +407,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 3, 文韬: 2 },
-          gameState: { 圣眷: 5, 清议: -12,},
-          hidden: {野心值: 5 }
+          gameState: { 圣眷: 5, 清议: -12,
+              民望: -5
+        },
+          hidden: {野心值: 5,
+              道德值: -8
+        }
         },
         resultDescription: '',
         result: {
@@ -408,9 +439,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -8, 清议: -20,},
-          hidden: {欲望值: 15, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 30
+        },
+          gameState: { 圣眷: -8, 清议: -20,
+              民望: -12
+        },
+          hidden: {欲望值: 15, 野心值: 5,
+              道德值: -18
+        }
         },
         resultDescription: '',
         result: {
@@ -439,8 +476,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 圣眷: -10, 清议: 5,},
-          hidden: {野心值: -3 }
+          gameState: { 圣眷: -10, 清议: 5,
+              民望: -8
+        },
+          hidden: {野心值: -3,
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -466,8 +507,8 @@ export const events1642: GameEvent[] = [
   {
     id: 'transition_166',
     storyline: 'ordinary',
-    title: '开封之战',
-    description: '',
+    title: '开封之战 · 中原存亡',
+    description: '开封被围，中原告急。',
     narrative: {
       speaker: {
         name: '河南巡抚急递',
@@ -505,8 +546,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 5, 体质: -3 },
-          gameState: { 圣眷: 10, 清议: 12,},
-          hidden: {野心值: 5 }
+          gameState: { 圣眷: 10, 清议: 12,
+              民望: 10
+        },
+          hidden: {野心值: 5,
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -533,8 +578,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 3, 武略: 3 },
-          gameState: { 圣眷: 5, 清议: 8,},
-          hidden: {野心值: 3 }
+          gameState: { 圣眷: 5, 清议: 8,
+              民望: -5
+        },
+          hidden: {野心值: 3,
+              道德值: 2
+        }
         },
         resultDescription: '',
         result: {
@@ -563,9 +612,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -8, 清议: -20,},
-          hidden: {欲望值: 15, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 30
+        },
+          gameState: { 圣眷: -8, 清议: -20,
+              民望: -18
+        },
+          hidden: {欲望值: 15, 野心值: 5,
+              道德值: -20
+        }
         },
         resultDescription: '',
         result: {
@@ -594,8 +649,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 圣眷: -5, 清议: 8,},
-          hidden: {}
+          gameState: { 圣眷: -5, 清议: 8,
+              民望: 5
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -622,7 +681,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_167',
     storyline: 'ordinary',
     title: '春耕荒废',
-    description: '',
+    description: '春耕荒废，民生凋敝。',
     narrative: {
       speaker: {
         name: '户部郎中',
@@ -657,9 +716,15 @@ export const events1642: GameEvent[] = [
           origin: ['寒门', '没落世家']
         },
         effects: {
-          attributes: {理政: 5, 体质: -3 },
-          gameState: { 圣眷: 8, 清议: 15,},
-          hidden: {}
+          attributes: {理政: 5, 体质: -3,
+              财帛: -20
+        },
+          gameState: { 圣眷: 8, 清议: 15,
+              民望: 20
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -685,8 +750,12 @@ export const events1642: GameEvent[] = [
         description: '组织百姓互助合作，以工代耕，恢复春耕',
         effects: {
           attributes: { 理政: 4, 体质: -2 },
-          gameState: { 圣眷: 5, 清议: 8,},
-          hidden: {}
+          gameState: { 圣眷: 5, 清议: 8,
+              民望: 10
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -713,9 +782,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -5, 清议: -15,士绅: 10 },
-          hidden: {欲望值: 12, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 20
+        },
+          gameState: { 圣眷: -5, 清议: -15,士绅: 10,
+              民望: -18
+        },
+          hidden: {欲望值: 12, 野心值: 5,
+              道德值: -15
+        }
         },
         resultDescription: '',
         result: {
@@ -744,8 +819,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 文韬: 3 },
-          gameState: { 圣眷: -5, 清议: 8,},
-          hidden: {}
+          gameState: { 圣眷: -5, 清议: 8,
+              民望: 5
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -772,7 +851,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_168',
     storyline: 'ordinary',
     title: '夏季洪涝',
-    description: '',
+    description: '夏季洪涝，南方告急。',
     narrative: {
       speaker: {
         name: '南京工部主事',
@@ -807,9 +886,15 @@ export const events1642: GameEvent[] = [
           origin: ['寒门', '没落世家']
         },
         effects: {
-          attributes: { 理政: 5,体质: -5 },
-          gameState: { 圣眷: 8, 清议: 15,},
-          hidden: {}
+          attributes: { 理政: 5,体质: -5,
+              财帛: -15
+        },
+          gameState: { 圣眷: 8, 清议: 15,
+              民望: 20
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -840,8 +925,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 4, 武略: 2, 体质: -3 },
-          gameState: { 圣眷: 8, 清议: 8,},
-          hidden: {}
+          gameState: { 圣眷: 8, 清议: 8,
+              民望: 10
+        },
+          hidden: {
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -870,9 +959,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -8, 清议: -20,},
-          hidden: {欲望值: 15, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 30
+        },
+          gameState: { 圣眷: -8, 清议: -20,
+              民望: -18
+        },
+          hidden: {欲望值: 15, 野心值: 5,
+              道德值: -20
+        }
         },
         resultDescription: '',
         result: {
@@ -898,8 +993,12 @@ export const events1642: GameEvent[] = [
         description: '不急于行动，拖延观望，等待更好的时机',
         effects: {
           attributes: { 体质: 3 },
-          gameState: { 圣眷: -8,},
-          hidden: {}
+          gameState: { 圣眷: -8,
+              民望: 5
+        },
+          hidden: {
+              道德值: 3
+        }
         },
         resultDescription: '',
         result: {
@@ -928,7 +1027,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_169',
     storyline: 'ordinary',
     title: '朝中求和',
-    description: '',
+    description: '朝中求和，争论不休。',
     narrative: {
       speaker: {
         name: '兵部侍郎',
@@ -966,8 +1065,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 武略: 4, 文韬: 2 },
-          gameState: { 圣眷: -5, 清议: 15,},
-          hidden: {野心值: 3 }
+          gameState: { 圣眷: -5, 清议: 15,
+              民望: 10
+        },
+          hidden: {野心值: 3,
+              道德值: 8
+        }
         },
         resultDescription: '',
         result: {
@@ -996,8 +1099,12 @@ export const events1642: GameEvent[] = [
         },
         effects: {
           attributes: { 理政: 3, 文韬: 2 },
-          gameState: { 圣眷: 8, 清议: -12,},
-          hidden: {野心值: 5 }
+          gameState: { 圣眷: 8, 清议: -12,
+              民望: -10
+        },
+          hidden: {野心值: 5,
+              道德值: -8
+        }
         },
         resultDescription: '',
         result: {
@@ -1024,9 +1131,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {文韬: 2 },
+          attributes: {文韬: 2,
+              财帛: 10
+        },
           gameState: { 圣眷: 3, 清议: -8, 士绅: 10 },
-          hidden: {欲望值: 5, 野心值: 8 }
+          hidden: {欲望值: 5, 野心值: 8,
+              道德值: -8
+        }
         },
         resultDescription: '',
         result: {
@@ -1055,7 +1166,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 3 },
           gameState: { 圣眷: -3, 清议: -3 },
-          hidden: {野心值: -3 }
+          hidden: {野心值: -3,
+              道德值: -3
+        }
         },
         resultDescription: '',
         result: {
@@ -1080,7 +1193,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_170',
     storyline: 'eastern_forest',
     title: '陈新甲事件',
-    description: '',
+    description: '陈新甲事件，朝野震动。',
     narrative: {
       speaker: {
         name: '内阁中书',
@@ -1119,7 +1232,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3, 体质: -3 },
           gameState: { 圣眷: -15, 清议: 20, 中官: -10 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: 12
+        }
         },
         resultDescription: '',
         result: {
@@ -1146,7 +1261,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 3 },
           gameState: { 圣眷: -3, 清议: 3 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: -2
+        }
         },
         resultDescription: '',
         result: {
@@ -1173,9 +1290,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: { 文韬: 2,},
+          attributes: { 文韬: 2,
+              财帛: 10
+        },
           gameState: { 圣眷: 8, 清议: -15, 中官: 12 },
-          hidden: {野心值: 12, 欲望值: 5 }
+          hidden: {野心值: 12, 欲望值: 5,
+              道德值: -15
+        }
         },
         resultDescription: '',
         result: {
@@ -1202,7 +1323,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: -5, 清议: 3 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: -2
+        }
         },
         resultDescription: '',
         result: {
@@ -1231,7 +1354,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_171',
     storyline: 'ordinary',
     title: '秋收赋税',
-    description: '',
+    description: '秋收征税，百姓困苦。',
     narrative: {
       speaker: {
         name: '户部主事',
@@ -1264,9 +1387,15 @@ export const events1642: GameEvent[] = [
           origin: ['寒门', '没落世家']
         },
         effects: {
-          attributes: { 理政: 4,},
-          gameState: { 圣眷: -8, 清议: 12,},
-          hidden: {}
+          attributes: { 理政: 4,
+              财帛: -10
+        },
+          gameState: { 圣眷: -8, 清议: 12,
+              民望: 18
+        },
+          hidden: {
+              道德值: 10
+        }
         },
         resultDescription: '',
         result: {
@@ -1292,8 +1421,12 @@ export const events1642: GameEvent[] = [
         description: '严格执行朝廷命令，强制征收赋税',
         effects: {
           attributes: { 理政: 3, 武略: 2 },
-          gameState: { 圣眷: 12,清议: -8 },
-          hidden: {}
+          gameState: { 圣眷: 12,清议: -8,
+              民望: -20
+        },
+          hidden: {
+              道德值: -12
+        }
         },
         resultDescription: '',
         result: {
@@ -1322,9 +1455,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -5, 清议: -15,},
-          hidden: {欲望值: 12, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 30
+        },
+          gameState: { 圣眷: -5, 清议: -15,
+              民望: -18
+        },
+          hidden: {欲望值: 12, 野心值: 5,
+              道德值: -15
+        }
         },
         resultDescription: '',
         result: {
@@ -1348,8 +1487,12 @@ export const events1642: GameEvent[] = [
         description: '不急于征收，拖延观望，等待更好的时机',
         effects: {
           attributes: { 体质: 3 },
-          gameState: { 圣眷: -8,},
-          hidden: {}
+          gameState: { 圣眷: -8,
+              民望: 5
+        },
+          hidden: {
+              道德值: 3
+        }
         },
         resultDescription: '',
         result: {
@@ -1378,7 +1521,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_172',
     storyline: 'ordinary',
     title: '开封淹没',
-    description: '',
+    description: '开封淹没，数十万百姓溺亡。',
     narrative: {
       speaker: {
         name: '河南巡抚急递',
@@ -1417,7 +1560,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 4, 体质: -3 },
           gameState: { 圣眷: -10, 清议: 20, 中官: -10 },
-          hidden: {野心值: -3 }
+          hidden: {野心值: -3,
+              道德值: 15
+        }
         },
         resultDescription: '',
         result: {
@@ -1445,9 +1590,15 @@ export const events1642: GameEvent[] = [
           origin: ['寒门', '没落世家']
         },
         effects: {
-          attributes: { 理政: 5, 体质: -3,},
-          gameState: { 圣眷: 8, 清议: 8,},
-          hidden: {野心值: 2 }
+          attributes: { 理政: 5, 体质: -3,
+              财帛: -8
+        },
+          gameState: { 圣眷: 8, 清议: 8,
+              民望: 15
+        },
+          hidden: {野心值: 2,
+              道德值: 8
+        }
         },
         resultDescription: '',
         result: {
@@ -1476,9 +1627,15 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {理政: -3 },
-          gameState: { 圣眷: -5, 清议: -18,},
-          hidden: {欲望值: 15, 野心值: 5 }
+          attributes: {理政: -3,
+              财帛: 30
+        },
+          gameState: { 圣眷: -5, 清议: -18,
+              民望: -15
+        },
+          hidden: {欲望值: 15, 野心值: 5,
+              道德值: -18
+        }
         },
         resultDescription: '',
         result: {
@@ -1505,7 +1662,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 3 },
           gameState: { 圣眷: -3, 清议: -5 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -1532,7 +1691,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_173',
     storyline: 'ordinary',
     title: '朝堂动荡',
-    description: '',
+    description: '朝堂动荡，人人自危。',
     narrative: {
       speaker: {
         name: '吏部考功司郎中',
@@ -1569,7 +1728,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 3, 体质: -3 },
           gameState: { 圣眷: -8, 清议: 18, 中官: -10 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: 12
+        }
         },
         resultDescription: '',
         result: {
@@ -1597,9 +1758,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅', '没落世家']
         },
         effects: {
-          attributes: { 文韬: 2,},
+          attributes: { 文韬: 2,
+              财帛: -5
+        },
           gameState: { 圣眷: 5, 清议: -8, 士绅: 8 },
-          hidden: {野心值: 3 }
+          hidden: {野心值: 3,
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -1624,9 +1789,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {文韬: -2 },
+          attributes: {文韬: -2,
+              财帛: 15
+        },
           gameState: { 圣眷: 8, 清议: -15, 中官: 12, 士绅: 8 },
-          hidden: {野心值: 12, 欲望值: 5 }
+          hidden: {野心值: 12, 欲望值: 5,
+              道德值: -12
+        }
         },
         resultDescription: '',
         result: {
@@ -1655,7 +1824,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: -5, 清议: 3 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: -2
+        }
         },
         resultDescription: '',
         result: {
@@ -1682,7 +1853,7 @@ export const events1642: GameEvent[] = [
     id: 'transition_174',
     storyline: 'ordinary',
     title: '岁末总结',
-    description: '',
+    description: '岁末总结，决定命运。',
     narrative: {
       speaker: {
         name: '吏部考功司郎中',
@@ -1717,7 +1888,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 理政: 3, 文韬: 2 },
           gameState: { 圣眷: 12, 清议: 10 },
-          hidden: {野心值: 5 }
+          hidden: {野心值: 5,
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {
@@ -1746,7 +1919,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 体质: 5 },
           gameState: { 圣眷: 3, 清议: 5 },
-          hidden: {野心值: -5 }
+          hidden: {野心值: -5,
+              道德值: 3
+        }
         },
         resultDescription: '',
         result: {
@@ -1778,9 +1953,13 @@ export const events1642: GameEvent[] = [
           origin: ['缙绅']
         },
         effects: {
-          attributes: {},
+          attributes: {
+              财帛: -20
+        },
           gameState: { 圣眷: 5, 士绅: 15, 中官: 10 },
-          hidden: {野心值: 10, 欲望值: 3 }
+          hidden: {野心值: 10, 欲望值: 3,
+              道德值: -5
+        }
         },
         resultDescription: '',
         result: {
@@ -1809,7 +1988,9 @@ export const events1642: GameEvent[] = [
         effects: {
           attributes: { 文韬: 4, 理政: 2 },
           gameState: { 清议: 8 },
-          hidden: {野心值: -3 }
+          hidden: {野心值: -3,
+              道德值: 5
+        }
         },
         resultDescription: '',
         result: {

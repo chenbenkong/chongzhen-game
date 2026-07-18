@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import ErrorBoundary from './components/ErrorBoundary'
 import { setupLongTaskObserver } from './utils/performance'
 import './index.css'
@@ -8,6 +7,9 @@ import './theme.css'
 
 // 启动性能监控
 setupLongTaskObserver()
+
+// 懒加载根组件，减少首屏 JS 体积，让标题屏更快可交互
+const App = lazy(() => import('./App'))
 
 // 移除加载占位
 const removeLoader = (): void => {
@@ -38,7 +40,9 @@ if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <ErrorBoundary>
-        <App />
+        <Suspense fallback={null}>
+          <App />
+        </Suspense>
       </ErrorBoundary>
     </React.StrictMode>
   )

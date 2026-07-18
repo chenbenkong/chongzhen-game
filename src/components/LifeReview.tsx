@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { LifeRecord, LifeSummary, Character, GameStateValues } from '../types/game'
 import { GameEvent } from '../types/event'
 import { generateEpitaph } from '../utils/endingSystem'
@@ -67,7 +68,7 @@ export default function LifeReview({
               <span className="date-year">{record.year}</span>
               <span className="date-month">{record.month}月</span>
             </div>
-            <div className="timeline-icon-badge">{getRecordIcon(record.type)}</div>
+            <div className="timeline-icon-badge"><Icon name={getRecordIcon(record.type)} size={14} color="#d4af37" /></div>
             <div className="timeline-content-compact">
               <div className="timeline-title-row">
                 <span className="timeline-event-title">{record.title}</span>
@@ -114,7 +115,7 @@ export default function LifeReview({
         {/* 功绩 */}
         <div className="merit-box">
           <div className="merit-header">
-            <span className="merit-icon">✦</span>
+            <span className="merit-icon"><Icon name="sparkle" size={14} color="#d4af37" /></span>
             <span className="merit-title">生平功绩</span>
             <span className="merit-count">{lifeSummary.achievements.length}</span>
           </div>
@@ -197,7 +198,7 @@ export default function LifeReview({
     )
   }
 
-  return (
+  const node = (
     <div className="life-review-overlay">
       {/* 顶部装饰条 */}
       <div className="life-review-top-bar"></div>
@@ -272,4 +273,6 @@ export default function LifeReview({
       <div className="life-review-bottom-bar"></div>
     </div>
   )
+
+  return createPortal(node, document.body)
 }

@@ -123,6 +123,8 @@ export interface EventChoice {
   text: string
   quote?: string
   description?: string
+  /** 选择后将切换到的剧情线（留空则继承事件剧情线） */
+  storyline?: string
   showConditions?: EventConditions
   effects: EventEffects
   resultDescription?: string

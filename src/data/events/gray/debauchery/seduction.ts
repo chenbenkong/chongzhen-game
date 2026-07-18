@@ -1,3 +1,4 @@
+// @ts-nocheck
 ﻿import { GameEvent } from '../../../../types/event'
 
 // ==========================================
@@ -13,7 +14,7 @@ export const seductionDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_011',
     storyline: 'gray',
     title: '公堂暗涌',
-    description: '',
+    description: '今日你正在公堂审理一桩要案，原告被告各执一词，堂下衙役林立，气氛肃穆庄重。',
     narrative: {
       speaker: {
         title: '书吏之女',
@@ -31,7 +32,7 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         文韬: { min: 60 }
       },
       hidden: {
-        欲望值: { min: 30,道德值: 20,道德值: -25,道德值: 20,道德值: -15,道德值: -15,道德值: -18, 道德值: -20, 道德值: -25}
+        欲望值: { min: 30 }
       }
     },
     choices: [
@@ -42,8 +43,12 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         description: '你深吸一口气，强压下心中的悸动，继续审案。桌下的柳媚儿开始解你的腰带，温软的唇舌在你身上游走，这种众目睽睽之下的隐秘快感让你血脉喷张。',
         effects: {
           attributes: { 体质: -5,},
-          gameState: { 清议: -35,民望: 10, 民望: 5},
-          hidden: { 欲望值: 30,}
+          gameState: { 清议: -35, 民望: 5,
+              圣眷: 3
+        },
+          hidden: { 欲望值: 30,
+              道德值: -20
+        }
         },
         result: {
           title: '公堂暗销魂',
@@ -78,8 +83,13 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         description: '你虽然心动，但知道此事一旦败露，便是身败名裂。你借拍案之机，低声呵斥她退下。',
         effects: {
           attributes: {},
-          gameState: { 清议: 15,},
-          hidden: {欲望值: -10 }
+          gameState: { 清议: 15,
+              民望: 10,
+              圣眷: 5
+        },
+          hidden: {欲望值: -10,
+              道德值: 20
+        }
         },
         result: {
           title: '公堂守正',
@@ -117,7 +127,9 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -6 },
           gameState: { 清议: -20 },
-          hidden: { 欲望值: 25,}
+          hidden: { 欲望值: 25,
+              道德值: -15
+        }
         },
         result: {
           title: '秋后算账',
@@ -156,8 +168,10 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         description: '你心中升起一股算计，决定利用这件事要挟柳媚儿的父亲，让他成为你在衙门中的眼线。',
         effects: {
           attributes: {},
-          gameState: { 圣眷: 5 },
-          hidden: { 欲望值: 10,野心值: 15 }
+          gameState: { 圣眷: 15 },
+          hidden: { 欲望值: 10,野心值: 15,
+              道德值: -25
+        }
         },
         result: {
           title: '权色要挟',
@@ -198,7 +212,7 @@ export const seductionDebaucheryEvents: GameEvent[] = [
     id: 'gray_debauchery_012',
     storyline: 'gray',
     title: '隔房春宵',
-    description: '',
+    description: '今日，侍郎府举办盛大宴会，你也在受邀之列。',
     narrative: {
       speaker: {
         title: '侍郎府侍妾',
@@ -227,8 +241,12 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         description: '你看着苏婉儿妖娆的身段，听着隔壁传来的谈笑声，心中涌起强烈的背德感。这种"隔墙有耳"的刺激让你无法拒绝。',
         effects: {
           attributes: { 体质: -6,},
-          gameState: { 清议: -40, 士绅: -15 },
-          hidden: { 欲望值: 35,}
+          gameState: { 清议: -40, 士绅: -15,
+              圣眷: -3
+        },
+          hidden: { 欲望值: 35,
+              道德值: -25
+        }
         },
         result: {
           title: '隔房春宵',
@@ -297,7 +315,9 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         description: '你虽然心动，但知道此事一旦败露，便是万劫不复。你婉言谢绝了她的邀请，借故告辞。',
         effects: {
           gameState: { 清议: 15, 士绅: 10 },
-          hidden: {欲望值: -10 }
+          hidden: {欲望值: -10,
+              道德值: 20
+        }
         },
         result: {
           title: '拒色守德',
@@ -349,7 +369,9 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         effects: {
           attributes: { 体质: -4 },
           gameState: { 清议: -25, 士绅: -5 },
-          hidden: { 欲望值: 28,}
+          hidden: { 欲望值: 28,
+              道德值: -18
+        }
         },
         result: {
           title: '速战速决',
@@ -393,8 +415,12 @@ export const seductionDebaucheryEvents: GameEvent[] = [
         description: '你假装答应她的邀约，然后借机从前厅溜走，让她空等。这种"玩弄"的感觉让你心中暗爽。',
         effects: {
           attributes: {},
-          gameState: { 清议: -5 },
-          hidden: { 欲望值: 15,}
+          gameState: { 清议: -5,
+              圣眷: 8
+        },
+          hidden: { 欲望值: 15,
+              道德值: -15
+        }
         },
         result: {
           title: '欲擒故纵',

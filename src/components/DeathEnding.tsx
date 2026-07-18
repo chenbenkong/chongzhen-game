@@ -1,4 +1,5 @@
 import './DeathEnding.css'
+import { createPortal } from 'react-dom'
 
 interface DeathEndingProps {
   isOpen: boolean
@@ -23,18 +24,18 @@ export default function DeathEnding({
 }: DeathEndingProps) {
   if (!isOpen) return null
 
-  const getEndingIcon = () => {
+  const getEndingIconClass = () => {
     switch (endingType) {
       case 'martyrdom':
-        return '⚔️'
+        return 'icon-martyrdom'
       case 'suicide':
-        return '🕯️'
+        return 'icon-suicide'
       case 'killed':
-        return '⚰️'
+        return 'icon-killed'
       case 'execution':
-        return '🔪'
+        return 'icon-execution'
       default:
-        return '💀'
+        return 'icon-default'
     }
   }
 
@@ -68,7 +69,7 @@ export default function DeathEnding({
     }
   }
 
-  return (
+  const node = (
     <div className={`death-ending-overlay ${getEndingColor()}`}>
       {/* 顶部装饰条 */}
       <div className="death-ending-top-bar"></div>
@@ -77,7 +78,7 @@ export default function DeathEnding({
       <div className="death-ending-container">
         {/* 头部区域 */}
         <div className="death-ending-header">
-          <div className="death-ending-icon">{getEndingIcon()}</div>
+          <div className={`death-ending-icon ${getEndingIconClass()}`} />
           <div className="death-ending-type">{getEndingTitle()}</div>
         </div>
 
@@ -132,4 +133,6 @@ export default function DeathEnding({
       <div className="death-ending-bottom-bar"></div>
     </div>
   )
+
+  return createPortal(node, document.body)
 }

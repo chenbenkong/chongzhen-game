@@ -34,7 +34,21 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
             </div>
             
             <p className="background">{origin.background}</p>
-            
+
+            <div className="features">
+              <h4>出身特性</h4>
+              <ul>
+                {origin.features.map((feature, i) => (
+                  <li key={i}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+
+            <p className="play-style">
+              <strong>玩法风格：</strong>
+              {origin.playStyle}
+            </p>
+
             <div className="attributes">
               <h4>初始属性</h4>
               {Object.entries(origin.initialAttributes).map(([key, value]) => (

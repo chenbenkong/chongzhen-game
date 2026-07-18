@@ -64,8 +64,15 @@ export default class ErrorBoundary extends Component<Props, State> {
   handleConfirmClear = (): void => {
     this.setState({ confirmClearOpen: false })
     try {
-      localStorage.removeItem('chongzhen_save')
-      localStorage.removeItem('chongzhen_error_logs')
+      // 全量清理游戏相关存储，避免残留数据导致再次崩溃
+      const keysToRemove: string[] = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && key.startsWith('chongzhen_')) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach(k => localStorage.removeItem(k))
     } catch (e) {
       // ignore
     }

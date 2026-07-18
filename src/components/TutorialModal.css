@@ -52,7 +52,19 @@
 .tutorial-icon {
   font-size: 64px;
   margin-bottom: 20px;
+  color: #c9a227;
+  font-family: 'Ma Shan Zheng', serif;
 }
+
+.tutorial-icon.welcome::before { content: '引'; }
+.tutorial-icon.attributes::before { content: '性'; }
+.tutorial-icon.relations::before { content: '交'; }
+.tutorial-icon.target::before { content: '迁'; }
+.tutorial-icon.storyline::before { content: '线'; }
+.tutorial-icon.ending::before { content: '终'; }
+.tutorial-icon.save::before { content: '存'; }
+.tutorial-icon.achievement::before { content: '功'; }
+.tutorial-icon.start::before { content: '启'; }
 
 .tutorial-title {
   color: #c9a227;
