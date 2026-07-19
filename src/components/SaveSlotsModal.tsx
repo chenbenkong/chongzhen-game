@@ -34,8 +34,6 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
     }
   }, [isOpen])
 
-  if (!isOpen) return null
-
   const handleDelete = useCallback(async (slotId: number) => {
     const slot = slots.find(s => s.id === slotId)
     const ok = await confirm({
@@ -68,6 +66,8 @@ export default function SaveSlotsModal({ isOpen, mode, currentData, onSelect, on
     setAutosavePresent(false)
     setAutosavePreviewState(null)
   }, [confirm])
+
+  if (!isOpen) return null
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString)
