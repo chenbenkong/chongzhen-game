@@ -43,7 +43,7 @@ export function getArchetype(category?: string): EndingArchetype {
 }
 
 /** 阿拉伯数字 → 汉字数字（用于年龄/序号等小整数） */
-function toChineseNum(n: number): string {
+export function toChineseNum(n: number): string {
   if (n === 0) return '〇'
   if (n < 0) return '负' + toChineseNum(-n)
   const d = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
@@ -61,7 +61,7 @@ function toChineseNum(n: number): string {
 }
 
 /** 西历年 → 明代年号纪年。元年用"元"不用"一" */
-function toMingEraYear(year: number): string {
+export function toMingEraYear(year: number): string {
   if (year >= 1628) return '崇祯' + (year === 1628 ? '元' : toChineseNum(year - 1627)) + '年'
   if (year >= 1621) return '天启' + (year === 1621 ? '元' : toChineseNum(year - 1620)) + '年'
   if (year === 1620) return '泰昌元年'
@@ -98,9 +98,9 @@ export function generateBiography(
   const startYear = 1628
   const endYear = gameState.currentYear
 
-  // 提取关键人生事件（按 type 字段筛选：死亡/升迁/贬官/婚配这类决定性事件）
+  // 提取关键人生事件（升迁、贬官、死亡及有重大影响的事件）
   const keyRecords = lifeRecords
-    .filter(r => r.type === 'event' || r.type === 'death')
+    .filter(r => ['promotion', 'demotion', 'death', 'marriage', 'event'].includes(r.type))
     .slice(0, 8)
 
   const emperorsFavor = gameState.圣眷 ?? 50
@@ -176,9 +176,11 @@ export function generateBiography(
     ? keyRecords.map((r, i) => `    ${toChineseNum(i + 1)}、${r.year}年${toChineseNum(r.month)}月 — ${r.title}：${r.description.slice(0, 50)}${r.description.length > 50 ? '……' : ''}`).join('\n')
     : '    （无显著事件）'
 
+  const cleanEndingTitle = endingEvent.title.replace(/【?结局】?\s*/g, '').trim()
+
   return `【明史列传·${displayName}传】
 
-    ${displayName}，字${character.courtesyName || '未详'}，${character.hometown || '籍贯未详'}人。${originShort}。举${character.degree}，${chongzhenEntry}授知县。
+    ${displayName}，字${character.courtesyName || '未详'}，${character.hometown || '籍贯未详'}人。${originShort}。以${character.degree}出身，${chongzhenEntry}授知县。
 
     ${closeLine}
 
@@ -189,7 +191,7 @@ ${keyEventsText}
 
     史臣曰：${evaluation}。
 
-    【结局：${endingEvent.title}】
+    【结局：${cleanEndingTitle}】
 
     ${endingEvent.description}
 `

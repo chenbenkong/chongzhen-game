@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Character, GameStateValues } from '../types/game'
 import { GameEvent } from '../types/event'
 import { getUnlockedAchievements, Achievement } from '../types/achievement'
-import { extractCounterfactuals, getArchetype } from '../utils/endingSystem'
+import { extractCounterfactuals, getArchetype, toChineseNum, toMingEraYear } from '../utils/endingSystem'
 import Icon from './Icon'
 import './GameOverScreen.css'
 
@@ -53,7 +53,12 @@ export default function GameOverScreen({
     return calculateEnding(character, gameState)
   }, [character, gameState])
 
-  const totalYears = Math.max(1, gameState.currentYear - 1627)
+  const serviceMonths = Math.max(0, (gameState.currentYear - 1628) * 12 + (gameState.currentMonth - 1))
+  const totalYearsText = serviceMonths === 0
+    ? '不足一年'
+    : serviceMonths < 12
+      ? `${toChineseNum(serviceMonths)}个月`
+      : `${toChineseNum(Math.floor(serviceMonths / 12))}年又${toChineseNum(serviceMonths % 12)}个月`
   const eventCount = (character.history?.length || 0)
 
   // 13 个属性分 3 组
@@ -86,7 +91,7 @@ export default function GameOverScreen({
                     <span className="archetype-icon"><Icon name={arch.iconName} size={12} /></span>
                     <span className="archetype-name">{arch.name}</span>
                     <span className="archetype-sep">·</span>
-                    <span className="archetype-variant">{endingEvent.title}</span>
+                    <span className="archetype-variant">{endingEvent.title.replace(/【?结局】?\s*/g, '').trim()}</span>
                   </div>
                 )
               })()}
@@ -132,8 +137,8 @@ export default function GameOverScreen({
               {/* 4 格统计 */}
               <div className="stats-grid">
                 <div className="stat-item">
-                  <div className="stat-value">{totalYears}</div>
-                  <div className="stat-label">宦海年数</div>
+                  <div className="stat-value">{totalYearsText}</div>
+                  <div className="stat-label">宦海时长</div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-value">{getPositionCount(character)}</div>
@@ -222,7 +227,7 @@ export default function GameOverScreen({
         {/* ====== 底部：按钮 + 落款（一行）====== */}
         <footer className="ending-bottom">
           <div className="bottom-left">
-            <span className="footer-time">崇祯 {gameState.currentYear - 1627 + 1}年 {getChineseMonth(gameState.currentMonth)}月</span>
+            <span className="footer-time">{toMingEraYear(gameState.currentYear)} {getChineseMonth(gameState.currentMonth)}月</span>
             <span className="footer-sep">·</span>
             <span className="footer-author">史馆修撰</span>
           </div>
@@ -577,7 +582,6 @@ function getChineseMonth(month: number) {
 }
 
 function getPositionCount(character: Character) {
-  const uniqueRanks = new Set<string>()
-  uniqueRanks.add(character.rank || '布衣')
-  return Math.max(1, uniqueRanks.size)
+  // 历任官职以实际升降次数 + 1 估算，避免只显示当前官职
+  return Math.max(1, 1 + character.promotionCount + character.demotionCount)
 }

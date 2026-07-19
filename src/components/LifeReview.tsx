@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { LifeRecord, LifeSummary, Character, GameStateValues } from '../types/game'
 import { GameEvent } from '../types/event'
-import { generateEpitaph } from '../utils/endingSystem'
+import { generateEpitaph, toChineseNum, toMingEraYear } from '../utils/endingSystem'
 import Icon, { IconName } from './Icon'
 import './LifeReview.css'
 
@@ -91,7 +91,7 @@ export default function LifeReview({
           <span className="top-card-degree">{lifeSummary.finalRank} · {character.origin}</span>
         </div>
         <div className="top-card-stats">
-          <span className="top-stat">享年{lifeSummary.lifespan.end - lifeSummary.lifespan.start}岁</span>
+          <span className="top-stat">享年{toChineseNum(Math.max(0, Math.floor(character.age)))}岁</span>
           <span className="top-stat">{character.promotionCount}升{character.demotionCount}贬</span>
           <span className="top-stat">{character.wives.length}妻{character.lovers.length}妾</span>
         </div>
@@ -209,7 +209,7 @@ export default function LifeReview({
         <div className="life-review-header">
           <h1 className="life-review-title">生平回顾</h1>
           <p className="life-review-subtitle">
-            {character.name} · {character.origin} · 崇祯{lifeSummary.lifespan.start}-{lifeSummary.lifespan.end}年
+            {character.name} · {character.origin} · {toMingEraYear(lifeSummary.lifespan.start)}至{toMingEraYear(lifeSummary.lifespan.end)}
           </p>
         </div>
 

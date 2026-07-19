@@ -1043,10 +1043,13 @@ export function useGameEngine(props: UseGameEngineProps) {
           setIsProcessing(false)
           return
         }
-        const event = findAvailableEventWithState(newState)
-        setCurrentEvent(event)
-        if (event) {
-          setEventHistory(prevHistory => [...prevHistory, event.id])
+        const allEvents = findAllEventsForState(newState)
+        if (allEvents.length > 0) {
+          setCurrentEvent(allEvents[0])
+          setPendingEvents(allEvents.slice(1))
+          setEventHistory(prevHistory => [...prevHistory, ...allEvents.map(e => e.id)])
+        } else {
+          setCurrentEvent(null)
         }
         setIsProcessing(false)
         checkAchievements()
@@ -1070,49 +1073,10 @@ export function useGameEngine(props: UseGameEngineProps) {
       return
     }
 
+    // 当前月份事件已处理完，回到等待玩家操作的状态，不再重复推进月份/年龄
     setCurrentEvent(null)
-    setIsProcessing(true)
-    setUndoHistory([])
-
-    setGameState(prev => {
-      let newMonth = prev.currentMonth + 1
-      let newYear = prev.currentYear
-      if (newMonth > 12) {
-        newMonth = 1
-        newYear++
-      }
-
-      const newState = {
-        ...prev,
-        currentMonth: newMonth,
-        currentYear: newYear,
-        turn: prev.turn + 1
-      }
-
-      setTimeout(() => {
-        if (checkBoundary()) {
-          setIsProcessing(false)
-          return
-        }
-        const allEvents = findAllEventsForState(newState)
-        if (allEvents.length > 0) {
-          setCurrentEvent(allEvents[0])
-          setPendingEvents(allEvents.slice(1))
-          setEventHistory(prevHistory => [...prevHistory, ...allEvents.map(e => e.id)])
-        } else {
-          setCurrentEvent(null)
-        }
-        checkAchievements()
-        setIsProcessing(false)
-      }, 300)
-
-      return newState
-    })
-
-    setCharacter(prev => ({
-      ...prev,
-      age: prev.age + 1 / 12
-    }))
+    setIsProcessing(false)
+    checkAchievements()
   }, [])
 
   const handleUndo = useCallback(() => {
@@ -1440,6 +1404,14 @@ export function useGameEngine(props: UseGameEngineProps) {
       setCurrentEvent(allEvents[0])
       setPendingEvents(allEvents.slice(1))
       setEventHistory(prev => [...prev, ...allEvents.map(e => e.id)])
+    }
+
+    // 初始化时若跳过若干月份才找到事件，需同步增加角色年龄
+    if (attempts > 0) {
+      setCharacter(prev => ({
+        ...prev,
+        age: prev.age + attempts / 12
+      }))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
