@@ -14,7 +14,7 @@ import LifeReview from './LifeReview'
 import DeathEnding from './DeathEnding'
 import SaveNotification from './SaveNotification'
 import SaveSlotsModal from './SaveSlotsModal'
-import AchievementUnlock from './AchievementUnlock'
+
 import AchievementPanel from './AchievementPanel'
 import TutorialModal from './TutorialModal'
 import StorylineBar from './StorylineBar'
@@ -56,7 +56,6 @@ function GameScreen(props: GameScreenProps) {
     isSaveSlotsOpen,
     saveSlotsMode,
     isAchievementPanelOpen,
-    newAchievement,
     showTutorial,
     showHelp,
     showAIAdvisor,
@@ -82,7 +81,6 @@ function GameScreen(props: GameScreenProps) {
     completeTutorial,
     closeSaveNotification,
     closeSaveSlots,
-    dismissNewAchievement,
     closeDeathEnding,
     handleChoice,
     handleNextMonth,
@@ -338,16 +336,6 @@ function GameScreen(props: GameScreenProps) {
         onLoadAutosave={handleLoadAutosave}
         onClose={closeSaveSlots}
       />
-
-      {newAchievement && (
-        <AchievementUnlock
-          achievementName={newAchievement.name}
-          achievementDescription={newAchievement.description}
-          achievementIcon={newAchievement.icon}
-          isOpen={true}
-          onClose={dismissNewAchievement}
-        />
-      )}
 
       <AchievementPanel
         isOpen={isAchievementPanelOpen}

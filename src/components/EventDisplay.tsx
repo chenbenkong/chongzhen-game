@@ -669,15 +669,8 @@ function EventDisplay({
   }
 
   if (!event) {
-    return (
-      <div className="event-display empty">
-        <div className="empty-state">
-          <div className={`empty-icon ${isProcessing ? 'spinning' : ''}`} aria-label="无事件" />
-          <p className="empty-text">{isProcessing ? '自动推进中……' : '暂无事件'}</p>
-          <p className="empty-hint">{isProcessing ? '命运的车轮正在转动' : '等待命运的安排...'}</p>
-        </div>
-      </div>
-    )
+    // 无事件时不渲染任何界面，由 useEffect 自动触发下月推进
+    return null
   }
 
   const narrative = event.narrative

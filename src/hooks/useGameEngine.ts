@@ -775,18 +775,8 @@ export function useGameEngine(props: UseGameEngineProps) {
       endingType: endingType
     }
     const newlyUnlocked = checkAndUnlockAchievements(ctx)
-    if (newlyUnlocked.length > 0) {
-      const showNextAchievement = (index: number) => {
-        if (index < newlyUnlocked.length) {
-          setNewAchievement(newlyUnlocked[index])
-          setTimeout(() => {
-            setNewAchievement(null)
-            setTimeout(() => showNextAchievement(index + 1), 100)
-          }, 4000)
-        }
-      }
-      showNextAchievement(0)
-    }
+    // 成就解锁后不再弹出弹窗，仅在后台记录
+    void newlyUnlocked
   }, [])
 
   const handleGameOver = useCallback((event?: GameEvent) => {
