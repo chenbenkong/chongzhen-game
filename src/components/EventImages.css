@@ -1,17 +1,17 @@
 /* EventImages 事件插图存档区 */
 .event-images {
-  margin: 16px 0 8px;
-  padding: 12px 14px;
+  margin: 10px 0 6px;
+  padding: 8px 10px;
   background: linear-gradient(180deg, rgba(20, 16, 10, 0.6) 0%, rgba(15, 12, 8, 0.6) 100%);
   border: 1px solid #2a2015;
-  border-radius: 6px;
+  border-radius: 5px;
 }
 
 .ei-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 6px;
   flex-wrap: wrap;
 }
 
@@ -72,19 +72,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  font-size: 0.78rem;
+  gap: 8px;
+  font-size: 0.75rem;
   color: #5a4a30;
-  padding: 6px 4px;
+  padding: 4px 2px;
 }
 
 .ei-empty-btn {
-  padding: 4px 12px;
+  padding: 3px 10px;
   background: transparent;
   border: 1px dashed #4a3820;
   border-radius: 3px;
   color: #8b7540;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   cursor: pointer;
 }
 
@@ -96,7 +96,7 @@
 .ei-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 5px;
 }
 
 .ei-grid.expanded {

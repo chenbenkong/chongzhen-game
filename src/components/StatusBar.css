@@ -2,20 +2,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 24px;
+  padding: 6px 20px;
   background: linear-gradient(180deg, rgba(24,18,10,0.85) 0%, rgba(18,16,12,0.9) 100%);
   border: 1px solid rgba(197,165,90,0.15);
   border-radius: 3px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-body);
 }
 
 .status-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
 }
 
 .time-info {
@@ -25,22 +25,22 @@
 }
 
 .year {
-  font-size: 1.15rem;
+  font-size: 1rem;
   color: var(--gold);
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   font-weight: bold;
   font-family: var(--font-heading);
 }
 
 .month {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: rgba(197,165,90,0.5);
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .divider {
   width: 1px;
-  height: 32px;
+  height: 26px;
   background: linear-gradient(180deg, transparent, rgba(197,165,90,0.25), transparent);
 }
 
@@ -51,13 +51,13 @@
 }
 
 .name {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--parchment);
-  letter-spacing: 4px;
+  letter-spacing: 3px;
 }
 
 .age {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: rgba(197,165,90,0.5);
   letter-spacing: 1px;
 }
@@ -71,27 +71,27 @@
 
 .rank-label,
 .origin-label {
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   color: rgba(197,165,90,0.4);
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .rank-value,
 .origin-value {
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   color: var(--gold);
-  letter-spacing: 2px;
-  padding: 2px 10px;
+  letter-spacing: 1px;
+  padding: 1px 7px;
   background: rgba(197,165,90,0.08);
   border: 1px solid rgba(197,165,90,0.15);
   border-radius: 2px;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .status-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
 .origin-info {
@@ -105,16 +105,16 @@
 }
 
 .label {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: rgba(197,165,90,0.5);
-  letter-spacing: 2px;
-  min-width: 28px;
+  letter-spacing: 1px;
+  min-width: 26px;
 }
 
 .trust-bar,
 .power-bar {
-  width: 80px;
-  height: 6px;
+  width: 64px;
+  height: 5px;
   background: rgba(0,0,0,0.5);
   border: 1px solid rgba(197,165,90,0.1);
   border-radius: 3px;
@@ -129,19 +129,19 @@
 }
 
 .value {
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   font-weight: bold;
-  min-width: 22px;
+  min-width: 20px;
   text-align: right;
   font-family: var(--font-heading);
   color: var(--parchment);
 }
 
 .faction-value {
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   color: var(--gold);
-  letter-spacing: 2px;
-  padding: 2px 8px;
+  letter-spacing: 1px;
+  padding: 1px 6px;
   background: rgba(197,165,90,0.08);
   border: 1px solid rgba(197,165,90,0.15);
   border-radius: 2px;

@@ -2,26 +2,26 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
+  padding: 8px 20px;
   background: linear-gradient(180deg, #18130d 0%, #12100c 100%);
   border: 1px solid #2a2015;
   border-radius: 3px;
-  margin-top: 16px;
+  margin-top: 8px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .action-left,
 .action-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .turn-info {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: #4a3820;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .action-center {
@@ -33,16 +33,16 @@
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
+  gap: 6px;
+  padding: 6px 16px;
   background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
   border: 1px solid #2a2015;
   border-radius: 3px;
   color: #8b7540;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   cursor: pointer;
   transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
 .action-btn:hover:not(:disabled) {
@@ -52,9 +52,9 @@
 }
 
 .action-btn.primary {
-  padding: 12px 40px;
-  font-size: 0.95rem;
-  letter-spacing: 6px;
+  padding: 8px 28px;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
   border-color: #4a3820;
 }
 
