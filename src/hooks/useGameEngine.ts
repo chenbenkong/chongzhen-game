@@ -528,6 +528,13 @@ export function useGameEngine(props: UseGameEngineProps) {
   const [biography, setBiography] = useState<string>('')
   const [lastAutosaveFingerprint, setLastAutosaveFingerprint] = useState<string>('')
 
+  const [currentStoryline, setCurrentStoryline] = useState<string | undefined>(() => {
+    if (loadSaveData && (loadSaveData as any).currentStoryline) {
+      return (loadSaveData as any).currentStoryline
+    }
+    return undefined
+  })
+
   // refs 用于在稳定回调中读取最新状态
   const characterRef = useRef(character)
   const gameStateRef = useRef(gameState)
@@ -541,6 +548,7 @@ export function useGameEngine(props: UseGameEngineProps) {
   const difficultyConfigRef = useRef(difficultyConfig)
   const playTimeRef = useRef(playTime)
   const onReturnToMenuRef = useRef(onReturnToMenu)
+  const currentStorylineRef = useRef(currentStoryline)
 
   useEffect(() => { characterRef.current = character }, [character])
   useEffect(() => { gameStateRef.current = gameState }, [gameState])
@@ -554,12 +562,14 @@ export function useGameEngine(props: UseGameEngineProps) {
   useEffect(() => { difficultyConfigRef.current = difficultyConfig }, [difficultyConfig])
   useEffect(() => { playTimeRef.current = playTime }, [playTime])
   useEffect(() => { onReturnToMenuRef.current = onReturnToMenu }, [onReturnToMenu])
+  useEffect(() => { currentStorylineRef.current = currentStoryline }, [currentStoryline])
 
-  // 推断当前剧情线：从 eventHistory 末尾往前找第一个有 storyline 的事件
+  // 推断当前剧情线：优先使用玩家选择后持久化的剧情线，否则从历史事件反推
   const getCurrentStoryline = useCallback((): string | undefined => {
+    if (currentStorylineRef.current) return currentStorylineRef.current
     const allEvents = [...initialEvents, ...allGrayChoiceEvents]
     const history = eventHistoryRef.current
-    for (let i = history.length - 1; i >= Math.max(0, history.length - 5); i--) {
+    for (let i = history.length - 1; i >= Math.max(0, history.length - 8); i--) {
       const id = history[i]
       const ev = allEvents.find(e => e.id === id)
       if (ev?.storyline) return ev.storyline
@@ -579,44 +589,121 @@ export function useGameEngine(props: UseGameEngineProps) {
     return pickEvent(available, eventHistoryRef.current, getCurrentStoryline())
   }, [])
 
+  const weightedPick = useCallback(<T extends { storyline?: string }>(pool: T[], activeStoryline?: string): T | null => {
+    if (pool.length === 0) return null
+    if (pool.length === 1) return pool[0]
+    const currentLine = activeStoryline ?? currentStorylineRef.current
+    const weights = pool.map(item => {
+      if (!currentLine) return 1
+      if (item.storyline === currentLine) return 6
+      if (item.storyline && item.storyline.startsWith(currentLine)) return 3
+      return 1
+    })
+    const total = weights.reduce((a, b) => a + b, 0)
+    let r = Math.random() * total
+    for (let i = 0; i < pool.length; i++) {
+      r -= weights[i]
+      if (r <= 0) return pool[i]
+    }
+    return pool[pool.length - 1]
+  }, [])
+
   const findAllEventsForState = useCallback((state: GameStateValues): GameEvent[] => {
     const allEvents = [...initialEvents, ...allGrayChoiceEvents]
     const history = eventHistoryRef.current
-    const recentIds = history.slice(-5)
     const available = allEvents.filter(e => checkEventConditions(e, characterRef.current, state))
     if (available.length === 0) return []
 
+    const activeStoryline = getCurrentStoryline()
+
+    // 计算某个事件 ID 距离上次触发有多远（月数）
+    const lastOccurrenceDistance = (eventId: string): number => {
+      const lastIndex = history.lastIndexOf(eventId)
+      if (lastIndex === -1) return Infinity
+      return history.length - lastIndex
+    }
+
+    // 可重复事件的冷却期（月），避免同一事件反复出现
+    const cooldowns: Record<string, number> = {
+      random: 8,
+      gray: 6,
+      character: 6,
+      national: 6,
+      faction: 6,
+      emotion: 12
+    }
+    const withCooldown = (pool: GameEvent[], type: string): GameEvent[] => {
+      const minGap = cooldowns[type] || 0
+      return minGap <= 0 ? pool : pool.filter(e => lastOccurrenceDistance(e.id) > minGap)
+    }
+
     const results: GameEvent[] = []
 
-    const historical = available.filter(e => e.type === 'historical' && !history.includes(e.id) && !recentIds.includes(e.id))
-    if (historical.length > 0) {
-      results.push(historical[Math.floor(Math.random() * historical.length)])
+    // 1. 历史大事件（一次性）
+    const historical = available.filter(e => e.type === 'historical' && !history.includes(e.id))
+    const pickedHistorical = weightedPick(historical, activeStoryline)
+    if (pickedHistorical) {
+      results.push(pickedHistorical)
     } else {
+      // 2. 过渡事件（一次性），结局前奏优先
       const prelude = available.find(
-        e => e.type === 'transition' && e.isPreEnding === true && !history.includes(e.id) && !recentIds.includes(e.id)
+        e => e.type === 'transition' && e.isPreEnding === true && !history.includes(e.id)
       )
       if (prelude) {
         results.push(prelude)
       } else {
-        const transition = available.filter(e => e.type === 'transition' && !history.includes(e.id) && !recentIds.includes(e.id))
-        if (transition.length > 0) {
-          results.push(transition[Math.floor(Math.random() * transition.length)])
+        const transition = available.filter(e => e.type === 'transition' && !history.includes(e.id))
+        const pickedTransition = weightedPick(transition, activeStoryline)
+        if (pickedTransition) {
+          results.push(pickedTransition)
         }
       }
     }
 
-    const branchEmotion = available.filter(
-      e => e.type === 'emotion' && !history.includes(e.id) && !recentIds.includes(e.id)
-    )
-    const branchGray = available.filter(
-      e => e.type === 'gray' && !recentIds.includes(e.id)
-    )
-    const branchShuffled = [...branchEmotion, ...branchGray].sort(() => Math.random() - 0.5)
-    const branchPick = branchShuffled.slice(0, 2)
-    results.push(...branchPick)
+    // 3. 若本月没有大事件/过渡事件，用随机事件填充（可重复，带冷却）
+    if (results.length === 0) {
+      const random = withCooldown(available.filter(e => e.type === 'random'), 'random')
+      const pickedRandom = weightedPick(random, activeStoryline)
+      if (pickedRandom) {
+        results.push(pickedRandom)
+      }
+    }
 
-    return results
-  }, [])
+    // 4. 支线事件：emotion 一次性，gray/character/national/faction 可重复但带冷却
+    const branchEmotion = available.filter(e => e.type === 'emotion' && !history.includes(e.id))
+    const branchRepeatableTypes = ['gray', 'character', 'national', 'faction'] as const
+    const branchRepeatable = branchRepeatableTypes.flatMap(type =>
+      withCooldown(available.filter(e => e.type === type), type)
+    )
+    const branchPool = [...branchEmotion, ...branchRepeatable]
+
+    // 按剧情线加权的无放回抽样，最多 2 个
+    const branchWeighted = branchPool.map(e => ({
+      e,
+      w: activeStoryline && e.storyline === activeStoryline ? 4 : 1
+    }))
+    const branchSelected: GameEvent[] = []
+    const remaining = [...branchWeighted]
+    while (branchSelected.length < 2 && remaining.length > 0) {
+      const total = remaining.reduce((a, b) => a + b.w, 0)
+      let r = Math.random() * total
+      let selectedIndex = -1
+      for (let i = 0; i < remaining.length; i++) {
+        r -= remaining[i].w
+        if (r <= 0) {
+          selectedIndex = i
+          break
+        }
+      }
+      if (selectedIndex === -1) selectedIndex = remaining.length - 1
+      branchSelected.push(remaining[selectedIndex].e)
+      remaining.splice(selectedIndex, 1)
+    }
+    results.push(...branchSelected)
+
+    // 去重并过滤掉已经在本月结果中的事件
+    return results.filter((e, i, arr) => arr.findIndex(x => x.id === e.id) === i)
+  }, [getCurrentStoryline, weightedPick])
 
   const addLifeRecord = useCallback((record: Omit<LifeRecord, 'id'>) => {
     const newRecord: LifeRecord = {
@@ -862,6 +949,15 @@ export function useGameEngine(props: UseGameEngineProps) {
       relatedEvent: currentEvent?.id
     })
 
+    // 剧情线推进：优先采用选项显式指定的非 ordinary 剧情线；其次继承当前事件的非 ordinary 剧情线
+    const explicitChoiceLine = choice.storyline && choice.storyline !== 'ordinary' ? choice.storyline : undefined
+    const eventLine = currentEvent?.storyline && currentEvent.storyline !== 'ordinary' ? currentEvent.storyline : undefined
+    const newStoryline = explicitChoiceLine || eventLine
+    if (newStoryline && newStoryline !== currentStorylineRef.current) {
+      currentStorylineRef.current = newStoryline
+      setCurrentStoryline(newStoryline)
+    }
+
     if (choice.effects.meritScore !== undefined) {
       const baseChange = choice.effects.meritScore
       const eventMultiplier = (currentEvent?.type === 'historical' || currentEvent?.type === 'ending') ? 2 : 1
@@ -1009,41 +1105,57 @@ export function useGameEngine(props: UseGameEngineProps) {
     setUndoHistory([])
 
     setGameState(prev => {
-      let newMonth = prev.currentMonth + 1
-      let newYear = prev.currentYear
+      let newState = { ...prev }
+      let allEvents: GameEvent[] = []
+      let skippedMonths = 0
+      const maxSkip = 12
 
-      if (newMonth > 12) {
-        newMonth = 1
-        newYear++
+      // 连续跳过空月，直到找到事件或达到上限，避免玩家反复点击继续
+      while (skippedMonths < maxSkip) {
+        let nextMonth = newState.currentMonth + 1
+        let nextYear = newState.currentYear
+
+        if (nextMonth > 12) {
+          nextMonth = 1
+          nextYear++
+        }
+
+        const current国势 = newState.国势 ?? 75
+        let 国势Decay = 0
+        const decayMultiplier = difficultyConfigRef.current.countryPowerDecay
+        if (nextYear >= 1636) {
+          国势Decay = -1 * decayMultiplier
+        }
+        if (nextYear >= 1640) {
+          国势Decay = -2 * decayMultiplier
+        }
+        if (nextYear >= 1643) {
+          国势Decay = -3 * decayMultiplier
+        }
+
+        newState = {
+          ...newState,
+          currentMonth: nextMonth,
+          currentYear: nextYear,
+          turn: newState.turn + 1,
+          国势: Math.max(0, Math.min(100, current国势 + 国势Decay))
+        }
+
+        allEvents = findAllEventsForState(newState)
+        skippedMonths++
+        if (allEvents.length > 0) break
       }
 
-      const current国势 = prev.国势 ?? 75
-      let 国势Decay = 0
-      const decayMultiplier = difficultyConfigRef.current.countryPowerDecay
-      if (newYear >= 1636) {
-        国势Decay = -1 * decayMultiplier
-      }
-      if (newYear >= 1640) {
-        国势Decay = -2 * decayMultiplier
-      }
-      if (newYear >= 1643) {
-        国势Decay = -3 * decayMultiplier
-      }
-
-      const newState = {
-        ...prev,
-        currentMonth: newMonth,
-        currentYear: newYear,
-        turn: prev.turn + 1,
-        国势: Math.max(0, Math.min(100, current国势 + 国势Decay))
-      }
+      setCharacter(prevChar => ({
+        ...prevChar,
+        age: prevChar.age + skippedMonths / 12
+      }))
 
       setTimeout(() => {
         if (checkBoundary()) {
           setIsProcessing(false)
           return
         }
-        const allEvents = findAllEventsForState(newState)
         if (allEvents.length > 0) {
           setCurrentEvent(allEvents[0])
           setPendingEvents(allEvents.slice(1))
@@ -1057,11 +1169,6 @@ export function useGameEngine(props: UseGameEngineProps) {
 
       return newState
     })
-
-    setCharacter(prev => ({
-      ...prev,
-      age: prev.age + 1 / 12
-    }))
   }, [])
 
   const handleContinue = useCallback(() => {
@@ -1073,11 +1180,9 @@ export function useGameEngine(props: UseGameEngineProps) {
       return
     }
 
-    // 当前月份事件已处理完，回到等待玩家操作的状态，不再重复推进月份/年龄
-    setCurrentEvent(null)
-    setIsProcessing(false)
-    checkAchievements()
-  }, [])
+    // 当前月份事件已处理完，直接进入下月，不再显示空事件界面
+    handleNextMonth()
+  }, [handleNextMonth])
 
   const handleUndo = useCallback(() => {
     const history = undoHistoryRef.current
@@ -1355,6 +1460,12 @@ export function useGameEngine(props: UseGameEngineProps) {
     if ((loadSaveData as any).identityType) {
       setIdentityType((loadSaveData as any).identityType)
     }
+
+    const savedStoryline = (loadSaveData as any).currentStoryline
+    if (savedStoryline) {
+      currentStorylineRef.current = savedStoryline
+      setCurrentStoryline(savedStoryline)
+    }
   }, [loadSaveData])
 
   // 组件挂载/读档时初始化第一个事件
@@ -1439,10 +1550,11 @@ export function useGameEngine(props: UseGameEngineProps) {
       lifeRecords,
       savedAt: new Date().toISOString(),
       playTime,
-      achievements: loadAchievements()
+      achievements: loadAchievements(),
+      currentStoryline
     }
 
-    const fingerprint = `${gameState.currentYear}|${gameState.currentMonth}|${gameState.turn}|${eventHistory.length}|${character.attributes.财帛}|${character.attributes.文韬}|${character.attributes.理政}|${character.attributes.武略}|${character.attributes.体质}|${gameState.圣眷}|${gameState.中官}|${gameState.清议}|${gameState.士绅}|${gameState.民望}|${gameState.国势}|${character.flags.length}|${currentEvent?.id || ''}`
+    const fingerprint = `${gameState.currentYear}|${gameState.currentMonth}|${gameState.turn}|${eventHistory.length}|${character.attributes.财帛}|${character.attributes.文韬}|${character.attributes.理政}|${character.attributes.武略}|${character.attributes.体质}|${gameState.圣眷}|${gameState.中官}|${gameState.清议}|${gameState.士绅}|${gameState.民望}|${gameState.国势}|${character.flags.length}|${currentEvent?.id || ''}|${currentStoryline || ''}`
     if (fingerprint === lastAutosaveFingerprint) return
 
     if (autosaveTimerRef.current !== null) {

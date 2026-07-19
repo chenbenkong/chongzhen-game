@@ -32,6 +32,8 @@ export interface SaveData {
   playTime?: number
   /** 每个存档独立的成就数据（新游戏时为空数组） */
   achievements?: AchievementData
+  /** 当前持久化剧情线（玩家主动选择后保存） */
+  currentStoryline?: string
 }
 
 export interface SaveSlot {

@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useMemo, useCallback } from 'react'
+import { memo, useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { GameEvent, EventChoice } from '../types/event'
 import { Character, GameStateValues, Attributes } from '../types/game'
@@ -389,6 +389,20 @@ function EventDisplay({
   onGenerateImageForEvent,
   onDeathEnding
 }: EventDisplayProps) {
+  // 无事件时自动触发继续（进入下月），避免显示空界面
+  const autoAdvancedRef = useRef(false)
+
+  useEffect(() => {
+    if (event) {
+      autoAdvancedRef.current = false
+      return
+    }
+    if (pendingCount === 0 && !isProcessing && onContinue && !autoAdvancedRef.current && !isGhostMode) {
+      autoAdvancedRef.current = true
+      onContinue()
+    }
+  }, [event, pendingCount, isProcessing, onContinue, isGhostMode])
+
   const [internalSelectedChoice, setInternalSelectedChoice] = useState<EventChoice | null>(null)
   const [internalShowResult, setInternalShowResult] = useState(false)
   
@@ -658,9 +672,9 @@ function EventDisplay({
     return (
       <div className="event-display empty">
         <div className="empty-state">
-          <div className="empty-icon" aria-label="无事件" />
-          <p className="empty-text">暂无事件</p>
-          <p className="empty-hint">等待命运的安排...</p>
+          <div className={`empty-icon ${isProcessing ? 'spinning' : ''}`} aria-label="无事件" />
+          <p className="empty-text">{isProcessing ? '自动推进中……' : '暂无事件'}</p>
+          <p className="empty-hint">{isProcessing ? '命运的车轮正在转动' : '等待命运的安排...'}</p>
         </div>
       </div>
     )
