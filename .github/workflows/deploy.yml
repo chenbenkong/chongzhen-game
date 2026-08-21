@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npx vite build --base=./
+        env:
+          VITE_AI_API_KEY: ${{ secrets.VITE_AI_API_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
