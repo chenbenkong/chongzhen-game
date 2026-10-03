@@ -52,7 +52,7 @@ function StatusPanel({ gameState }: StatusPanelProps) {
   return (
     <div className="status-panel">
       <div className="panel-section">
-        <h3 className="section-title">五方态度</h3>
+        <h2 className="section-title">五方态度</h2>
         <div className="status-list">
           {attitudeItems.map(({ key, value, hint }) => {
             const level = getStatusLevel(value)

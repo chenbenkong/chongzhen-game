@@ -5,6 +5,30 @@ import { GameEvent } from '../types/event'
 import { unlockAchievement } from '../types/achievement'
 
 /**
+ * 关键生平事件的统一筛选口径。
+ *
+ * 为什么需要抽成共用函数：游戏里有**两处**都要挑"值得写进结局的关键事件"——
+ * 人物志（`generateBiography`）与生平总结（`generateLifeSummary`）。
+ * 它们此前各写一套，结果口径全都不一致：
+ *   - 类型过滤不同：一边算上 `marriage`，另一边算上"带 impact 的 event"
+ *   - 取样方向相反：人物志取 `slice(0, 8)`（**最早** 8 条），总结取 `slice(-10)`（最近 10 条）
+ * 于是同一局游戏，人物志会只写早年的事、把后半生整段丢掉 —— 一局 17 年的仕途，
+ * 传记里却看不到结局前发生了什么。现在两处都走这里，取最近的关键事件。
+ */
+export function pickKeyLifeRecords(lifeRecords: LifeRecord[], limit: number): LifeRecord[] {
+  return lifeRecords
+    .filter(
+      r =>
+        r.type === 'promotion' ||
+        r.type === 'demotion' ||
+        r.type === 'death' ||
+        r.type === 'marriage' ||
+        (r.type === 'event' && Boolean(r.impact))
+    )
+    .slice(-limit)
+}
+
+/**
  * 结局卷首（《明史·列传》体裁）。
  * 8 大卷覆盖所有 endingConfig.category 取值。
  * - official 仕林：科举正途，文臣良吏
@@ -98,10 +122,10 @@ export function generateBiography(
   const startYear = 1628
   const endYear = gameState.currentYear
 
-  // 提取关键人生事件（升迁、贬官、死亡及有重大影响的事件）
-  const keyRecords = lifeRecords
-    .filter(r => ['promotion', 'demotion', 'death', 'marriage', 'event'].includes(r.type))
-    .slice(0, 8)
+  // 提取关键人生事件（升迁、贬官、死亡、婚配及有重大影响的事件）。
+  // 口径与生平总结共用 pickKeyLifeRecords —— 此前这里取的是**最早** 8 条，
+  // 导致人物志只写早年、把后半生丢掉。
+  const keyRecords = pickKeyLifeRecords(lifeRecords, 8)
 
   const emperorsFavor = gameState.圣眷 ?? 50
   // 评价关键词

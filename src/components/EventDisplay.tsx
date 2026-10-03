@@ -15,7 +15,7 @@ interface EventDisplayProps {
   event: GameEvent | null
   character: Character
   gameState: GameStateValues
-  onChoice?: (choice: EventChoice) => void
+  onChoice?: (choice: EventChoice, opts?: { random?: boolean }) => void
   onContinue?: () => void
   onUndo?: () => void
   onGameOver?: () => void
@@ -420,12 +420,16 @@ function EventDisplay({
   const [eventDiceUsed, setEventDiceUsed] = useState(false)
 
   /**
-   * 投骰流程里排下的所有定时器 id。
+   * 投骰流程里排下的所有定时器 id，以及 diceModal 的 ref 镜像。
    *
-   * 结算链路是「一级 setTimeout → 在 setState 更新函数里再排一级 setTimeout」，
-   * 卸载时若不清理就会留下一批悬挂的定时器。当前 React 会丢弃已卸载组件的状态更新，
-   * 所以暂时没有可观察的后果；但一旦它被触发，回调里会走到 `onChoice`（父组件的回调，
-   * 永久生效：属性扣减、人生记录都会重复写）。这里统一登记、卸载时一并清掉。
+   * `diceModalRef` 的存在是为了让 `rollDice` 能**同步**读到最新的 choice / difficulty，
+   * 从而把掷骰与后续调度都放在 setState 更新函数**之外**。
+   * React 的更新函数必须是纯的：StrictMode（开发期）与并发渲染下的重放
+   * 都会重复执行它，而只要里面还残留"排下一个定时器"这种副作用，
+   * 结算就会被排两次 —— `onChoice` 是永久生效的（属性扣减、人生记录写进存档），
+   * 重复调用等于把同一个选择的后果应用两遍。
+   *
+   * 定时器统一登记则是因为：卸载时若不清理会留下悬挂定时器，回调里同样会走到 `onChoice`。
    */
   const diceTimersRef = useRef<number[]>([])
 
@@ -469,6 +473,21 @@ function EventDisplay({
   const [attemptedChoices, setAttemptedChoices] = useState<Set<string>>(new Set())
   // 记录每个选项的成功/失败状态
   const [choiceResults, setChoiceResults] = useState<Map<string, boolean>>(new Map())
+
+  /**
+   * diceModal 的 ref 镜像。
+   *
+   * 存在的原因是让 `rollDice` 能**同步**读到最新的 choice / difficulty，
+   * 从而把掷骰与后续调度都放在 setState 更新函数**之外**。
+   * React 的更新函数必须是纯的：StrictMode（开发期）与并发渲染下的重放
+   * 都会重复执行它；只要里面还残留"排下一个定时器"这种副作用，结算就会被排两次 ——
+   * `onChoice` 是永久生效的（属性扣减、人生记录写进存档），
+   * 重复调用等于把同一个选择的后果应用两遍。
+   */
+  const diceModalRef = useRef(diceModal)
+  useEffect(() => {
+    diceModalRef.current = diceModal
+  }, [diceModal])
 
 
 
@@ -529,6 +548,13 @@ function EventDisplay({
   }, [event, character, gameState])
 
   useEffect(() => {
+    // 骰子流程属于「它开始时的那个事件」。事件一换，就必须把还在飞行中的
+    // 投骰定时器全部取消 —— 否则旧事件的结算会在新事件上落地，
+    // 把玩家已经离开的那个选择的后果（属性扣减、人生记录）应用到当前局面。
+    // 此前这一点是靠"二级定时器排在更新函数内部、而切换事件会把 choice 重置为 null
+    // 从而让更新函数提前返回"这个巧合掩盖的，并不是有意为之的守卫。
+    clearDiceTimers()
+
     setShowResult(false)
     setSelectedChoice(null)
     setEventDiceUsed(false) // 切换事件时重置骰子状态
@@ -544,9 +570,9 @@ function EventDisplay({
     // 重置每个选项的尝试记录
     setAttemptedChoices(new Set())
     setChoiceResults(new Map())
-  }, [event])
+  }, [event, clearDiceTimers])
 
-  const handleSelectChoice = useCallback((choice: EventChoice) => {
+  const handleSelectChoice = useCallback((choice: EventChoice, opts?: { random?: boolean }) => {
     if ((isProcessing) && !isGhostMode) return
 
     // 条件不足的选项已不再是 disabled（改用 aria-disabled 以保持可聚焦、可被读屏朗读原因），
@@ -569,14 +595,35 @@ function EventDisplay({
         echo: choice.result?.echo || '',
         tags: choice.result?.tags || []
       })
-      onChoice?.(choice)
+      onChoice?.(choice, opts)
     } else {
       // 正常模式
       setSelectedChoice(choice)
       setShowResult(true)
-      onChoice?.(choice)
+      onChoice?.(choice, opts)
     }
   }, [isProcessing, onChoice, isGhostMode, onChoiceSelect, checkDeathEnding, onDeathEnding, choiceChecks, choiceResults])
+
+  /**
+   * 「听天由命」：在当前**可选**的选项里随机挑一个。
+   *
+   * 这个入口有两个意义：
+   *   1. 玩家选择困难时的实用功能；
+   *   2. 它是游戏内 `randomChoiceCount` 的**唯一**来源 ——
+   *      没有它，「随心所欲」（随机选择 50 次）成就在设计上不可达，
+   *      只能被标记成 deadByDesign 排除在全收集判定之外。
+   * 只从"可选"里挑，锁定（条件不足）的选项不会被随机选中。
+   */
+  const handleRandomChoice = useCallback(() => {
+    if (!event) return
+    if (isProcessing || showResult) return
+
+    const available = event.choices.filter(c => choiceChecks.get(c.id)?.available)
+    if (available.length === 0) return
+
+    const picked = available[Math.floor(Math.random() * available.length)]
+    handleSelectChoice(picked, { random: true })
+  }, [event, choiceChecks, isProcessing, showResult, handleSelectChoice])
 
   const openDiceModal = useCallback((choice: EventChoice) => {
     const check = choiceChecks.get(choice.id)
@@ -604,82 +651,75 @@ function EventDisplay({
   }, [])
 
   const rollDice = useCallback(() => {
+    const current = diceModalRef.current
+    const choice = current.choice
+
+    // 显式并发守卫：没有选项、正在投掷、或已经出过结果，都直接忽略。
+    // （骰子区与底部按钮各自也有守卫，这里再加一层是因为下面改成了从 ref 读快照。）
+    if (!choice || current.isRolling || current.success !== null) return
+
+    const difficulty = current.difficulty || 3
+    const roll = Math.floor(Math.random() * 6) + 1
+    const success = roll >= difficulty
+
     setDiceModal(prev => ({ ...prev, isRolling: true }))
 
+    // 以下是"排定时器"的副作用，全部放在更新函数之外
     scheduleDiceTimer(() => {
-      setDiceModal(dicePrev => {
-        const choice = dicePrev.choice
-        if (!choice) return dicePrev
+      // 标记事件级骰子已用（整个事件只能投一次）
+      setEventDiceUsed(true)
 
-        // 整个事件只能投一次
-        const baseDifficulty = dicePrev.difficulty || 3
-        const adjustedDifficulty = baseDifficulty
+      if (success) {
+        setChoiceResults(r => new Map(r).set(choice.id, true))
+      } else {
+        setAttemptedChoices(r => new Set(r).add(choice.id))
+        setChoiceResults(r => new Map(r).set(choice.id, false))
+      }
 
-        const roll = Math.floor(Math.random() * 6) + 1
-        const success = roll >= adjustedDifficulty
+      // 亮出点数，结束"投掷中"
+      setDiceModal(prev => ({
+        ...prev,
+        isRolling: false,
+        rollResult: roll,
+        success,
+        attemptCount: 1,
+        showPenalty: !success,
+        difficulty
+      }))
 
-        // 标记事件级骰子已用
-        setEventDiceUsed(true)
-
-        if (success) {
+      // 第二级：把结果真正落到游戏状态上（这一步会调用 onChoice，只允许发生一次）
+      scheduleDiceTimer(() => {
+        if (isGhostMode) {
+          onChoiceSelect?.(choice.id)
+        } else if (success) {
           // 成功：用原 effects / result
-          setChoiceResults(r => new Map(r).set(choice.id, true))
-          scheduleDiceTimer(() => {
-            if (isGhostMode) {
-              onChoiceSelect?.(choice.id)
-            } else {
-              setSelectedChoice(choice)
-              setShowResult(true)
-              onChoice?.(choice)
-            }
-            setDiceModal(p => ({ ...p, show: false }))
-          }, motionDelay(1500))
+          setSelectedChoice(choice)
+          setShowResult(true)
+          onChoice?.(choice)
         } else {
-          // 失败：用 failEffects / failResult；若无则默认一个简单的
-          setAttemptedChoices(r => new Set(r).add(choice.id))
-          setChoiceResults(r => new Map(r).set(choice.id, false))
+          // 失败：优先用作者在 choice.failEffects / failResult 里配的，
+          // 否则根据"成功时的效果"反推；绝不再用死数据"体质-2/道德值-1"敷衍
+          const generated = generateFailEcho(choice, current, event)
+          const failEffects = choice.failEffects || deriveFailEffects(choice)
 
-          scheduleDiceTimer(() => {
-            if (isGhostMode) {
-              onChoiceSelect?.(choice.id)
-            } else {
-              // 根据所选选项 + 失败条件 + 事件背景动态生成回音
-              const generated = generateFailEcho(choice, dicePrev, event)
-
-              // 失败副作用：优先用作者在 choice.failEffects 里配的，否则根据"成功时的效果"反推
-              // 绝不再用死数据"体质-2/道德值-1"敷衍
-              const failEffects = choice.failEffects || deriveFailEffects(choice)
-
-              const useChoice: EventChoice = {
-                ...choice,
-                effects: failEffects,
-                resultDescription: choice.failResultDescription || generated.description,
-                result: choice.failResult || {
-                  title: generated.title,
-                  tags: ['投骰失败', '副作用'],
-                  echo: generated.echo
-                }
-              }
-              setSelectedChoice(useChoice)
-              setShowResult(true)
-              onChoice?.(useChoice)
+          const useChoice: EventChoice = {
+            ...choice,
+            effects: failEffects,
+            resultDescription: choice.failResultDescription || generated.description,
+            result: choice.failResult || {
+              title: generated.title,
+              tags: ['投骰失败', '副作用'],
+              echo: generated.echo
             }
-            setDiceModal(p => ({ ...p, show: false }))
-          }, motionDelay(1500))
+          }
+          setSelectedChoice(useChoice)
+          setShowResult(true)
+          onChoice?.(useChoice)
         }
-
-        return {
-          ...dicePrev,
-          isRolling: false,
-          rollResult: roll,
-          success,
-          attemptCount: 1,
-          showPenalty: !success,
-          difficulty: adjustedDifficulty
-        }
-      })
+        setDiceModal(p => ({ ...p, show: false }))
+      }, motionDelay(1500))
     }, motionDelay(800))
-  }, [isGhostMode, onChoiceSelect, onChoice, scheduleDiceTimer])
+  }, [isGhostMode, onChoiceSelect, onChoice, scheduleDiceTimer, event])
 
   const handleContinue = () => {
     if (isGhostMode) {
@@ -1010,6 +1050,21 @@ function EventDisplay({
               )
             })}
           </div>
+
+          {/* 「听天由命」：从当前可选的选项里随机挑一个。
+              只在有两个及以上可选时才有意义（只有一个选项时等于替玩家点它）。
+              这个入口同时是 randomChoiceCount 的唯一来源。 */}
+          {event.choices.filter(c => choiceChecks.get(c.id)?.available).length >= 2 && (
+            <button
+              type="button"
+              className="random-choice-btn"
+              onClick={handleRandomChoice}
+              aria-disabled={isProcessing}
+              title="从当前可选的选项中随机挑一个"
+            >
+              听 天 由 命
+            </button>
+          )}
 
         </div>
       ) : (

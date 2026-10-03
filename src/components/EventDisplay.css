@@ -427,6 +427,43 @@
   gap: 6px;
 }
 
+/* 「听天由命」：从当前可选的选项里随机挑一个。
+   视觉上要比普通选项轻，避免玩家误以为它是主线操作。 */
+.random-choice-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 12px;
+  background: transparent;
+  border: 1px dashed rgba(197, 165, 90, 0.22);
+  border-radius: 2px;
+  color: rgba(197, 165, 90, 0.5);
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  letter-spacing: 0.35em;
+  text-indent: 0.35em;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.random-choice-btn:hover {
+  color: rgba(197, 165, 90, 0.9);
+  border-color: rgba(197, 165, 90, 0.5);
+  background: rgba(197, 165, 90, 0.05);
+}
+
+.random-choice-btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* 触屏设备上的点按目标下限 */
+@media (any-pointer: coarse) {
+  .random-choice-btn {
+    min-height: 44px;
+  }
+}
+
 .choice-card-wrapper {
   position: relative;
 }
@@ -1196,7 +1233,8 @@
 .choice-card:focus-visible,
 .dice-attempt-btn:focus-visible,
 .continue-btn:focus-visible,
-.undo-btn:focus-visible {
+.undo-btn:focus-visible,
+.random-choice-btn:focus-visible {
   outline: 2px solid #c9a227;
   outline-offset: 2px;
 }

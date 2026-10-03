@@ -88,16 +88,7 @@
   contain: layout style;
 }
 
-.history-panel h4 {
-  font-size: 0.85rem;
-  color: rgba(197,165,90,0.6);
-  letter-spacing: 4px;
-  margin-bottom: 12px;
-  font-weight: normal;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(197,165,90,0.1);
-  font-family: var(--font-heading);
-}
+/* 已移除 `.history-panel h4`：`.history-panel` 在整个代码库里不存在，是历史遗留的死规则 */
 
 .history-panel ul {
   list-style: none;
@@ -346,14 +337,14 @@
   background: #101a15;
   border: 1px solid #1a3a2a;
 }
-.identity-panel h4 {
+.identity-panel h2 {
   font-size: 0.85rem;
   margin-bottom: 8px;
 }
-.identity-panel--official h4 { color: #8b7540; }
-.identity-panel--rebel h4 { color: #b85a3a; }
-.identity-panel--exiled h4 { color: #8a5a7a; }
-.identity-panel--other h4 { color: #5a8a6a; }
+.identity-panel--official h2 { color: #8b7540; }
+.identity-panel--rebel h2 { color: #b85a3a; }
+.identity-panel--exiled h2 { color: #8a5a7a; }
+.identity-panel--other h2 { color: #5a8a6a; }
 .identity-rank {
   color: #c9a227;
   font-size: 1rem;
@@ -375,7 +366,7 @@
   padding: 12px;
   animation: fadeInUp 0.5s ease 0.15s both;
 }
-.merit-panel h4 {
+.merit-panel h2 {
   color: #8b7540;
   font-size: 0.85rem;
   margin-bottom: 8px;

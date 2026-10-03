@@ -392,13 +392,7 @@
   }
 }
 
-.desc-section h4 {
-  font-size: 0.85rem;
-  color: #6b5a3a;
-  margin-bottom: 12px;
-  letter-spacing: 3px;
-  font-weight: normal;
-}
+/* 已移除 `.desc-section h4`：`.desc-section` 在整个代码库里不存在，是历史遗留的死规则 */
 
 .attr-desc {
   display: grid;

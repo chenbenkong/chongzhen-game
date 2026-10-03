@@ -123,7 +123,7 @@ export default function NameInput({ onConfirm }: NameInputProps) {
   return (
     <div className="name-input-screen">
       <div className="name-scroll">
-        <h2>请 赐 名 字</h2>
+        <h1>请 赐 名 字</h1>
         <p className="name-quote">"名以正体，字以表德。"</p>
 
         <div className="name-form">
@@ -241,7 +241,7 @@ export default function NameInput({ onConfirm }: NameInputProps) {
 
         <div className="suggested-names suggested-compact">
           <div className="suggest-section">
-            <h3>常见姓氏</h3>
+            <h2>常见姓氏</h2>
             <div className="suggest-list">
               {suggestedSurnames.map((s) => (
                 <button
@@ -254,7 +254,7 @@ export default function NameInput({ onConfirm }: NameInputProps) {
           </div>
 
           <div className="suggest-section">
-            <h3>雅致名讳（点选填入）</h3>
+            <h2>雅致名讳（点选填入）</h2>
             <div className="suggest-list">
               {suggestedNames.map((n) => (
                 <button

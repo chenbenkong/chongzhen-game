@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { StrictMode, useState } from 'react'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import EventDisplay from '../../src/components/EventDisplay'
@@ -275,10 +275,26 @@ describe('EventDisplay 勉力一试（投骰）', () => {
     })
     expect(onChoice).toHaveBeenCalledTimes(1)
   })
-})
+  it('StrictMode 下投骰只结算一次（更新函数必须是纯的）', () => {
+    // React 18 的 StrictMode 会在开发构建下**重复调用 setState 的更新函数**，
+    // 目的就是暴露更新函数里的副作用。而 rollDice 恰恰把「排第二级定时器」这件事
+    // 写在了 setDiceModal(updater) 的 updater 内部 —— 更新函数被重放一次，
+    // 就会多排一个结算定时器，onChoice 被调用两次。
+    //
+    // onChoice 是永久生效的（属性扣减、人生记录都会写进存档），
+    // 重复调用等于把同一个选择的后果应用两遍，所以这不是"仅开发期"的问题，
+    // 而是更新函数不纯所导致的真实正确性缺陷。
+    const onChoice = vi.fn()
+    render(
+      <StrictMode>
+        <EventDisplay {...baseProps(makeDiceEvent('ev-strict'))} onChoice={onChoice} />
+      </StrictMode>
+    )
 
-// 用例自身出错时也要保证假定时器被收回（afterEach 里已经处理，
-// 这里额外兜一层：vitest 的 testTimeout 是 20s，一旦漏还原整份 suite 都会超时）
-afterEach(() => {
-  cleanup()
+    const diceButton = openDiceModal()
+    fireEvent.click(diceButton)
+    settleTimers()
+
+    expect(onChoice).toHaveBeenCalledTimes(1)
+  })
 })

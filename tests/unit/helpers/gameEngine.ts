@@ -1,5 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
+import { createElement, StrictMode, type ReactNode } from 'react'
 import { useGameEngine, type UseGameEngineProps } from '../../../src/hooks/useGameEngine'
+import type { AchievementContext } from '../../../src/types/achievement'
 import type { SaveData } from '../../../src/types/save'
 import type { Attributes, Character, DegreeType, GameStateValues, LifeRecord } from '../../../src/types/game'
 import type { OriginType } from '../../../src/types/game'
@@ -98,10 +100,51 @@ export function makeProps(overrides: Partial<UseGameEngineProps> = {}): UseGameE
   }
 }
 
-/** 渲染引擎，并把常用的解构结果一起返回 */
-export function renderGameEngine(overrides: Partial<UseGameEngineProps> = {}) {
+/**
+ * 构造一个完整的成就判定上下文（`AchievementContext` 的字段都是必填的，
+ * 逐个手写太啰嗦）。传 partial 覆盖你要测的那部分即可。
+ */
+export function makeAchievementContext(
+  overrides: Partial<AchievementContext> = {}
+): AchievementContext {
+  return {
+    attributes: { ...DEFAULT_ATTRIBUTES },
+    gameState: makeGameState(),
+    characterRank: '正七品·知县',
+    eventHistory: [],
+    promotionCount: 0,
+    demotionCount: 0,
+    luckyStreak: 0,
+    unluckyStreak: 0,
+    firstChoiceCount: 0,
+    randomChoiceCount: 0,
+    undoCount: 0,
+    saveCount: 0,
+    origin: '寒门' as OriginType,
+    unlockedAchievements: [],
+    ...overrides
+  }
+}
+
+/** 用 StrictMode 包裹被测组件。用 createElement 而不是 JSX，好让本文件保持 .ts */
+function StrictWrapper({ children }: { children: ReactNode }) {
+  return createElement(StrictMode, null, children)
+}
+
+/**
+ * 渲染引擎，并把常用的解构结果一起返回。
+ *
+ * `strict: true` 会把引擎放进 React.StrictMode 里跑 —— 这是暴露
+ * "setState 更新函数里带副作用"这类缺陷的标准手段：StrictMode 会**重复调用更新函数**，
+ * 更新函数里任何被重放的副作用（排定时器、改别的 state）都会被执行两次。
+ */
+export function renderGameEngine(
+  overrides: Partial<UseGameEngineProps> = {},
+  options: { strict?: boolean } = {}
+) {
   return renderHook((props: UseGameEngineProps) => useGameEngine(props), {
-    initialProps: makeProps(overrides)
+    initialProps: makeProps(overrides),
+    wrapper: options.strict ? StrictWrapper : undefined
   })
 }
 
@@ -113,8 +156,12 @@ export async function flush(ms = 0): Promise<void> {
 }
 
 /**
- * 推进 n 个月。handleNextMonth 会触发多次 setState 与 300ms 的调度定时器，
- * 因此每步都留出一点真实时间，避免断言落在中间态上。
+ * 推进 n 个月。
+ *
+ * 等待时间必须**长于引擎里那 300ms 的调度定时器**：`handleNextMonth` 只在
+ * 那个定时器里才挑选本月事件、写入事件历史、调用 checkBoundary。
+ * 早先这里只等 30ms，导致针对"事件历史是否重复"的断言其实什么都没测到 ——
+ * 定时器还没跑，历史自然不会有新条目，重复也就无从谈起。
  */
 export async function advanceMonths(
   result: { current: ReturnType<typeof useGameEngine> },
@@ -124,6 +171,6 @@ export async function advanceMonths(
     await act(async () => {
       result.current.handleNextMonth()
     })
-    await flush(30)
+    await flush(350)
   }
 }

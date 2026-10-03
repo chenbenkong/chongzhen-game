@@ -19,7 +19,7 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
 
   return (
     <div className="origin-select">
-      <h2>铨 选 出 身</h2>
+      <h1>铨 选 出 身</h1>
       <p className="quote">先选个出身，毕竟在上位者眼里，诸位大人的斤两从一开始便标好了价。</p>
       
       <div className="origin-grid">
@@ -34,7 +34,7 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
             onKeyDown={(e) => handleCardKeyDown(e, origin)}
           >
             <div className="card-header">
-              <h3>{origin.name}</h3>
+              <h2>{origin.name}</h2>
               <span className="rank-info">
                 <span className="rank-label">{origin.initialRank || '待定'}</span>
                 <span className="rank-value">{origin.initialDegree || '进士'}</span>
@@ -50,7 +50,7 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
             <p className="background">{origin.background}</p>
 
             <div className="features">
-              <h4>出身特性</h4>
+              <h3>出身特性</h3>
               <ul>
                 {origin.features.map((feature, i) => (
                   <li key={i}>{feature}</li>
@@ -64,7 +64,7 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
             </p>
 
             <div className="attributes">
-              <h4>初始属性</h4>
+              <h3>初始属性</h3>
               {Object.entries(origin.initialAttributes).map(([key, value]) => (
                 <div key={key} className="attr-row">
                   <span className="attr-name">{key}</span>

@@ -263,7 +263,7 @@ function GameScreen(props: GameScreenProps) {
             />
 
             <div className={identityPanelClass}>
-              <h4>{identityTitle}</h4>
+              <h2>{identityTitle}</h2>
               <div className="identity-rank">
                 {character.rank}
               </div>
@@ -295,7 +295,7 @@ function GameScreen(props: GameScreenProps) {
 
             {identityType === 'official' && (
               <div className="merit-panel">
-                <h4>政 绩 评 定</h4>
+                <h2>政 绩 评 定</h2>
                 <div className="merit-score-row">
                   <span className="merit-score-label">当前政绩分</span>
                   <span className="merit-score-value">{meritScore}</span>

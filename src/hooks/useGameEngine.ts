@@ -8,7 +8,7 @@ import { initialEvents, allGrayChoiceEvents } from '../data/events/index'
 import { origins } from '../data/origins'
 import { boundaryEventManager } from '../services/BoundaryEventManager'
 import '../data/boundaryEvents'
-import { triggerEndingAchievements, generateBiography } from '../utils/endingSystem'
+import { triggerEndingAchievements, generateBiography, pickKeyLifeRecords } from '../utils/endingSystem'
 import { ATTR_MAP, STATE_MAP, ATTR_BOUNDS } from '../utils/constants'
 import { checkEventConditions, pickEvent } from '../utils/eventConditions'
 
@@ -896,12 +896,13 @@ export function useGameEngine(props: UseGameEngineProps) {
       luckyStreak: stats.luckyStreak,
       unluckyStreak: stats.unluckyStreak,
       firstChoiceCount: stats.firstChoiceCount,
-      // randomChoiceCount 恒为 0：游戏内没有「随机选择选项」的入口
-      // （EventDisplay 只有普通选择 + 投骰成功率检定），因此本文件里不存在它的自增点。
-      // 对应成就 random_player 在 achievement.ts 里标记为 deadByDesign。
+      // 来自「听天由命」按钮（EventDisplay.handleRandomChoice）
       randomChoiceCount: stats.randomChoiceCount,
       undoCount: stats.undoCount,
-      saveCount: stats.saveCount
+      saveCount: stats.saveCount,
+      // 当前存档内已解锁的成就。「结局收藏」类成就必须靠它统计**跨局**解锁的结局数，
+      // 而不是靠 eventHistory（那是单局流水，一局只会走到一个结局）。
+      unlockedAchievements: loadAchievements().unlocked
     }
     const newlyUnlocked = checkAndUnlockAchievements(ctx)
     // 成就解锁后不再弹出弹窗，仅在后台记录
@@ -920,7 +921,7 @@ export function useGameEngine(props: UseGameEngineProps) {
     setIsGameOver(true)
   }, [])
 
-  const handleChoice = useCallback((choice: EventChoice) => {
+  const handleChoice = useCallback((choice: EventChoice, opts?: { random?: boolean }) => {
     const currentCharacter = characterRef.current
     const currentGameState = gameStateRef.current
     const currentEvent = currentEventRef.current
@@ -972,6 +973,13 @@ export function useGameEngine(props: UseGameEngineProps) {
     // 「果断抉择」：本次选择是否为当前事件的第一个选项
     if (currentEvent?.choices[0]?.id === choice.id) {
       updatePlayerStats(prev => ({ ...prev, firstChoiceCount: prev.firstChoiceCount + 1 }))
+    }
+
+    // 「随心所欲」：本次选择是否来自「听天由命」随机挑选。
+    // 这是 randomChoiceCount 的**唯一**自增点 —— 在 EventDisplay 加上那个入口之前，
+    // 这个计数恒为 0，导致对应成就无法达成。
+    if (opts?.random) {
+      updatePlayerStats(prev => ({ ...prev, randomChoiceCount: prev.randomChoiceCount + 1 }))
     }
 
     // 「时来运转 / 屋漏偏逢雨」的「负面回合」定义：
@@ -1270,71 +1278,82 @@ export function useGameEngine(props: UseGameEngineProps) {
     setIsProcessing(true)
     setUndoHistory([])
 
-    setGameState(prev => {
-      let newState = { ...prev }
-      let allEvents: GameEvent[] = []
-      let skippedMonths = 0
-      const maxSkip = 12
+    // ── 纯计算部分 ──────────────────────────────────────────────────────
+    // 这一整段必须在 setState 更新函数**之外**执行。
+    //
+    // 早先它写在 `setGameState(prev => {...})` 的更新函数里，而那个更新函数还顺手做了
+    // 增龄、排 300ms 定时器、改事件历史这些**副作用**。React 的更新函数必须是纯的：
+    // StrictMode 在开发构建下会重复调用它来暴露不纯的代码，并发渲染下也可能重放。
+    // 一旦被重放，那些副作用就各执行两遍 —— 事件 id 重复写进历史、年龄被加两次、
+    // 两个定时器互相抢事件。有回归测试盯着（tests/unit/engine.strictMode.test.ts）。
+    //
+    // 现在改为「先从 gameStateRef 同步算出结果 → 一次性 setGameState → 再做副作用」。
+    const prev = gameStateRef.current
+    let newState = { ...prev }
+    let allEvents: GameEvent[] = []
+    let skippedMonths = 0
+    const maxSkip = 12
 
-      // 连续跳过空月，直到找到事件或达到上限，避免玩家反复点击继续
-      while (skippedMonths < maxSkip) {
-        let nextMonth = newState.currentMonth + 1
-        let nextYear = newState.currentYear
+    // 连续跳过空月，直到找到事件或达到上限，避免玩家反复点击继续
+    while (skippedMonths < maxSkip) {
+      let nextMonth = newState.currentMonth + 1
+      let nextYear = newState.currentYear
 
-        if (nextMonth > 12) {
-          nextMonth = 1
-          nextYear++
-        }
-
-        const current国势 = newState.国势 ?? 75
-        let 国势Decay = 0
-        const decayMultiplier = difficultyConfigRef.current.countryPowerDecay
-        if (nextYear >= 1636) {
-          国势Decay = -1 * decayMultiplier
-        }
-        if (nextYear >= 1640) {
-          国势Decay = -2 * decayMultiplier
-        }
-        if (nextYear >= 1643) {
-          国势Decay = -3 * decayMultiplier
-        }
-
-        newState = {
-          ...newState,
-          currentMonth: nextMonth,
-          currentYear: nextYear,
-          turn: newState.turn + 1,
-          国势: Math.max(0, Math.min(100, current国势 + 国势Decay))
-        }
-
-        allEvents = findAllEventsForState(newState)
-        skippedMonths++
-        if (allEvents.length > 0) break
+      if (nextMonth > 12) {
+        nextMonth = 1
+        nextYear++
       }
 
-      setCharacter(prevChar => ({
-        ...prevChar,
-        age: prevChar.age + skippedMonths / 12
-      }))
+      const current国势 = newState.国势 ?? 75
+      let 国势Decay = 0
+      const decayMultiplier = difficultyConfigRef.current.countryPowerDecay
+      if (nextYear >= 1636) {
+        国势Decay = -1 * decayMultiplier
+      }
+      if (nextYear >= 1640) {
+        国势Decay = -2 * decayMultiplier
+      }
+      if (nextYear >= 1643) {
+        国势Decay = -3 * decayMultiplier
+      }
 
-      setTimeout(() => {
-        if (checkBoundary()) {
-          setIsProcessing(false)
-          return
-        }
-        if (allEvents.length > 0) {
-          setCurrentEvent(allEvents[0])
-          setPendingEvents(allEvents.slice(1))
-          setEventHistory(prevHistory => [...prevHistory, ...allEvents.map(e => e.id)])
-        } else {
-          setCurrentEvent(null)
-        }
+      newState = {
+        ...newState,
+        currentMonth: nextMonth,
+        currentYear: nextYear,
+        turn: newState.turn + 1,
+        国势: Math.max(0, Math.min(100, current国势 + 国势Decay))
+      }
+
+      allEvents = findAllEventsForState(newState)
+      skippedMonths++
+      if (allEvents.length > 0) break
+    }
+
+    setGameState(newState)
+
+    // ── 副作用部分：每次调用只执行一次 ────────────────────────────────
+    setCharacter(prevChar => ({
+      ...prevChar,
+      age: prevChar.age + skippedMonths / 12
+    }))
+
+    window.setTimeout(() => {
+      if (checkBoundary()) {
         setIsProcessing(false)
-        checkAchievements()
-      }, 300)
-
-      return newState
-    })
+        return
+      }
+      if (allEvents.length > 0) {
+        setCurrentEvent(allEvents[0])
+        setPendingEvents(allEvents.slice(1))
+        setEventHistory(prevHistory => [...prevHistory, ...allEvents.map(e => e.id)])
+      } else {
+        setCurrentEvent(null)
+      }
+      setIsProcessing(false)
+      checkAchievements()
+    }, 300)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleContinue = useCallback(() => {
@@ -1576,12 +1595,9 @@ export function useGameEngine(props: UseGameEngineProps) {
 
     return {
       totalRecords: lifeRecords.length,
-      keyEvents: lifeRecords.filter(r =>
-        r.type === 'promotion' ||
-        r.type === 'demotion' ||
-        r.type === 'death' ||
-        (r.type === 'event' && r.impact)
-      ).slice(-10),
+      // 与人物志共用同一套筛选口径（见 pickKeyLifeRecords 的说明），
+      // 避免"两处各挑一套、口径不一致"的老问题再次出现
+      keyEvents: pickKeyLifeRecords(lifeRecords, 10),
       finalTitle: character.rank,
       finalRank: character.degree,
       reputation: getReputation(),
@@ -2012,6 +2028,9 @@ export function useGameEngine(props: UseGameEngineProps) {
     showAIAdvisor,
     showImageGenerator,
     playTime,
+    // 局内统计（「果断抉择 / 随心所欲 / 谨慎行事 / 习惯性存档」等成就的计数来源）。
+    // 暴露出来既方便将来做统计面板，也让这些计数可被测试直接断言。
+    playerStats,
     lifeRecords,
     isLifeReviewOpen,
     deathEndingState,

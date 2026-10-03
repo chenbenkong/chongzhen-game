@@ -23,7 +23,7 @@
   text-align: center;
 }
 
-.name-scroll h2 {
+.name-scroll h1 {
   font-size: 1.9rem;
   color: #c9a227;
   letter-spacing: 0.6rem;
@@ -33,7 +33,7 @@
 }
 
 @media (max-width: 768px) {
-  .name-scroll h2 {
+  .name-scroll h1 {
     font-size: 1.6rem;
     letter-spacing: 0.4rem;
   }
@@ -366,9 +366,9 @@
   margin-bottom: 0;
 }
 
-/* h3：与页面的 h2「请 赐 名 字」构成连续层级（此前跳级到 h4）。
-   显式 margin-top: 0 是为了让 h3 与原来 h4 的间距保持一致（两者 UA margin 不同）。 */
-.suggest-section h3 {
+/* h2：与页面的 h1「请 赐 名 字」构成连续层级。
+   显式 margin-top: 0 是为了让 h2 与原来 h4 的间距保持一致（两者 UA margin 不同）。 */
+.suggest-section h2 {
   color: #6b5a45;
   font-size: 0.72rem;
   letter-spacing: 0.15rem;

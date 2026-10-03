@@ -52,7 +52,7 @@ function AttributePanel({ attributes, hidden }: AttributePanelProps) {
   return (
     <div className="attribute-panel">
       <div className="panel-section">
-        <h3 className="section-title">个人能力</h3>
+        <h2 className="section-title">个人能力</h2>
         <div className="attr-list">
           {personalAttributes.map(({ key, value }) => {
             const level = getAttributeLevel(value)
@@ -79,7 +79,7 @@ function AttributePanel({ attributes, hidden }: AttributePanelProps) {
       </div>
 
       <div className="panel-section hidden-attrs">
-        <h3 className="section-title">隐藏属性</h3>
+        <h2 className="section-title">隐藏属性</h2>
         <div className="attr-list compact">
           {Object.entries(hidden).map(([key, value]) => {
             const level = getHiddenLevel(value)

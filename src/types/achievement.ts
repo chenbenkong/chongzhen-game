@@ -14,8 +14,12 @@ export interface Achievement {
   unlocked: boolean
   unlockTime?: string
   /**
-   * 当前版本游戏内不存在达成入口（例如缺少「随机选择」功能）。
-   * 这类成就不参与「传奇大师」的全收集判定，避免把全收集成就一起拖成不可达。
+   * 标记「当前版本游戏内不存在达成入口」的成就，使其不参与「传奇大师」的全收集判定，
+   * 避免把全收集成就一起拖成不可达。
+   *
+   * 目前**没有**任何成就使用这个标记：此前用它绕过的 random_player 与
+   * ending_collection_5/15/30 都已修好（分别补上了「听天由命」入口、
+   * 以及跨局结局统计与缺失的结局成就）。保留该机制以备将来又出现不可达条目。
    */
   deadByDesign?: boolean
 }
@@ -39,8 +43,8 @@ export interface AchievementContext {
   firstChoiceCount: number
   /**
    * 累计「随机选择选项」的次数。
-   * 注意：当前版本游戏内没有任何「随机选项目」入口（见 useGameEngine 中的说明），
-   * 该计数恒为 0，因此 random_player 成就属于「设计上不可达」。
+   * 来源是事件选项列表下方的「听 天 由 命」按钮
+   * （EventDisplay.handleRandomChoice → handleChoice(choice, { random: true })）。
    */
   randomChoiceCount: number
   /** 累计使用悔棋/回退功能的次数 */
@@ -49,11 +53,37 @@ export interface AchievementContext {
   saveCount: number
   /** 角色出身。noble_climb 成就需要按出身判定 */
   origin?: OriginType
+  /**
+   * 当前存档内**已解锁的成就 id 列表**。
+   *
+   * 「结局收藏」类成就必须依赖它，而不是 `eventHistory`：结局的解锁状态是记录成
+   * `ending_*_done` 形式的成就的（见 endingSystem.triggerEndingAchievements 与
+   * EndingCodex 的读取方式），而 eventHistory 是**单局**的事件流水 ——
+   * 一局只会走到一个结局，用它统计跨局收集数永远凑不满。
+   */
+  unlockedAchievements: string[]
 }
 
 export interface AchievementData {
   unlocked: string[]
   unlockTimes: Record<string, string>
+}
+
+/**
+ * 已解锁的**不同结局**数量。
+ *
+ * 数据源是成就列表里的 `ending_*_done` 条目。此前三处「结局收藏」成就统计的是
+ * `eventHistory` 里的 ending_* id：那是单局流水，而且 handleGameOver 是在把结局 id
+ * 写进 eventHistory **之前**调用 checkAchievements 的，检查时该局结局数恒为 0，
+ * 单局最多也只会有一个结局（结局即终局）。所以那些成就实际不可达。
+ */
+function countUnlockedEndings(ctx: AchievementContext): number {
+  // 用 Set 去重：判据写的是"不同结局数"，就不能被重复条目骗过
+  // （正常路径下 unlockAchievement 有 includes 守卫，不会写入重复 id，
+  //  但这里显式去重可以让这条不变量不依赖调用方的自觉）
+  return new Set(
+    ctx.unlockedAchievements.filter(id => id.startsWith('ending_') && id.endsWith('_done'))
+  ).size
 }
 
 // 成就定义
@@ -817,13 +847,59 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     checkUnlock: (ctx) => ctx.eventHistory.includes('ending_jiashen_nationfall'),
     unlocked: false
   },
-  // ⚠️ 以下三个「结局收藏」成就当前**不可达**（发现于本次修复，非本任务列出的 12 项之一）：
-  //    它们统计的是 ctx.eventHistory 里的 ending_* 事件 id，而 eventHistory 是「单局」的
-  //    事件流水，且 useGameEngine.handleGameOver 里 checkAchievements() 是在把结局 id
-  //    写进 eventHistory **之前**调用的 —— 因此检查时该局的结局数恒为 0，单局最多也只有 1 个
-  //    结局（结局即终局）。要凑满 5/15/30 需要真正的「跨局结局图鉴」数据源。
-  //    这里先标记 deadByDesign，使其不参与「传奇大师」的全收集判定（否则传奇大师会再次不可达）；
-  //    成就本身仍按原判据可被解锁，等数据源修好后去掉 deadByDesign 即可。
+  // ── 补齐此前缺失的 5 个结局成就 ──────────────────────────────────────
+  // 发现过程：把 src/data 与引擎里**所有** ending_* 事件 id 拉出来与成就对照，
+  // 发现有 5 个结局没有对应的 `_done` 成就。后果有两个：
+  //   1. 这 5 个结局永远无法写进结局图鉴（EndingCodex 的进度也就永远到不了 100%）；
+  //   2. 「结局收藏」最高档要求 30 个，而可收集的只有 29 个 —— 数学上不可达。
+  // 补上之后共 34 个可收集结局，30 个的门槛才成立。
+  {
+    id: 'ending_debauchery_001_done',
+    name: '精尽人亡',
+    description: '达成"精尽人亡"结局',
+    icon: '亡',
+    category: 'endgame',
+    checkUnlock: (ctx) => ctx.eventHistory.includes('ending_debauchery_001'),
+    unlocked: false
+  },
+  {
+    id: 'ending_scholar_martyr_done',
+    name: '清流殉道',
+    description: '达成"清流殉道"结局',
+    icon: '殉',
+    category: 'endgame',
+    checkUnlock: (ctx) => ctx.eventHistory.includes('ending_scholar_martyr'),
+    unlocked: false
+  },
+  {
+    id: 'ending_fugitive_done',
+    name: '亡命江湖',
+    description: '达成"亡命江湖"结局',
+    icon: '逃',
+    category: 'endgame',
+    checkUnlock: (ctx) => ctx.eventHistory.includes('ending_fugitive'),
+    unlocked: false
+  },
+  {
+    id: 'ending_bankrupt_done',
+    name: '倾家荡产',
+    description: '达成"倾家荡产"结局',
+    icon: '荡',
+    category: 'endgame',
+    checkUnlock: (ctx) => ctx.eventHistory.includes('ending_bankrupt'),
+    unlocked: false
+  },
+  {
+    id: 'ending_demotion_done',
+    name: '罢黜归田',
+    description: '达成"革职为民 / 流放边疆"结局',
+    icon: '黜',
+    category: 'endgame',
+    checkUnlock: (ctx) => ctx.eventHistory.includes('ending_demotion'),
+    unlocked: false
+  },
+  // 「结局收藏」三档：数据源改为跨局的已解锁成就列表（见 countUnlockedEndings），
+  // 因此不再需要 deadByDesign —— 它们现在是真正可达的。
   {
     id: 'ending_collection_5',
     name: '结局收藏家',
@@ -832,8 +908,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'endgame',
     group: 'collection',
     priority: 5,
-    deadByDesign: true,
-    checkUnlock: (ctx) => ctx.eventHistory.filter(e => e.startsWith('ending_') && !e.includes('_done')).length >= 5,
+    checkUnlock: (ctx) => countUnlockedEndings(ctx) >= 5,
     unlocked: false
   },
   {
@@ -844,8 +919,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'endgame',
     group: 'collection',
     priority: 15,
-    deadByDesign: true,
-    checkUnlock: (ctx) => ctx.eventHistory.filter(e => e.startsWith('ending_') && !e.includes('_done')).length >= 15,
+    checkUnlock: (ctx) => countUnlockedEndings(ctx) >= 15,
     unlocked: false
   },
   {
@@ -856,8 +930,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'endgame',
     group: 'collection',
     priority: 30,
-    deadByDesign: true,
-    checkUnlock: (ctx) => ctx.eventHistory.filter(e => e.startsWith('ending_') && !e.includes('_done')).length >= 30,
+    checkUnlock: (ctx) => countUnlockedEndings(ctx) >= 30,
     unlocked: false
   },
   // 特殊成就
@@ -1123,12 +1196,9 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '随机选择选项 50 次以上',
     icon: '随',
     category: 'special',
-    // 【设计上不可达，不是 bug】当前版本游戏内没有任何「随机选项目」入口
-    // （EventDisplay 只提供普通选择 + 投骰成功率检定，投骰不是随机选项），
-    // 因此 AchievementContext.randomChoiceCount 恒为 0，本成就永远无法解锁。
-    // 显式标记 deadByDesign，使其不参与「传奇大师」的全收集判定。
-    // 若将来真的加入「听天由命」按钮，只需在该路径上补计数并去掉此标记。
-    deadByDesign: true,
+    // 达成入口：事件选项列表下方的「听 天 由 命」按钮
+    // （EventDisplay.handleRandomChoice → handleChoice(choice, { random: true })）。
+    // 该路径是 AchievementContext.randomChoiceCount 的唯一自增点。
     checkUnlock: (ctx) => ctx.randomChoiceCount >= 50,
     unlocked: false
   },
@@ -1153,27 +1223,39 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
 ]
 
 // 成就数据（每个存档独立一份，不再用 localStorage 共享）
-// 改用 module-level 内存变量：玩家读档时 GameScreen 读 SaveData 恢复，新游戏时清空
+//
+// 用 module-level 变量保存：玩家读档时由 App 读 SaveData 恢复，新开局时清空。
+// 这仍是一处共享可变状态（见 docs/KNOWN_ISSUES.md 的 K-6），但读写都在这里收口，
+// 并在边界上做**防御性拷贝** —— 否则调用方拿到的就是内部对象本身，
+// 任何一次无意的就地修改都会污染全局成就状态，而且极难排查。
 let currentAchievementData: AchievementData = { unlocked: [], unlockTimes: {} }
 
-/** 获取当前内存中的成就数据（不再读 localStorage） */
+/** 拷贝一份成就数据，切断与内部状态的引用共享 */
+function cloneAchievementData(data: AchievementData): AchievementData {
+  return {
+    unlocked: [...(data.unlocked ?? [])],
+    unlockTimes: { ...(data.unlockTimes ?? {}) }
+  }
+}
+
+/** 获取当前内存中的成就数据（返回副本，改它不会影响内部状态） */
 export function getCurrentAchievementData(): AchievementData {
-  return currentAchievementData
+  return cloneAchievementData(currentAchievementData)
 }
 
-/** 设置当前内存中的成就数据（读档/新游戏时调用） */
+/** 设置当前内存中的成就数据（读档/新游戏时调用；会存副本） */
 export function setAchievementData(data: AchievementData): void {
-  currentAchievementData = data
+  currentAchievementData = cloneAchievementData(data)
 }
 
-// 读取成就数据（从内存）
+/** 读取成就数据（从内存；返回副本） */
 export function loadAchievements(): AchievementData {
-  return currentAchievementData
+  return cloneAchievementData(currentAchievementData)
 }
 
-// 保存成就数据（写到内存，不写 localStorage）
+/** 写入成就数据（写到内存，不写 localStorage；会存副本） */
 export function saveAchievements(data: AchievementData): void {
-  currentAchievementData = data
+  currentAchievementData = cloneAchievementData(data)
 }
 
 // ============================================================
