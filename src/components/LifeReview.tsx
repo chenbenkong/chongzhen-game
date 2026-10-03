@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { LifeRecord, LifeSummary, Character, GameStateValues } from '../types/game'
 import { GameEvent } from '../types/event'
 import { generateEpitaph, toChineseNum, toMingEraYear } from '../utils/endingSystem'
+import { useModal } from '../hooks/useModal'
 import Icon, { IconName } from './Icon'
 import './LifeReview.css'
 
@@ -28,6 +29,15 @@ export default function LifeReview({
   onRestart
 }: LifeReviewProps) {
   const [activeTab, setActiveTab] = useState<'timeline' | 'summary' | 'achievements' | 'epitaph'>('timeline')
+
+  // 全屏覆盖层（盖在仍在运行的游戏之上）：需要完整对话框语义 + ESC + Tab 焦点陷阱
+  // + 焦点还原 + 滚动锁，否则键盘用户会 Tab 到底下看不见的游戏界面。
+  // 这里显式关闭"点遮罩关闭"：原来就没有这个行为，避免误点空白处丢掉回顾页
+  const { getModalProps, dialogRef, titleId } = useModal({
+    open: isOpen,
+    onClose,
+    closeOnOverlayClick: false
+  })
 
   if (!isOpen) return null
 
@@ -201,13 +211,13 @@ export default function LifeReview({
   const node = (
     <div className="life-review-overlay">
       {/* 顶部装饰条 */}
-      <div className="life-review-top-bar"></div>
+      <div className="life-review-top-bar" aria-hidden="true"></div>
 
       {/* 主容器 */}
-      <div className="life-review-container">
+      <div className="life-review-container" ref={dialogRef} {...getModalProps()}>
         {/* 头部 */}
         <div className="life-review-header">
-          <h1 className="life-review-title">生平回顾</h1>
+          <h1 className="life-review-title" id={titleId}>生平回顾</h1>
           <p className="life-review-subtitle">
             {character.name} · {character.origin} · {toMingEraYear(lifeSummary.lifespan.start)}至{toMingEraYear(lifeSummary.lifespan.end)}
           </p>
@@ -270,7 +280,7 @@ export default function LifeReview({
       </div>
 
       {/* 底部装饰条 */}
-      <div className="life-review-bottom-bar"></div>
+      <div className="life-review-bottom-bar" aria-hidden="true"></div>
     </div>
   )
 

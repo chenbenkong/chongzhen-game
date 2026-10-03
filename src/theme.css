@@ -18,10 +18,16 @@
   --blood: #4A2A12;
   --bg-deep: #0A0807;
 
-  /* —— 字体 —— */
-  --font-heading: 'Ma Shan Zheng', 'Songti SC', 'STSong', 'SimSun', 'FangSong', serif;
-  --font-body: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
-  --font-fun: 'ZCOOL KuaiLe', cursive;
+  /* —— 字体 ——
+     仅「Ma Shan Zheng」作为身份字体随包自托管（见 src/main.tsx 的 @fontsource 导入）。
+     正文不再拉取 Noto Serif SC 网络字体：单字重子集体积达 4.5MB，而各桌面系统
+     （Windows 宋体 / macOS Songti SC / Linux Noto Serif CJK）自带的高质量中文衬线体
+     已能覆盖，离线与首次渲染表现都更好。若需强制统一字形，可改为引入
+     `@fontsource/noto-serif-sc/400.css` 并把 'Noto Serif SC' 放回栈首。 */
+  --font-heading: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', 'Songti SC', 'STSong', 'SimSun', '宋体', serif;
+  --font-body: 'Songti SC', 'STSong', 'SimSun', '宋体', 'Noto Serif CJK SC', 'Source Han Serif SC',
+    'Noto Serif SC', 'FangSong', 'STFangsong', serif;
+  --font-display: 'LiSu', 'STLiti', 'SimLi', '隶书', var(--font-heading);
 
   /* —— 通用别名 —— */
   --color-text: var(--parchment);
@@ -158,10 +164,10 @@
     radial-gradient(ellipse 35% 30% at 88% 12%, rgba(120,85,35,0.1) 0%, rgba(80,55,20,0.03) 50%, transparent 100%),
     radial-gradient(ellipse 80% 50% at 50% 55%, rgba(120,80,30,0.08) 0%, transparent 70%);
 }
-/* 主背景图 - 参考站用的 cover-landscape.webp */
+/* 主背景图 - 相对 base 解析，GitHub Pages 子路径与 Electron file:// 下都能命中 */
 .title-bg-image {
-  background: url('/cover-landscape.webp') center center / cover no-repeat;
-  opacity: 0.10;
+  background: url('./assets/cover-landscape.webp') center center / cover no-repeat;
+  opacity: 0.1;
 }
 /* 远山剪影 - 用 SVG */
 .title-bg-mountains {

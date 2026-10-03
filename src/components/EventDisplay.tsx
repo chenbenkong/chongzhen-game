@@ -1,9 +1,11 @@
-import { memo, useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { memo, useState, useEffect, useId, useMemo, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { GameEvent, EventChoice } from '../types/event'
 import { Character, GameStateValues, Attributes } from '../types/game'
 import { ATTR_DISPLAY_MAP, STATE_DISPLAY_MAP } from '../utils/constants'
+import { motionDelay } from '../utils/motion'
 import { getStoryline } from '../data/storylines'
+import { useModal } from '../hooks/useModal'
 import DiceAnimation from './DiceAnimation'
 import Icon from './Icon'
 import EventImages from './EventImages'
@@ -520,7 +522,12 @@ function EventDisplay({
 
   const handleSelectChoice = useCallback((choice: EventChoice) => {
     if ((isProcessing) && !isGhostMode) return
-    
+
+    // 条件不足的选项已不再是 disabled（改用 aria-disabled 以保持可聚焦、可被读屏朗读原因），
+    // 因此这里显式兜住点击：只有"勉力一试"投骰成功后才会以该选项结算。
+    const check = choiceChecks.get(choice.id)
+    if (!isGhostMode && check && !check.available && choiceResults.get(choice.id) !== true) return
+
     // 检查是否为死亡结局
     const deathCheck = checkDeathEnding(choice)
     
@@ -543,7 +550,7 @@ function EventDisplay({
       setShowResult(true)
       onChoice?.(choice)
     }
-  }, [isProcessing, onChoice, isGhostMode, onChoiceSelect, checkDeathEnding, onDeathEnding])
+  }, [isProcessing, onChoice, isGhostMode, onChoiceSelect, checkDeathEnding, onDeathEnding, choiceChecks, choiceResults])
 
   const openDiceModal = useCallback((choice: EventChoice) => {
     const check = choiceChecks.get(choice.id)
@@ -600,7 +607,7 @@ function EventDisplay({
               onChoice?.(choice)
             }
             setDiceModal(p => ({ ...p, show: false }))
-          }, 1500)
+          }, motionDelay(1500))
         } else {
           // 失败：用 failEffects / failResult；若无则默认一个简单的
           setAttemptedChoices(r => new Set(r).add(choice.id))
@@ -632,7 +639,7 @@ function EventDisplay({
               onChoice?.(useChoice)
             }
             setDiceModal(p => ({ ...p, show: false }))
-          }, 1500)
+          }, motionDelay(1500))
         }
 
         return {
@@ -645,7 +652,7 @@ function EventDisplay({
           difficulty: adjustedDifficulty
         }
       })
-    }, 800)
+    }, motionDelay(800))
   }, [isGhostMode, onChoiceSelect, onChoice])
 
   const handleContinue = () => {
@@ -668,6 +675,51 @@ function EventDisplay({
     }
   }
 
+  // 骰子弹窗此前是应用里唯一的"键盘陷阱"：没有语义、没有 ESC、没有焦点陷阱。
+  // 这里补上完整对话框行为（role/aria-modal/ESC/Tab 循环/焦点还原/滚动锁）。
+  const {
+    getModalProps: getDiceModalProps,
+    dialogRef: diceDialogRef,
+    titleId: diceTitleId,
+    handleOverlayClick: handleDiceOverlayClick
+  } = useModal({
+    open: diceModal.show,
+    onClose: closeDiceModal
+  })
+
+  // 锁定原因 aria-describedby 的 id 前缀（useId 保证实例唯一）
+  const choiceIdPrefix = useId()
+
+  // 结算结果的无障碍播报文案（例如："效果：文韬+3、圣眷-2"）
+  const settlementAnnouncement = useMemo(() => {
+    if (!selectedChoice) return ''
+    const parts: string[] = []
+    const push = (label: string, value: number) => {
+      parts.push(`${label}${value > 0 ? `+${value}` : value}`)
+    }
+    const attrs = selectedChoice.effects?.attributes
+    if (attrs) {
+      for (const [key, value] of Object.entries(attrs)) {
+        if (typeof value === 'number') push(ATTR_DISPLAY_MAP[key] || key, value)
+      }
+    }
+    const states = selectedChoice.effects?.gameState
+    if (states) {
+      for (const [key, value] of Object.entries(states)) {
+        if (typeof value === 'number') push(STATE_DISPLAY_MAP[key] || key, value)
+      }
+    }
+    const hidden = selectedChoice.effects?.hidden
+    if (hidden) {
+      for (const [key, value] of Object.entries(hidden)) {
+        if (typeof value === 'number') push(key, value)
+      }
+    }
+    const title = selectedChoice.result?.title
+    const effectText = parts.length > 0 ? `效果：${parts.join('、')}` : ''
+    return [title, effectText].filter(Boolean).join('。')
+  }, [selectedChoice])
+
   if (!event) {
     // 无事件时不渲染任何界面，由 useEffect 自动触发下月推进
     return null
@@ -676,10 +728,10 @@ function EventDisplay({
   const narrative = event.narrative
 
   const node = (
-    <div className="dice-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) closeDiceModal() }}>
-      <div className="dice-modal" onClick={e => e.stopPropagation()}>
+    <div className="dice-modal-overlay" onClick={handleDiceOverlayClick}>
+      <div className="dice-modal" ref={diceDialogRef} {...getDiceModalProps()}>
         <div className="dice-modal-header">
-          <h3>勉 力 一 试</h3>
+          <h3 id={diceTitleId}>勉 力 一 试</h3>
         </div>
 
         <div className="dice-modal-content">
@@ -717,13 +769,22 @@ function EventDisplay({
             )
           })()}
           
-          <div className="dice-area" onClick={!diceModal.isRolling && diceModal.success === null ? rollDice : undefined}>
+          {/* 骰子区改为真实 button：键盘可用 Enter/Space 投掷。
+              投掷中用 aria-disabled 而不是 disabled，保证投掷动画期间焦点不会被弹出对话框
+              （否则焦点陷阱内可能一个可聚焦元素都不剩） */}
+          <button
+            type="button"
+            className="dice-area"
+            onClick={() => { if (!diceModal.isRolling && diceModal.success === null) rollDice() }}
+            aria-disabled={diceModal.isRolling || diceModal.success !== null}
+            aria-label={diceModal.isRolling ? '投掷中' : '投掷骰子'}
+          >
             <DiceAnimation 
               isRolling={diceModal.isRolling}
               result={diceModal.rollResult}
               success={diceModal.success}
             />
-          </div>
+          </button>
           
           {!diceModal.isRolling && diceModal.success === null && (
             <div className="dice-click-hint">点击骰子开始</div>
@@ -738,8 +799,26 @@ function EventDisplay({
           {/* 失败后的属性变化会由效果系统自动应用，不在弹窗里重复显示 */}
         </div>
         
+        {/* 键盘用户需要一个可见的投掷/关闭出口（原来这里是空 div，形成键盘陷阱） */}
         <div className="dice-modal-footer">
-          {/* 失败后会自动显示结果，不需要单独确认按钮了 */}
+          {diceModal.success === null ? (
+            <button
+              type="button"
+              className="dice-confirm-btn"
+              onClick={rollDice}
+              disabled={diceModal.isRolling}
+            >
+              {diceModal.isRolling ? '投 掷 中' : '投 掷'}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="dice-confirm-btn"
+              onClick={closeDiceModal}
+            >
+              关 闭
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -747,8 +826,8 @@ function EventDisplay({
 
   return (
     <div className={`event-display ${showResult ? 'show-result' : ''}`}>
-      {/* 标题区 */}
-      <div className="event-header">
+      {/* 标题区：随事件切换原地更新的标题，需要 live region 才会被读屏播报 */}
+      <div className="event-header" role="status" aria-live="polite" aria-atomic="true">
         <h1 className="event-title">{event.title}</h1>
         {pendingCount > 0 && (
           <div className="event-pending-hint">
@@ -851,12 +930,17 @@ function EventDisplay({
                 (choiceResults.get(choice.id) !== true) &&
                 !eventDiceUsed // 整个事件只投一次
 
+              // 锁定原因用 aria-describedby 暴露；id 由 useId() 派生，避免实例/选项间冲突
+              const lockReasonId = `${choiceIdPrefix}-${choice.id}-lock-reason`
+
               return (
                 <div key={`${choice.id}-${idx}`} className="choice-card-wrapper">
                   <button
                     className={`choice-card ${!check.available ? 'locked' : ''}`}
                     onClick={() => handleSelectChoice(choice)}
-                    disabled={isProcessing || !check.available}
+                    aria-disabled={isProcessing || !check.available}
+                    aria-label={!check.available ? choice.text : undefined}
+                    aria-describedby={!check.available ? lockReasonId : undefined}
                   >
                     <div className="choice-content">
                       <div className="choice-title">
@@ -872,8 +956,10 @@ function EventDisplay({
                       )}
                     </div>
 
+                    {/* 锁定原因：按钮不再 disabled（可聚焦），原因通过 aria-describedby 暴露。
+                        放在按钮内部以保留原来的缩进/透明度叠加效果（视觉不变） */}
                     {!check.available && (
-                      <div className="choice-lock-reason">
+                      <div className="choice-lock-reason" id={lockReasonId}>
                         {check.reason}
                         {attemptedChoices.has(choice.id) && choiceResults.get(choice.id) === false && (
                           <span className="attempt-failed-mark"> <Icon name="cross" size={12} /> 已失败</span>
@@ -889,6 +975,7 @@ function EventDisplay({
                     <button
                       className="dice-attempt-btn"
                       onClick={() => openDiceModal(choice)}
+                      aria-label={`勉力一试：${choice.text}`}
                     >
                       勉力一试
                     </button>
@@ -939,6 +1026,13 @@ function EventDisplay({
                 </div>
               ))}
             </div>
+
+            {/* 结算结果播报：视觉上隐藏，读屏会念出"效果：文韬+3、圣眷-2" */}
+            {settlementAnnouncement && (
+              <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+                {settlementAnnouncement}
+              </div>
+            )}
 
             {/* 回音叙述 */}
             {selectedChoice?.result?.echo && (() => {

@@ -1,0 +1,29 @@
+{
+  "name": "chongzhen-game-desktop",
+  "private": true,
+  "version": "0.4.0",
+  "description": "崇祯 · 宦海浮沉模拟器 —— Electron 桌面 / Steam 打包层",
+  "author": "chenbenkong",
+  "license": "UNLICENSED",
+  "main": "main.cjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "electron . --dev",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac",
+    "steam:upload": "node steam/upload.mjs",
+    "verify:steam-driver": "node -e \"const s=require('./steam.cjs');console.log(JSON.stringify(s.getStatus(),null,2))\""
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "optionalDependencies": {
+    "steamworks.js": "^0.3.0"
+  }
+}

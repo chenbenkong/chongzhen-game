@@ -95,7 +95,7 @@
   margin: 0;
   font-size: 1rem;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   letter-spacing: 3px;
   font-weight: normal;
   flex: 1;
@@ -213,5 +213,15 @@
   }
   .cd-btn {
     flex: 1;
+  }
+}
+
+/* ============================================================
+   触控点按目标（追加）：仅 any-pointer: coarse 生效，
+   桌面鼠标下的视觉密度不变
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .cd-btn {
+    min-height: 44px;
   }
 }

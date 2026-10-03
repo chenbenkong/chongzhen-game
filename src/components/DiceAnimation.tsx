@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { prefersReducedMotion } from '../utils/motion'
 import './DiceAnimation.css'
 
 interface DiceAnimationProps {
@@ -30,7 +31,13 @@ export default function DiceAnimation({ isRolling, result, success }: DiceAnimat
     if (shuffleIntervalRef.current) {
       clearInterval(shuffleIntervalRef.current)
     }
-    
+
+    // 偏好减少动态效果时不做逐帧跳动，直接停在初始面
+    if (prefersReducedMotion()) {
+      shuffleIntervalRef.current = null
+      return
+    }
+
     // 开始数字跳动
     shuffleIntervalRef.current = setInterval(() => {
       setShufflingNumber(Math.floor(Math.random() * 6) + 1)

@@ -2,7 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 20px;
+  /* 底部留白叠加上 Home 指示条安全区，避免贴边不可点 */
+  padding: 8px 20px calc(8px + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(180deg, #18130d 0%, #12100c 100%);
   border: 1px solid #2a2015;
   border-radius: 3px;
@@ -86,14 +87,14 @@
 }
 
 .ai-advisor-btn .btn-icon {
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
 }
 
 /* 平板 */
 @media (max-width: 900px) {
   .action-bar {
-    padding: 12px 16px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
   }
   
   .action-btn {
@@ -111,7 +112,7 @@
 /* 手机横屏 */
 @media (max-width: 768px) {
   .action-bar {
-    padding: 10px 12px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
     gap: 8px;
   }
   
@@ -140,7 +141,7 @@
 /* 手机竖屏 */
 @media (max-width: 480px) {
   .action-bar {
-    padding: 8px 10px;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
@@ -150,6 +151,19 @@
   .action-right {
     justify-content: center;
     gap: 6px;
+  }
+
+  /* 六个次级按钮原来共挤一行（flex:1 后每个约 55px），中文标签被压碎；
+     改为三列网格自动换行 */
+  .action-right {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+  }
+
+  .action-right .action-btn {
+    /* 网格项宽度由轨道决定，min-width:0 防止标签撑宽单元格 */
+    min-width: 0;
   }
   
   .action-center {
@@ -173,5 +187,16 @@
   
   .btn-icon {
     font-size: 0.8rem;
+  }
+}
+
+/* ============================================================
+   触控点按目标：仅 any-pointer: coarse 生效（含触屏笔记本），
+   桌面鼠标布局不受影响
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .action-btn {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

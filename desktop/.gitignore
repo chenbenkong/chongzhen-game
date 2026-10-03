@@ -1,0 +1,23 @@
+# 依赖
+node_modules/
+
+# electron-builder 产物
+release/
+
+# 注意：build/（含 icon.ico / icon.png / icon.icns）**必须提交**，
+# 它们是发行包需要的资源，不要 ignore。
+
+# Steam 上传：真实配置与运行期产物（**绝对不要提交**）
+steam/steamconfig.json
+steam/build-scripts/
+steam/build-output/
+
+# 自检脚本产生的临时数据
+.test-userdata/
+.test-userdata-absent/
+tmp-content/
+
+# 日志与系统文件
+*.log
+.DS_Store
+Thumbs.db

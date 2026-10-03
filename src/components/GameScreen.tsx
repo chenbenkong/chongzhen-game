@@ -1,4 +1,4 @@
-import { lazy, Suspense, memo, useMemo } from 'react'
+import { lazy, Suspense, memo, useEffect, useMemo, useRef } from 'react'
 import { OriginType, DegreeType, Attributes } from '../types/game'
 import { SaveData } from '../types/save'
 import { DifficultyLevel } from '../types/difficulty'
@@ -24,6 +24,13 @@ import './GameScreen.css'
 
 const AIAdvisor = lazy(() => import('./AIAdvisor'))
 const ImageGenerator = lazy(() => import('./ImageGenerator'))
+
+/**
+ * inert 属性在 React 18 的 JSX 类型里还没有声明，这里用条件展开绕过类型限制
+ * （返回的是收窄的联合类型，可安全展开到 JSX 上），运行时就是原生属性。
+ * inert 会把整棵子树从焦点顺序与无障碍树中移除。
+ */
+const inertProps = (on: boolean): Record<never, never> | { inert: string } => (on ? { inert: '' } : {})
 
 interface GameScreenProps {
   origin: OriginType
@@ -155,6 +162,22 @@ function GameScreen(props: GameScreenProps) {
 
   const lifeSummary = useMemo(() => generateLifeSummary(), [generateLifeSummary])
 
+  // 结局屏打开时把整个仍在运行的游戏从无障碍树与 Tab 顺序里移除，
+  // 否则键盘用户可以 Tab 进被 z-index 9999 盖住的游戏界面，结局也不会被播报。
+  const endingContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isGameOver) return
+    // 等 GameOverScreen 挂载完成后再移入焦点
+    const timer = window.setTimeout(() => {
+      const container = endingContainerRef.current
+      if (!container) return
+      if (!container.hasAttribute('tabindex')) container.setAttribute('tabindex', '-1')
+      container.focus()
+    }, 0)
+    return () => window.clearTimeout(timer)
+  }, [isGameOver])
+
   const identityPanelClass = `identity-panel identity-panel--${
     identityType === 'official' ? 'official' :
     identityType === 'rebel' ? 'rebel' :
@@ -179,137 +202,183 @@ function GameScreen(props: GameScreenProps) {
   return (
     <div className="game-screen">
       {isGameOver && (
-        <GameOverScreen
-          endingEvent={currentEvent}
-          character={character}
-          gameState={gameState}
-          biography={biography}
-          onRestart={handleRestart}
-          onReturnToMenu={handleReturnToMenu}
-          onViewLifeReview={openLifeReview}
-        />
+        <div ref={endingContainerRef} tabIndex={-1}>
+          <GameOverScreen
+            endingEvent={currentEvent}
+            character={character}
+            gameState={gameState}
+            biography={biography}
+            onRestart={handleRestart}
+            onReturnToMenu={handleReturnToMenu}
+            onViewLifeReview={openLifeReview}
+          />
+        </div>
       )}
 
       {promotionMessage && (
-        <div className={`promotion-toast ${promotionMessage.includes('恭喜') ? 'promotion-toast--promote' : 'promotion-toast--demote'}`}>
+        <div
+          className={`promotion-toast ${promotionMessage.includes('恭喜') ? 'promotion-toast--promote' : 'promotion-toast--demote'}`}
+          role="alert"
+        >
           {promotionMessage}
         </div>
       )}
 
-      <StatusBar
-        character={character}
-        gameState={gameState}
-        degree={props.degree}
-        onCheatClick={openCheatMode}
-      />
+      {/* 游戏主体：结局屏出现后隐藏于无障碍树且不可 Tab（视觉不变） */}
+      <div
+        className="game-screen-body"
+        aria-hidden={isGameOver ? 'true' : undefined}
+        {...inertProps(isGameOver)}
+      >
+        <StatusBar
+          character={character}
+          gameState={gameState}
+          degree={props.degree}
+          onCheatClick={openCheatMode}
+        />
 
-      <StorylineBar
-        currentStorylineKey={currentStorylineKey}
-        eventCount={eventHistory.length}
-      />
+        <StorylineBar
+          currentStorylineKey={currentStorylineKey}
+          eventCount={eventHistory.length}
+        />
 
-      <CheatMode
-        isOpen={isCheatModeOpen}
-        onClose={closeCheatMode}
-        currentGameState={{
-          currentYear: gameState.currentYear,
-          currentMonth: gameState.currentMonth,
-          turn: 0,
-          eventHistory: []
-        }}
-        currentCharacter={character}
-        currentGameStateValues={gameState}
-      />
+        <CheatMode
+          isOpen={isCheatModeOpen}
+          onClose={closeCheatMode}
+          currentGameState={{
+            currentYear: gameState.currentYear,
+            currentMonth: gameState.currentMonth,
+            turn: 0,
+            eventHistory: []
+          }}
+          currentCharacter={character}
+          currentGameStateValues={gameState}
+        />
 
-      <div className="game-main">
-        <aside className="sidebar">
-          <AttributePanel
-            attributes={character.attributes}
-            hidden={character.hidden}
-          />
+        <div className="game-main">
+          <aside className="sidebar">
+            <AttributePanel
+              attributes={character.attributes}
+              hidden={character.hidden}
+            />
 
-          <div className={identityPanelClass}>
-            <h4>{identityTitle}</h4>
-            <div className="identity-rank">
-              {character.rank}
-            </div>
-            <div className="identity-desc">
-              {identityDesc}
-            </div>
-          </div>
-        </aside>
-
-        <main className="main-content">
-          <EventDisplay
-            event={currentEvent}
-            character={character}
-            gameState={gameState}
-            onChoice={handleChoice}
-            onContinue={handleContinue}
-            onUndo={handleUndo}
-            onGameOver={handleGameOver}
-            onDeathEnding={handleDeathEnding}
-            onGenerateImageForEvent={openImageGenerator}
-            canUndo={undoHistory.length > 0}
-            isProcessing={isProcessing}
-            pendingCount={pendingEvents.length}
-          />
-        </main>
-
-        <aside className="right-sidebar">
-          <StatusPanel gameState={gameState} />
-
-          {identityType === 'official' && (
-            <div className="merit-panel">
-              <h4>政 绩 评 定</h4>
-              <div className="merit-score-row">
-                <span className="merit-score-label">当前政绩分</span>
-                <span className="merit-score-value">{meritScore}</span>
+            <div className={identityPanelClass}>
+              <h4>{identityTitle}</h4>
+              <div className="identity-rank">
+                {character.rank}
               </div>
-              <div className="merit-bar-track">
-                <div className="merit-bar-fill" style={{ width: `${Math.min(100, (meritScore / 1100) * 100)}%` }} />
-              </div>
-              <div className="merit-next">
-                下一级需: {RANKS.find(r => r.minScore > meritScore)?.minScore || '已达最高'} 分
+              <div className="identity-desc">
+                {identityDesc}
               </div>
             </div>
-          )}
-        </aside>
+          </aside>
+
+          <main className="main-content">
+            <EventDisplay
+              event={currentEvent}
+              character={character}
+              gameState={gameState}
+              onChoice={handleChoice}
+              onContinue={handleContinue}
+              onUndo={handleUndo}
+              onGameOver={handleGameOver}
+              onDeathEnding={handleDeathEnding}
+              onGenerateImageForEvent={openImageGenerator}
+              canUndo={undoHistory.length > 0}
+              isProcessing={isProcessing}
+              pendingCount={pendingEvents.length}
+            />
+          </main>
+
+          <aside className="right-sidebar">
+            <StatusPanel gameState={gameState} />
+
+            {identityType === 'official' && (
+              <div className="merit-panel">
+                <h4>政 绩 评 定</h4>
+                <div className="merit-score-row">
+                  <span className="merit-score-label">当前政绩分</span>
+                  <span className="merit-score-value">{meritScore}</span>
+                </div>
+                <div className="merit-bar-track">
+                  <div className="merit-bar-fill" style={{ width: `${Math.min(100, (meritScore / 1100) * 100)}%` }} />
+                </div>
+                <div className="merit-next">
+                  下一级需: {RANKS.find(r => r.minScore > meritScore)?.minScore || '已达最高'} 分
+                </div>
+              </div>
+            )}
+          </aside>
+        </div>
+
+        <ActionBar
+          onNextMonth={handleNextMonth}
+          onSave={handleSave}
+          onOpenAchievements={openAchievementPanel}
+          onOpenHelp={openHelp}
+          onOpenAIAdvisor={openAIAdvisor}
+          onOpenImageGenerator={openImageGenerator}
+          onReturnToMenu={handleReturnToMenu}
+          turn={gameState.turn}
+          canProceed={!currentEvent || isProcessing}
+        />
+
+        <ResignConfirmDialog
+          open={resignConfirmModal.isOpen}
+          choice={resignConfirmModal.choice}
+          onConfirm={confirmResign}
+          onCancel={cancelResign}
+        />
+
+        <DeathEnding
+          isOpen={deathEndingState.show}
+          endingType={deathEndingState.type}
+          title={deathEndingState.title}
+          description={deathEndingState.description}
+          echo={deathEndingState.echo}
+          tags={deathEndingState.tags}
+          onClose={() => {
+            closeDeathEnding()
+            openLifeReview()
+          }}
+          onRestart={handleRestart}
+        />
+
+        <SaveNotification
+          isOpen={saveNotification.isOpen}
+          onClose={closeSaveNotification}
+          message={saveNotification.message}
+          subMessage={saveNotification.subMessage}
+        />
+
+        <SaveSlotsModal
+          isOpen={isSaveSlotsOpen}
+          mode={saveSlotsMode}
+          currentData={saveSlotsCurrentData}
+          onSelect={saveSlotsMode === 'save' ? handleSaveToSlot : handleLoadFromSlot}
+          onLoadAutosave={handleLoadAutosave}
+          onClose={closeSaveSlots}
+        />
+
+        <AchievementPanel
+          isOpen={isAchievementPanelOpen}
+          onClose={closeAchievementPanel}
+        />
+
+        <TutorialModal
+          isOpen={showTutorial}
+          onClose={closeTutorial}
+          onComplete={completeTutorial}
+        />
+
+        <TutorialModal
+          isOpen={showHelp}
+          onClose={closeHelp}
+          onComplete={closeHelp}
+        />
       </div>
 
-      <ActionBar
-        onNextMonth={handleNextMonth}
-        onSave={handleSave}
-        onOpenAchievements={openAchievementPanel}
-        onOpenHelp={openHelp}
-        onOpenAIAdvisor={openAIAdvisor}
-        onOpenImageGenerator={openImageGenerator}
-        onReturnToMenu={handleReturnToMenu}
-        turn={gameState.turn}
-        canProceed={!currentEvent || isProcessing}
-      />
-
-      <ResignConfirmDialog
-        open={resignConfirmModal.isOpen}
-        choice={resignConfirmModal.choice}
-        onConfirm={confirmResign}
-        onCancel={cancelResign}
-      />
-
-      <DeathEnding
-        isOpen={deathEndingState.show}
-        endingType={deathEndingState.type}
-        title={deathEndingState.title}
-        description={deathEndingState.description}
-        echo={deathEndingState.echo}
-        tags={deathEndingState.tags}
-        onClose={() => {
-          closeDeathEnding()
-          openLifeReview()
-        }}
-        onRestart={handleRestart}
-      />
-
+      {/* 以下组件的弹窗都 portal 到 body，必须放在 inert 容器之外才能保持可交互 */}
       <LifeReview
         isOpen={isLifeReviewOpen}
         lifeRecords={lifeRecords}
@@ -319,39 +388,6 @@ function GameScreen(props: GameScreenProps) {
         endingEvent={currentEvent ?? undefined}
         onClose={closeLifeReview}
         onRestart={handleRestart}
-      />
-
-      <SaveNotification
-        isOpen={saveNotification.isOpen}
-        onClose={closeSaveNotification}
-        message={saveNotification.message}
-        subMessage={saveNotification.subMessage}
-      />
-
-      <SaveSlotsModal
-        isOpen={isSaveSlotsOpen}
-        mode={saveSlotsMode}
-        currentData={saveSlotsCurrentData}
-        onSelect={saveSlotsMode === 'save' ? handleSaveToSlot : handleLoadFromSlot}
-        onLoadAutosave={handleLoadAutosave}
-        onClose={closeSaveSlots}
-      />
-
-      <AchievementPanel
-        isOpen={isAchievementPanelOpen}
-        onClose={closeAchievementPanel}
-      />
-
-      <TutorialModal
-        isOpen={showTutorial}
-        onClose={closeTutorial}
-        onComplete={completeTutorial}
-      />
-
-      <TutorialModal
-        isOpen={showHelp}
-        onClose={closeHelp}
-        onComplete={closeHelp}
       />
 
       <Suspense fallback={null}>

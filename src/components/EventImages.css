@@ -18,7 +18,7 @@
 .ei-title {
   font-size: 0.78rem;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   letter-spacing: 2px;
 }
 
@@ -203,7 +203,7 @@
 
 .ei-viewer-close::before {
   content: '关';
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
 }
 
 .ei-viewer-close:hover {

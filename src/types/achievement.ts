@@ -1,4 +1,4 @@
-import { Attributes, GameStateValues } from './game'
+import { Attributes, GameStateValues, OriginType } from './game'
 
 export interface Achievement {
   id: string
@@ -13,6 +13,11 @@ export interface Achievement {
   checkUnlock: (ctx: AchievementContext) => boolean
   unlocked: boolean
   unlockTime?: string
+  /**
+   * 当前版本游戏内不存在达成入口（例如缺少「随机选择」功能）。
+   * 这类成就不参与「传奇大师」的全收集判定，避免把全收集成就一起拖成不可达。
+   */
+  deadByDesign?: boolean
 }
 
 export interface AchievementContext {
@@ -22,6 +27,28 @@ export interface AchievementContext {
   hasEnded?: boolean
   endingType?: string
   eventHistory: string[]
+  /** 本局累计升迁次数（取自 character.promotionCount） */
+  promotionCount: number
+  /** 本局累计贬官次数（取自 character.demotionCount） */
+  demotionCount: number
+  /** 连续「非负面回合」计数：每过一个非负面回合 +1，遇到负面回合清零 */
+  luckyStreak: number
+  /** 连续「负面回合」计数：每过一个负面回合 +1，遇到非负面回合清零 */
+  unluckyStreak: number
+  /** 累计「选中当前事件的第一个选项」的事件数 */
+  firstChoiceCount: number
+  /**
+   * 累计「随机选择选项」的次数。
+   * 注意：当前版本游戏内没有任何「随机选项目」入口（见 useGameEngine 中的说明），
+   * 该计数恒为 0，因此 random_player 成就属于「设计上不可达」。
+   */
+  randomChoiceCount: number
+  /** 累计使用悔棋/回退功能的次数 */
+  undoCount: number
+  /** 累计手动存档次数（不含自动存档） */
+  saveCount: number
+  /** 角色出身。noble_climb 成就需要按出身判定 */
+  origin?: OriginType
 }
 
 export interface AchievementData {
@@ -170,7 +197,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '从未被贬官',
     icon: '升',
     category: 'career',
-    checkUnlock: (ctx) => ctx.gameState.turn >= 30 && (ctx as any).demotionCount === 0,
+    checkUnlock: (ctx) => ctx.gameState.turn >= 30 && ctx.demotionCount === 0,
     unlocked: false
   },
   {
@@ -181,7 +208,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'career',
     group: 'promotion',
     priority: 50,
-    checkUnlock: (ctx) => (ctx as any).promotionCount >= 5,
+    checkUnlock: (ctx) => ctx.promotionCount >= 5,
     unlocked: false
   },
   {
@@ -192,7 +219,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'career',
     group: 'promotion',
     priority: 100,
-    checkUnlock: (ctx) => (ctx as any).promotionCount >= 10,
+    checkUnlock: (ctx) => ctx.promotionCount >= 10,
     unlocked: false
   },
   {
@@ -203,7 +230,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'career',
     group: 'promotion',
     priority: 150,
-    checkUnlock: (ctx) => (ctx as any).promotionCount >= 15,
+    checkUnlock: (ctx) => ctx.promotionCount >= 15,
     unlocked: false
   },
   {
@@ -212,7 +239,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '贬官次数达到3次以上',
     icon: '落',
     category: 'career',
-    checkUnlock: (ctx) => (ctx as any).demotionCount >= 3,
+    checkUnlock: (ctx) => ctx.demotionCount >= 3,
     unlocked: false
   },
   // 属性成就
@@ -790,6 +817,13 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     checkUnlock: (ctx) => ctx.eventHistory.includes('ending_jiashen_nationfall'),
     unlocked: false
   },
+  // ⚠️ 以下三个「结局收藏」成就当前**不可达**（发现于本次修复，非本任务列出的 12 项之一）：
+  //    它们统计的是 ctx.eventHistory 里的 ending_* 事件 id，而 eventHistory 是「单局」的
+  //    事件流水，且 useGameEngine.handleGameOver 里 checkAchievements() 是在把结局 id
+  //    写进 eventHistory **之前**调用的 —— 因此检查时该局的结局数恒为 0，单局最多也只有 1 个
+  //    结局（结局即终局）。要凑满 5/15/30 需要真正的「跨局结局图鉴」数据源。
+  //    这里先标记 deadByDesign，使其不参与「传奇大师」的全收集判定（否则传奇大师会再次不可达）；
+  //    成就本身仍按原判据可被解锁，等数据源修好后去掉 deadByDesign 即可。
   {
     id: 'ending_collection_5',
     name: '结局收藏家',
@@ -798,6 +832,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'endgame',
     group: 'collection',
     priority: 5,
+    deadByDesign: true,
     checkUnlock: (ctx) => ctx.eventHistory.filter(e => e.startsWith('ending_') && !e.includes('_done')).length >= 5,
     unlocked: false
   },
@@ -809,6 +844,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'endgame',
     group: 'collection',
     priority: 15,
+    deadByDesign: true,
     checkUnlock: (ctx) => ctx.eventHistory.filter(e => e.startsWith('ending_') && !e.includes('_done')).length >= 15,
     unlocked: false
   },
@@ -820,6 +856,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'endgame',
     group: 'collection',
     priority: 30,
+    deadByDesign: true,
     checkUnlock: (ctx) => ctx.eventHistory.filter(e => e.startsWith('ending_') && !e.includes('_done')).length >= 30,
     unlocked: false
   },
@@ -979,7 +1016,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     icon: '崛',
     category: 'special',
     checkUnlock: (ctx) => 
-      ((ctx as any).origin === '缙绅' || (ctx as any).origin === '诗文清望') && 
+      (ctx.origin === '缙绅' || ctx.origin === '诗文清望') && 
       (ctx.characterRank?.includes('太师') === true || ctx.characterRank?.includes('正一品') === true),
     unlocked: false
   },
@@ -1059,7 +1096,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '连续 10 回合未触发负面事件',
     icon: '运',
     category: 'special',
-    checkUnlock: (ctx) => (ctx as any).luckyStreak >= 10,
+    checkUnlock: (ctx) => ctx.luckyStreak >= 10,
     unlocked: false
   },
   {
@@ -1068,7 +1105,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '连续 5 回合遭遇负面事件',
     icon: '漏',
     category: 'special',
-    checkUnlock: (ctx) => (ctx as any).unluckyStreak >= 5,
+    checkUnlock: (ctx) => ctx.unluckyStreak >= 5,
     unlocked: false
   },
   {
@@ -1077,7 +1114,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '在 100 个事件中都选择了第一个选项',
     icon: '决',
     category: 'special',
-    checkUnlock: (ctx) => (ctx as any).firstChoiceCount >= 100,
+    checkUnlock: (ctx) => ctx.firstChoiceCount >= 100,
     unlocked: false
   },
   {
@@ -1086,7 +1123,13 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '随机选择选项 50 次以上',
     icon: '随',
     category: 'special',
-    checkUnlock: (ctx) => (ctx as any).randomChoiceCount >= 50,
+    // 【设计上不可达，不是 bug】当前版本游戏内没有任何「随机选项目」入口
+    // （EventDisplay 只提供普通选择 + 投骰成功率检定，投骰不是随机选项），
+    // 因此 AchievementContext.randomChoiceCount 恒为 0，本成就永远无法解锁。
+    // 显式标记 deadByDesign，使其不参与「传奇大师」的全收集判定。
+    // 若将来真的加入「听天由命」按钮，只需在该路径上补计数并去掉此标记。
+    deadByDesign: true,
+    checkUnlock: (ctx) => ctx.randomChoiceCount >= 50,
     unlocked: false
   },
   {
@@ -1095,7 +1138,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '使用回退功能 10 次以上',
     icon: '慎',
     category: 'special',
-    checkUnlock: (ctx) => (ctx as any).undoCount >= 10,
+    checkUnlock: (ctx) => ctx.undoCount >= 10,
     unlocked: false
   },
   {
@@ -1104,7 +1147,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     description: '存档次数达到 30 次以上',
     icon: '存',
     category: 'special',
-    checkUnlock: (ctx) => (ctx as any).saveCount >= 30,
+    checkUnlock: (ctx) => ctx.saveCount >= 30,
     unlocked: false
   }
 ]
@@ -1131,6 +1174,39 @@ export function loadAchievements(): AchievementData {
 // 保存成就数据（写到内存，不写 localStorage）
 export function saveAchievements(data: AchievementData): void {
   currentAchievementData = data
+}
+
+// ============================================================
+// 收集链（特殊判定，不走 checkUnlock）
+// ============================================================
+
+/**
+ * 收集链成就 id。
+ * collector / master_collector / ultimate_master 按「已解锁总数」逐档判定；
+ * legendary_master 见 unlockAchievement 中修复过的判据。
+ * 这四个 id 同时是 legendary_master 判定的排除项（自己不能要求自己已解锁）。
+ */
+export const COLLECTOR_CHAIN_ACHIEVEMENT_IDS = [
+  'collector',
+  'master_collector',
+  'ultimate_master',
+  'legendary_master'
+] as const
+
+/** 收集链各档阈值（保持原有数值不变） */
+const COLLECTOR_CHAIN_THRESHOLDS: ReadonlyArray<{ id: string; threshold: number }> = [
+  { id: 'collector', threshold: 30 },
+  { id: 'master_collector', threshold: 60 },
+  { id: 'ultimate_master', threshold: 80 }
+]
+
+/** 直接写入一条已解锁成就（内部使用） */
+function grantAchievement(id: string, data: AchievementData): void {
+  if (data.unlocked.includes(id)) return
+  if (!ALL_ACHIEVEMENTS.some(a => a.id === id)) return
+  data.unlocked.push(id)
+  data.unlockTimes[id] = new Date().toISOString()
+  saveAchievements(data)
 }
 
 // 获取解锁的成就列表（包含完整信息）
@@ -1190,45 +1266,29 @@ export function unlockAchievement(id: string): Achievement | null {
   data.unlocked.push(id)
   data.unlockTimes[id] = new Date().toISOString()
   saveAchievements(data)
-  
-  // 检查"成就收集者"
-  if (data.unlocked.length >= 30 && !data.unlocked.includes('collector')) {
-    const collector = ALL_ACHIEVEMENTS.find(a => a.id === 'collector')
-    if (collector) {
-      data.unlocked.push('collector')
-      data.unlockTimes['collector'] = new Date().toISOString()
-      saveAchievements(data)
+
+  // 收集链前 3 档：按「已解锁总数」逐档判定（阈值保持原有数值 30/60/80 不变）
+  for (const step of COLLECTOR_CHAIN_THRESHOLDS) {
+    if (data.unlocked.length >= step.threshold) {
+      grantAchievement(step.id, data)
     }
   }
-  
-  // 检查"成就大师"
-  if (data.unlocked.length >= 60 && !data.unlocked.includes('master_collector')) {
-    const master = ALL_ACHIEVEMENTS.find(a => a.id === 'master_collector')
-    if (master) {
-      data.unlocked.push('master_collector')
-      data.unlockTimes['master_collector'] = new Date().toISOString()
-      saveAchievements(data)
-    }
-  }
-  
-  // 检查"至尊大师"
-  if (data.unlocked.length >= 80 && !data.unlocked.includes('ultimate_master')) {
-    const ultimate = ALL_ACHIEVEMENTS.find(a => a.id === 'ultimate_master')
-    if (ultimate) {
-      data.unlocked.push('ultimate_master')
-      data.unlockTimes['ultimate_master'] = new Date().toISOString()
-      saveAchievements(data)
-    }
-  }
-  
+
   // 检查"传奇大师"
-  if (data.unlocked.length >= ALL_ACHIEVEMENTS.length && !data.unlocked.includes('legendary_master')) {
-    const legendary = ALL_ACHIEVEMENTS.find(a => a.id === 'legendary_master')
-    if (legendary) {
-      data.unlocked.push('legendary_master')
-      data.unlockTimes['legendary_master'] = new Date().toISOString()
-      saveAchievements(data)
-    }
+  //
+  // 【修复 off-by-one 死锁】原判据为：
+  //   data.unlocked.length >= ALL_ACHIEVEMENTS.length && !data.unlocked.includes('legendary_master')
+  // legendary_master 自己也是 ALL_ACHIEVEMENTS 的成员（共 105 个），而它只能在判据成立
+  // 之后才被 push 进 unlocked —— 也就是要求「已解锁 105 个」才能解锁第 105 个，永远差一个，
+  // 数学上不可达。
+  // 现改为：除收集链 4 个成就自身、以及 deadByDesign（当前版本无达成入口）的成就之外，
+  // 其余成就全部解锁即可 —— 该条件可以被真正达成。
+  const legendaryRequiredIds = ALL_ACHIEVEMENTS
+    .filter(a => !(COLLECTOR_CHAIN_ACHIEVEMENT_IDS as readonly string[]).includes(a.id) && !a.deadByDesign)
+    .map(a => a.id)
+  const legendaryReady = legendaryRequiredIds.every(requiredId => data.unlocked.includes(requiredId))
+  if (legendaryReady) {
+    grantAchievement('legendary_master', data)
   }
 
   return { ...achievement, unlocked: true, unlockTime: data.unlockTimes[id] }

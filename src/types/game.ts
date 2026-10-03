@@ -34,11 +34,47 @@ export interface Attributes {
   体质: number  // 身体健康
 }
 
-// 【隐藏属性】三大心性 - 四档制评价
+// 【隐藏属性】五大心性
+// 说明：机敏值 / 忠诚值 在事件数据中被引用 54 次（src/data/events/**），
+// 但历史上 HiddenAttributes 只声明了前三项，导致：
+//   - 写入效果时 `undefined + n === NaN`，NaN 被 JSON.stringify 写成 null 存进存档；
+//   - 条件判定在内存里是 `NaN < min === false`（永远通过），
+//     存盘再读回来变成 `null < min === true`（永远不通过）—— 同一条件前后行为相反。
+// 现在把它们补成正式属性，并用 normalizeHidden 兜底历史存档。
 export interface HiddenAttributes {
-  道德值: number  // 品德操守（>75君子 >50正直 >25常人 ≤25小人）
-  欲望值: number  // 欲望程度（>75强烈 >50一般 >25淡泊 ≤25清心）
-  野心值: number  // 权力野心（>75勃勃 >50有 >25微 ≤25无）
+  道德值: number // 品德操守（>75君子 >50正直 >25常人 ≤25小人）
+  欲望值: number // 欲望程度（>75强烈 >50一般 >25淡泊 ≤25清心）
+  野心值: number // 权力野心（>75勃勃 >50有 >25微 ≤25无）
+  机敏值: number // 机变敏锐（>75机警 >50敏锐 >25寻常 ≤25迟钝）
+  忠诚值: number // 事上之忠（>75死忠 >50忠谨 >25观望 ≤25首鼠）
+}
+
+/** 隐藏属性的默认值（新角色初始化与旧存档迁移共用） */
+export const HIDDEN_DEFAULTS: HiddenAttributes = {
+  道德值: 50,
+  欲望值: 50,
+  野心值: 50,
+  机敏值: 50,
+  忠诚值: 50
+}
+
+/**
+ * 把任意来源的 hidden 数据规整成完整的 HiddenAttributes。
+ * 缺失、null、NaN、Infinity 一律回落到默认值，并夹到 0-100。
+ * 这是历史存档（含 NaN/null 机敏值）能被安全读取的关键。
+ */
+export function normalizeHidden(
+  input: Partial<Record<keyof HiddenAttributes, number | null | undefined>> | null | undefined
+): HiddenAttributes {
+  const out: HiddenAttributes = { ...HIDDEN_DEFAULTS }
+  if (!input) return out
+  for (const key of Object.keys(HIDDEN_DEFAULTS) as Array<keyof HiddenAttributes>) {
+    const value = input[key]
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      out[key] = Math.max(0, Math.min(100, Math.round(value)))
+    }
+  }
+  return out
 }
 
 // 【五方态度】四档制评价
@@ -67,7 +103,8 @@ export interface OriginData {
   tags: string[]
   background: string
   initialAttributes: Attributes
-  initialHidden: HiddenAttributes
+  /** 出身的隐藏属性初值；未列出的键由 normalizeHidden 补默认 50 */
+  initialHidden: Partial<HiddenAttributes>
   initialGameState?: Partial<Omit<GameStateValues, 'currentYear' | 'currentMonth' | 'turn'>>
   features: string[]
   playStyle: string

@@ -331,7 +331,7 @@
   display: inline-block;
   margin-right: 6px;
   color: #8b7540;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   font-weight: normal;
 }
 

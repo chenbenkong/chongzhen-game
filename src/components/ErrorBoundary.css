@@ -2,14 +2,19 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  /* 用 100% 而不是 100vw：100vw 含桌面滚动条宽度，会凭空多出一条横向滚动条。
+     高度用 vh + dvh 双声明，避免移动端动态工具栏下内容被裁掉。 */
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   background: linear-gradient(135deg, #1a0a0a 0%, #0a0505 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  padding: 20px;
+  padding: calc(20px + env(safe-area-inset-top, 0px)) 20px
+    calc(20px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
   font-family: 'KaiTi', 'STKaiti', 'SimKai', serif;
 }
 

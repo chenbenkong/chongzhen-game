@@ -97,7 +97,7 @@
 .dice-char {
   font-size: 2.8rem;
   font-weight: 700;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   color: #c9a227;
   text-shadow: 
     0 0 8px rgba(201, 162, 39, 0.4),

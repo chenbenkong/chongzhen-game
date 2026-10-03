@@ -33,11 +33,16 @@
   border-bottom: 1px solid rgba(180, 140, 80, 0.3);
 }
 .codex-title-area { flex-shrink: 0; }
+/* 这是对话框的标题元素（h2），供 aria-labelledby 引用。
+   这里显式清掉 h2 的 UA 默认 margin / font-weight，保证由 div 改成 h2 后外观不变。 */
 .codex-title {
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 1.35rem;
   color: #d4af6f;
   letter-spacing: 6px;
+  margin: 0;
+  font-weight: normal;
+  line-height: 1.4;
 }
 
 .codex-title::before {
@@ -45,7 +50,7 @@
   display: inline-block;
   margin-right: 8px;
   color: #8b7540;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
 }
 .codex-subtitle {
   font-size: 0.7rem;
@@ -111,6 +116,10 @@
   overflow-x: auto;
   min-height: 64px;
   align-items: stretch;
+  /* 横向滚动提示：滚动吸附 + 惯性滚动，让「还有内容」不只靠 8px 滚动条传达 */
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 .codex-tab {
   display: flex;
@@ -121,12 +130,13 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: rgba(212, 175, 111, 0.6);
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  scroll-snap-align: start;
 }
 .codex-tab:hover { color: rgba(212, 175, 111, 0.85); }
 .codex-tab.active {
@@ -139,6 +149,14 @@
   font-size: 0.7rem;
   color: rgba(212, 175, 111, 0.5);
   margin-left: 2px;
+}
+
+/* 尾缘渐隐：只在可能溢出的窄屏套用，宽屏不压暗最右侧 tab */
+@media (max-width: 960px) {
+  .codex-tabs {
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+  }
 }
 
 /* 内容区 */
@@ -161,7 +179,7 @@
 }
 .codex-cat-icon { font-size: 1.4rem; }
 .codex-cat-label {
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 1.2rem;
   color: #d4af6f;
   letter-spacing: 4px;
@@ -219,7 +237,7 @@
   filter: grayscale(0.6);
 }
 .codex-card-name {
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 1rem;
   color: #d4af6f;
   letter-spacing: 2px;
@@ -306,7 +324,7 @@
   border: 1px solid rgba(180, 140, 80, 0.3);
   border-radius: 3px;
   color: #d4af6f;
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   letter-spacing: 4px;
   cursor: pointer;
@@ -409,7 +427,7 @@
   margin-bottom: 8px;
 }
 .codex-detail-title {
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 1.6rem;
   color: #d4af6f;
   margin: 0 0 8px;
@@ -437,7 +455,7 @@
   display: inline-block;
   margin-right: 4px;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   font-weight: normal;
 }
 .codex-detail-locked {
@@ -484,7 +502,7 @@
   margin-bottom: 18px;
 }
 .codex-detail-section h4 {
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   color: #c9a227;
   font-size: 0.95rem;
   letter-spacing: 4px;
@@ -539,7 +557,7 @@
   display: inline-block;
   margin-right: 6px;
   color: #8b7540;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
 }
 
 @media (max-width: 700px) {
@@ -547,4 +565,31 @@
   .codex-detail-header { padding: 20px 20px 12px; }
   .codex-detail-body { padding: 16px 20px 20px; }
   .codex-detail-title { font-size: 1.3rem; letter-spacing: 4px; }
+}
+
+/* ========== 无障碍改造补充（追加）：结局卡片改为真实 button 后的外观重置 ========== */
+/* 只重置 button 的 UA 默认样式：background / border / padding / display 等视觉属性
+   仍由上面的 .codex-card 规则决定，保持原设计不变 */
+.codex-card {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.codex-card:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   触控点按目标（追加）：仅 any-pointer: coarse 生效，
+   桌面鼠标下的视觉密度不变
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .codex-tab,
+  .codex-close-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

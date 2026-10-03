@@ -24,8 +24,8 @@ export default function SaveNotification({ isOpen, onClose, message, subMessage 
 
   const node = (
     <div className="save-notification-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
-      <div className="save-notification">
-        <div className="save-icon"></div>
+      <div className="save-notification" role="status" aria-live="polite" aria-atomic="true">
+        <div className="save-icon" aria-hidden="true"></div>
         <div className="save-content">
           <div className="save-title">{message}</div>
           {subMessage && <div className="save-subtitle">{subMessage}</div>}

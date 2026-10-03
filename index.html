@@ -2,156 +2,242 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231a1410'/%3E%3Ctext x='50' y='70' font-size='70' text-anchor='middle' fill='%23c9a227' font-family='serif'%3E明%3C/text%3E%3C/svg%3E" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1a1410" />
-    <meta name="description" content="崇祯·宦海浮沉模拟器 - 一款基于明朝末年历史背景的沉浸式角色扮演游戏，体验朝堂博弈与个人抉择。" />
-    <meta name="keywords" content="崇祯,明朝,历史游戏,角色扮演,策略,文字游戏" />
+
+    <title>崇祯·宦海浮沉模拟器</title>
+    <meta
+      name="description"
+      content="崇祯·宦海浮沉模拟器 —— 以明末崇祯朝（1628–1644）为舞台的文字向宦海人生模拟器。从科举童生一路摸爬到朝堂大员，在党争、边患、天灾与流寇之间做出你的抉择，最后由《青史》为你写下一卷。"
+    />
+    <meta name="keywords" content="崇祯,明朝,历史游戏,角色扮演,策略,文字游戏,模拟器,科举,官场" />
     <meta name="author" content="Chongzhen Game Studio" />
     <meta name="robots" content="index, follow" />
     <meta name="format-detection" content="telephone=no" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0A0807" />
+    <link rel="canonical" href="https://chenbenkong.github.io/chongzhen-game/" />
 
-    <!-- 缓存控制：减少 GitHub Pages 旧版本缓存导致的资源 404 -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+    <!-- 图标 -->
+    <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
 
     <!-- Open Graph / 社交分享 -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="崇祯·宦海浮沉模拟器" />
     <meta property="og:title" content="崇祯·宦海浮沉模拟器" />
-    <meta property="og:description" content="明末乱世，宦海浮沉。体验一个普通官员的仕途生涯，在朝堂风云中书写属于你的青史。" />
+    <meta
+      property="og:description"
+      content="明末乱世，宦海浮沉。从科举童生到朝堂大员，在党争、边患与天灾之间书写属于你的青史。"
+    />
     <meta property="og:locale" content="zh_CN" />
+    <meta property="og:url" content="https://chenbenkong.github.io/chongzhen-game/" />
+    <meta property="og:image" content="https://chenbenkong.github.io/chongzhen-game/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="崇祯·宦海浮沉模拟器 封面" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="崇祯·宦海浮沉模拟器" />
+    <meta
+      name="twitter:description"
+      content="明末乱世，宦海浮沉。从科举童生到朝堂大员，在党争、边患与天灾之间书写属于你的青史。"
+    />
+    <meta name="twitter:image" content="https://chenbenkong.github.io/chongzhen-game/og-image.png" />
 
     <!-- iOS 适配 -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="崇祯" />
 
-    <!-- 字体预加载 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.loli.net" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.loli.net/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;700;900&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link href="https://fonts.loli.net/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;700;900&display=swap" rel="stylesheet" /></noscript>
-
-    <title>崇祯·宦海浮沉模拟器</title>
-
     <style>
-      /* 关键渲染样式 - 避免白屏闪烁 */
+      /* 首屏兜底样式：仅用于启动占位，避免主 CSS 到达前的白屏 */
       :root {
-        --red: #5C3A1E; --red-light: #7A5030;
-        --gold: #C5A55A; --gold-dark: #9A7B3A;
-        --ink: #1A1A1A; --ink-light: #2D2D2D;
-        --parchment: #F5E6C8; --parchment-dark: #E8D5A8;
-        --jade: #2E8B57; --jade-dark: #1D6B3F;
-        --blood: #4A2A12;
-        --bg-deep: #0A0807;
+        --boot-bg: #0a0807;
+        --boot-gold: #c5a55a;
+        --boot-parchment: #f5e6c8;
         --font-heading: 'Ma Shan Zheng', 'Songti SC', 'STSong', 'SimSun', 'FangSong', serif;
-        --font-body: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+        --font-body: 'Songti SC', 'STSong', 'SimSun', '宋体', 'Noto Serif CJK SC', 'Source Han Serif SC', serif;
       }
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
-        background: var(--bg-deep);
-        color: var(--parchment);
+        background: var(--boot-bg);
+        color: var(--boot-parchment);
         font-family: var(--font-body);
         overflow-x: hidden;
         -webkit-tap-highlight-color: transparent;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-
       #root {
         min-height: 100vh;
         display: flex;
         flex-direction: column;
       }
 
-      /* 加载占位 - 防止白屏 */
-      .app-loading {
+      /* 启动占位（位于 #root 之外，因此不会被 React 首次渲染清掉） */
+      #boot-splash {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
+        z-index: 9999;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: var(--bg-deep);
-        z-index: 9999;
+        gap: 24px;
+        background: var(--boot-bg);
+        transition: opacity 0.4s ease;
       }
-
-      .app-loading-text {
-        font-size: 2rem;
-        color: var(--gold);
-        letter-spacing: 1rem;
-        margin-bottom: 24px;
+      #boot-splash.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .boot-splash__title {
         font-family: var(--font-heading);
+        font-size: 2rem;
+        letter-spacing: 1rem;
+        text-indent: 1rem;
+        color: var(--boot-gold);
       }
-
-      .app-loading-bar {
+      .boot-splash__bar {
         width: 200px;
         height: 2px;
         background: rgba(197, 165, 90, 0.2);
         overflow: hidden;
         position: relative;
       }
-
-      .app-loading-bar::after {
+      .boot-splash__bar::after {
         content: '';
         position: absolute;
         top: 0;
         left: -50%;
         width: 50%;
         height: 100%;
-        background: var(--gold);
-        animation: loading-slide 1.5s ease-in-out infinite;
+        background: var(--boot-gold);
+        animation: boot-slide 1.4s ease-in-out infinite;
       }
-
-      @keyframes loading-slide {
-        0% { left: -50%; }
-        100% { left: 100%; }
+      @keyframes boot-slide {
+        0% {
+          left: -50%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+      .boot-splash__hint {
+        font-size: 0.85rem;
+        color: rgba(245, 230, 200, 0.45);
+        letter-spacing: 0.1em;
+      }
+      /* 启动超时兜底（JS 加载失败时显示） */
+      #boot-fallback {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 24px;
+        text-align: center;
+        background: var(--boot-bg);
+        color: var(--boot-parchment);
+      }
+      #boot-fallback.is-visible {
+        display: flex;
+      }
+      #boot-fallback button {
+        padding: 10px 24px;
+        font: inherit;
+        color: #1a1410;
+        background: var(--boot-gold);
+        border: 0;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-splash__bar::after {
+          animation: none;
+          left: 0;
+          width: 100%;
+        }
       }
     </style>
   </head>
   <body>
-        <div id="cz-gate" style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#1a1410;font-family:'KaiTi','STKaiti',serif;color:#c9a227">
-      <div style="text-align:center;padding:2.2rem 2.6rem;border:1px solid #c9a227;border-radius:10px;background:rgba(0,0,0,.35);box-shadow:0 0 30px rgba(201,162,39,.15)">
-        <h2 style="margin:0 0 .4rem;font-size:1.5rem;letter-spacing:.1em">崇祯 · 宦海浮沉</h2>
-        <p style="margin:.2rem 0 1.1rem;opacity:.85;font-size:.95rem">请输入访问密码进入</p>
-        <div><input id="cz-pw" type="password" placeholder="访问密码" autofocus style="padding:.55rem .8rem;font-size:1rem;width:200px;border:1px solid #c9a227;background:#120d09;color:#c9a227;border-radius:5px;outline:none"></div>
-        <div><button onclick="czCheck()" style="margin-top:1.1rem;padding:.55rem 2rem;font-size:1rem;border:none;border-radius:5px;background:#c9a227;color:#1a1410;cursor:pointer;letter-spacing:.2em">进 入</button></div>
-        <div id="cz-err" style="color:#e06c4f;margin-top:.7rem;min-height:1.2em;font-size:.9rem"></div>
-      </div>
+    <div id="root"></div>
+
+    <div id="boot-splash" role="status" aria-live="polite">
+      <div class="boot-splash__title">崇祯</div>
+      <div class="boot-splash__bar"></div>
+      <div class="boot-splash__hint">正在展开卷宗…</div>
     </div>
-    <div id="root" style="display:none">
-      <div class="app-loading">
-        <div class="app-loading-text">崇祯</div>
-        <div class="app-loading-bar"></div>
-      </div>
+
+    <div id="boot-fallback" role="alert">
+      <h2 style="margin: 0; font-size: 1.25rem">游戏未能启动</h2>
+      <p style="margin: 0; max-width: 30em; line-height: 1.7; opacity: 0.8">
+        脚本加载失败或浏览器不支持所需特性。请刷新页面；若仍然失败，请尝试更新浏览器或关闭无痕模式。
+      </p>
+      <button type="button" onclick="location.reload()">重新加载</button>
     </div>
+
+    <noscript>
+      <div style="padding: 32px; text-align: center">
+        <h1 style="font-size: 1.4rem">需要启用 JavaScript</h1>
+        <p style="opacity: 0.75">本游戏完全运行于浏览器端，请在浏览器设置中启用 JavaScript 后重新打开本页。</p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
+
     <script>
-      // 移除加载占位（主应用挂载时）
-      window.addEventListener('app-ready', function() {
-        const loader = document.querySelector('.app-loading');
-        if (loader) loader.remove();
-      });
-    </script>
-      <script>
-      function czCheck(){
-        var v=document.getElementById('cz-pw').value;
-        if(v==='chongzhen'){
-          try{localStorage.setItem('cz_ok','1');}catch(e){}
-          document.getElementById('root').style.display='block';
-          document.getElementById('cz-gate').style.display='none';
-        } else {
-          document.getElementById('cz-err').textContent='密码错误，请重试';
+      // 启动流程：主应用挂载（或错误界面渲染）后移除占位层。
+      // 两条触发路径都要有：
+      //   1. App 挂载后派发的 'app-ready'（正常路径，最快）
+      //   2. #root 出现任意子节点（兜底：覆盖 ErrorBoundary 渲染错误界面、
+      //      以及未来任何不走 app-ready 的渲染路径，避免 20 秒后错误界面
+      //      被启动兜底层盖住）
+      ;(function () {
+        var splash = document.getElementById('boot-splash')
+        var root = document.getElementById('root')
+        var fallbackTimer = null
+        var revealed = false
+
+        function reveal() {
+          if (revealed) return
+          revealed = true
+          if (fallbackTimer) clearTimeout(fallbackTimer)
+          if (observer) observer.disconnect()
+          if (!splash) return
+          splash.classList.add('is-hidden')
+          window.setTimeout(function () {
+            if (splash && splash.parentNode) splash.parentNode.removeChild(splash)
+          }, 450)
         }
-      }
-      document.getElementById('cz-pw').addEventListener('keydown',function(e){ if(e.key==='Enter') czCheck(); });
-      try{ if(localStorage.getItem('cz_ok')==='1'){ document.getElementById('root').style.display='block'; document.getElementById('cz-gate').style.display='none'; } }catch(e){}
+
+        var observer = null
+        if (root && window.MutationObserver) {
+          observer = new MutationObserver(function () {
+            if (root.childElementCount > 0) reveal()
+          })
+          observer.observe(root, { childList: true })
+          if (root.childElementCount > 0) reveal()
+        }
+
+        window.addEventListener('app-ready', reveal, { once: true })
+
+        // 兜底：模块加载失败 / 初始化抛错时，20 秒后给出可操作的提示，而不是永久黑屏。
+        fallbackTimer = window.setTimeout(function () {
+          if (revealed) return
+          var fb = document.getElementById('boot-fallback')
+          if (fb) fb.classList.add('is-visible')
+        }, 20000)
+      })()
     </script>
   </body>
 </html>

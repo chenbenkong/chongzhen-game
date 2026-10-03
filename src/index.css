@@ -1,5 +1,6 @@
 :root {
-  font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', 'SimSun', 'STSong', '宋体', serif;
+  font-family: 'Songti SC', 'STSong', 'SimSun', '宋体', 'Noto Serif CJK SC', 'Source Han Serif SC',
+    'Noto Serif SC', 'KaiTi', 'STKaiti', serif;
   line-height: 1.6;
   font-weight: 400;
   color: #c9b896;
@@ -49,7 +50,10 @@ html {
 
 body {
   min-width: 320px;
+  /* 100vh 在移动端动态工具栏下高于可视区域，100dvh 才是真实可视高度；
+     保留 100vh 前置声明作为老浏览器的回退值 */
   min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(60, 40, 20, 0.15) 0%, transparent 60%),
     linear-gradient(180deg, #0a0806 0%, #0d0907 50%, #0a0806 100%);
@@ -57,23 +61,20 @@ body {
   overflow-x: hidden;
 }
 
+/* #root 不再自带内边距：各屏（.title-screen / .setup-screen / .game-screen）
+   自行管理留白，否则会出现「容器 20px + 屏内 20px」的双重内边距，
+   并让 min-height:100vh 的子屏比视口高出 40px 而产生无意义滚动条。 */
 #root {
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
   min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (max-width: 768px) {
-  #root {
-    padding: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  #root {
-    padding: 6px;
-  }
+#root > * {
+  flex: 1 0 auto;
 }
 
 /* 滚动条和选区样式统一由 theme.css 管理，此处不再重复定义 */
@@ -85,7 +86,11 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    /* 关键：延迟必须一起清零。animation: … both 带延迟的规则会先保持 from
+       状态（通常 opacity:0）再突然弹出，只清 duration 反而更晚才可见。 */
+    animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 }
@@ -110,8 +115,9 @@ body {
   border: 0;
 }
 
-/* 触摸设备优化 */
-@media (hover: none) and (pointer: coarse) {
+/* 触摸设备优化：any-pointer 而非 pointer —— 触屏笔记本 / 可翻转本上
+   pointer 可能是 fine，只有 any-pointer 才能命中触摸输入 */
+@media (any-pointer: coarse) {
   button,
   [role="button"] {
     min-height: 44px;

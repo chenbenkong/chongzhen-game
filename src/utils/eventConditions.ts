@@ -20,6 +20,8 @@ export function checkEventConditions(
     hidden: HiddenAttributes
     flags: string[]
     origin: OriginType
+    /** 当前官阶，用于 conditions.rank 判定 */
+    rank?: string
   },
   state: GameStateValues
 ): boolean {
@@ -81,10 +83,42 @@ export function checkEventConditions(
     if (!allowed.includes(character.origin)) return false
   }
 
+  // 官阶限制
+  // cond.rank 一直在 EventConditions 里声明，但此前从未被检查 —— 所有
+  // 「限定某官阶才触发」的事件实际上对任何官阶都开放。
+  if (cond.rank) {
+    const allowedRanks = Array.isArray(cond.rank) ? cond.rank : [cond.rank]
+    const currentRank = character.rank
+    if (!currentRank || !allowedRanks.includes(currentRank)) return false
+  }
+
   // 标志位
+  // 注意：数据里实际在用的有 has / notHas / any 三种（any 被 30 处引用，
+  // 另有 2 处写成了大写 ALL）。此前只实现了 has / notHas，
+  // 于是所有 any 条件被静默忽略 —— 事件的触发前提形同虚设。
   if (cond.flags) {
-    if (cond.flags.has?.some((f: string) => !character.flags.includes(f))) return false
-    if (cond.flags.notHas?.some((f: string) => character.flags.includes(f))) return false
+    const own = character.flags
+    if (cond.flags.has?.some((f: string) => !own.includes(f))) return false
+    if (cond.flags.notHas?.some((f: string) => own.includes(f))) return false
+
+    // any / some：至少命中一个（两个键等价，some 是历史别名）
+    const anyList = cond.flags.any ?? cond.flags.some
+    if (anyList && anyList.length > 0 && !anyList.some((f: string) => own.includes(f))) return false
+
+    // none：一个都不能有
+    if (cond.flags.none && cond.flags.none.some((f: string) => own.includes(f))) return false
+
+    // all：必须全部具备
+    if (cond.flags.all && cond.flags.all.some((f: string) => !own.includes(f))) return false
+
+    // 容错：数据里存在大写 ALL 的写法（2 处），按 all 语义处理
+    const upperAll = (cond.flags as { ALL?: string[] }).ALL
+    if (upperAll && upperAll.some((f: string) => !own.includes(f))) return false
+  }
+
+  // 概率门（0-1）。此前未实现，导致「每月25%」这类事件实际 100% 触发。
+  if (typeof cond.random === 'number' && cond.random < 1) {
+    if (Math.random() >= cond.random) return false
   }
 
   return true

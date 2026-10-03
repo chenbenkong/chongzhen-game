@@ -366,10 +366,13 @@
   margin-bottom: 0;
 }
 
-.suggest-section h4 {
+/* h3：与页面的 h2「请 赐 名 字」构成连续层级（此前跳级到 h4）。
+   显式 margin-top: 0 是为了让 h3 与原来 h4 的间距保持一致（两者 UA margin 不同）。 */
+.suggest-section h3 {
   color: #6b5a45;
   font-size: 0.72rem;
   letter-spacing: 0.15rem;
+  margin-top: 0;
   margin-bottom: 6px;
   font-weight: normal;
 }
@@ -408,5 +411,16 @@
   .suggest-chip {
     padding: 3px 8px;
     font-size: 0.8rem;
+  }
+}
+
+/* ============================================================
+   触控点按目标（追加）：仅 any-pointer: coarse 生效，
+   桌面鼠标下的视觉密度不变
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .suggest-chip {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

@@ -22,6 +22,25 @@ function AttributePanel({ attributes, hidden }: AttributePanelProps) {
     return 'good'
   }
 
+  /** 隐藏属性的四档评价文案 */
+  const HIDDEN_HINTS: Record<string, [string, string, string, string]> = {
+    // [>75, >50, >25, ≤25]
+    道德值: ['君子', '正直', '常人', '小人'],
+    欲望值: ['强烈', '一般', '淡泊', '清心'],
+    野心值: ['勃勃', '有', '微', '无'],
+    机敏值: ['机警', '敏锐', '寻常', '迟钝'],
+    忠诚值: ['死忠', '忠谨', '观望', '首鼠']
+  }
+
+  const hiddenHint = (key: string, value: number): string => {
+    const tiers = HIDDEN_HINTS[key]
+    if (!tiers) return ''
+    if (value > 75) return tiers[0]
+    if (value > 50) return tiers[1]
+    if (value > 25) return tiers[2]
+    return tiers[3]
+  }
+
   const personalAttributes = [
     { key: '财帛', value: attributes.财帛 },
     { key: '文韬', value: attributes.文韬 },
@@ -80,9 +99,7 @@ function AttributePanel({ attributes, hidden }: AttributePanelProps) {
                   {Math.round(Math.max(value, 0))}
                 </span>
                 <span className={`attr-hint attr-hint-${level}`} style={{ fontSize: '0.7rem', minWidth: '40px' }}>
-                  {key === '道德值' ? (value > 75 ? '君子' : value > 50 ? '正直' : value > 25 ? '常人' : '小人') :
-                   key === '欲望值' ? (value > 75 ? '强烈' : value > 50 ? '一般' : value > 25 ? '淡泊' : '清心') :
-                   key === '野心值' ? (value > 75 ? '勃勃' : value > 50 ? '有' : value > 25 ? '微' : '无') : ''}
+                  {hiddenHint(key, value)}
                 </span>
                 {(isCritical && (level === 'bad' || level === 'critical')) && (
                   <span className="attr-warning-small" aria-label="警告" />

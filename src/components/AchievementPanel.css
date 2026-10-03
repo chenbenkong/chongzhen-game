@@ -34,7 +34,7 @@
     inset 0 1px 0 rgba(201, 162, 39, 0.1);
   animation: ap-slide-up 0.3s ease-out;
   color: #c9b896;
-  font-family: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  font-family: var(--font-body);
 }
 
 @keyframes ap-slide-up {
@@ -62,7 +62,7 @@
   margin: 0;
   font-size: 1rem;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   letter-spacing: 4px;
   font-weight: normal;
 }
@@ -71,7 +71,7 @@
   content: '功';
   display: inline-block;
   margin-right: 8px;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   color: #8b7540;
 }
 
@@ -154,7 +154,7 @@
 .category-title {
   color: #c9a227;
   font-size: 0.85rem;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   letter-spacing: 3px;
   margin-bottom: 12px;
   padding-bottom: 8px;
@@ -203,7 +203,7 @@
   border: 1px solid #4a3820;
   border-radius: 50%;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   flex-shrink: 0;
 }
 
@@ -243,7 +243,7 @@
   content: '锁';
   display: inline-block;
   margin-right: 4px;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   color: #5a4a30;
 }
 
@@ -287,5 +287,16 @@
     width: 38px;
     height: 38px;
     font-size: 1.3rem;
+  }
+}
+
+/* ============================================================
+   触控点按目标（追加）：仅 any-pointer: coarse 生效，
+   桌面鼠标下的视觉密度不变
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .filter-button {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

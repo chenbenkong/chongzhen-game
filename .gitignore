@@ -1,20 +1,58 @@
-# Dependencies
+# =============================================================================
+# .gitignore — 崇祯直聘 (React + TS + Vite)
+#
+# Sections:
+#   Dependencies | Build outputs | Build & typecheck logs | Screenshots
+#   Dev scratch/temp | Public dev-only pages | Environment | Editor | OS
+#   Caches | Logs | Desktop (Electron) | Tests
+#
+# NOTE: root-anchored patterns use a leading "/" so they can never leak into
+# subdirectories. This matters for "/*.png": it ignores dev screenshots dumped
+# at the repo root while keeping tracked game art such as src/assets/*.png.
+# =============================================================================
+
+# --- Dependencies ---
 node_modules/
 .pnp
 .pnp.js
 
-# Build outputs
+# --- Build outputs ---
 dist/
 dist-ssr/
 *.local
-
-# Vite
 .vite/
 
-# Vercel
+# --- Vercel ---
 .vercel/
 
-# Editor
+# --- Build & typecheck logs (repo root) ---
+# Captures build_out.txt, tsc_out.txt, tsc_out2.txt, tsc-out.txt,
+# vite-final.txt, vite-now.txt, vite-startup*.txt and TS incremental build info.
+build_out.txt
+tsc_out*.txt
+tsc-out.txt
+vite-*.txt
+*.tsbuildinfo
+
+# --- Root-level screenshots (dev by-products) ---
+# Only the repo root; committed assets live under src/assets/ and stay tracked.
+/*.png
+
+# --- Dev scratch / temp directories ---
+/tmp/
+
+# --- Public dev-only pages (the Vite plugin serving these was removed) ---
+public/token-*.json
+public/token-*.html
+public/file-tree.html
+
+# --- Environment ---
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# --- Editor ---
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -24,11 +62,17 @@ dist-ssr/
 *.sln
 *.sw?
 
-# OS
+# --- OS ---
 .DS_Store
 Thumbs.db
 
-# Logs
+# --- Caches ---
+.cache/
+.eslintcache
+# 覆盖 .npm-cache/ 以及各子工程自建的缓存目录（如 .npm-cache-desktop/）
+.npm-cache*/
+
+# --- Logs ---
 logs
 *.log
 npm-debug.log*
@@ -36,15 +80,21 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Environment
-.env
-.env.local
-.env.*.local
+# --- Desktop (Electron) build artifacts ---
+desktop/dist/
+desktop/release/
+desktop/node_modules/
+# steamcmd 上传凭据（含账号信息），绝不入库
+desktop/steam/steamconfig.json
+desktop/steam/*.vdf
+desktop/steam/output/
 
-# Cache
-.cache/
-.eslintcache
+# --- Tests ---
+tests/node_modules/
+tests/.cache/
+# 端到端 / 布局测试的截图输出：是测试产物而非交付物，且体积达十几 MB
+tests/screenshots/
 
-# GitHub CLI local config
+# --- GitHub CLI local config ---
 .gh-config/
 commit_msg.txt

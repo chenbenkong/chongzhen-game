@@ -1,5 +1,6 @@
 import { useEffect, useRef, memo } from 'react'
 import { createPortal } from 'react-dom'
+import { useModal } from '../hooks/useModal'
 import './ConfirmDialog.css'
 
 interface ConfirmDialogProps {
@@ -33,17 +34,23 @@ function ConfirmDialogImpl({
 }: ConfirmDialogProps) {
   const confirmRef = useRef<HTMLButtonElement>(null)
 
-  // Esc 取消 / Enter 确认 + 锁 body 滚动 + 默认聚焦确认按钮
+  // 对话框语义（useId 生成 aria-labelledby，避免多实例同 id 冲突）
+  // + Tab 焦点陷阱 + 焦点还原 + 计数式滚动锁 + 初始聚焦确认按钮
+  // ESC 由下方自定义监听统一处理（因为这里还有 Enter 确认的逻辑），故 closeOnEsc 关闭
+  const { getModalProps, dialogRef, titleId, handleOverlayClick } = useModal({
+    open,
+    onClose: onCancel,
+    labelledBy: undefined,
+    initialFocusRef: confirmRef,
+    closeOnEsc: false
+  })
+
+  // Enter 确认（仅在无 input focus 时）+ 焦点管理交给 useModal
   useEffect(() => {
     if (!open) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        onCancel()
-      } else if (e.key === 'Enter' && e.target === document.body) {
+      if (e.key === 'Enter' && e.target === document.body) {
         // 仅在无 input focus 时按 Enter 确认
         e.preventDefault()
         onConfirm()
@@ -51,29 +58,23 @@ function ConfirmDialogImpl({
     }
     window.addEventListener('keydown', onKey)
 
-    // 延迟聚焦，等 transition 开始
-    const t = setTimeout(() => confirmRef.current?.focus(), 50)
-
     return () => {
-      document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
-      clearTimeout(t)
     }
-  }, [open, onCancel, onConfirm])
+  }, [open, onConfirm])
 
   if (!open) return null
 
   const node = (
-    <div
-      className="cd-overlay"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onCancel()
-      }}
-    >
-      <div className="cd-panel" role="dialog" aria-modal="true" aria-labelledby="cd-title">
+    <div className="cd-overlay" onClick={handleOverlayClick}>
+      <div
+        className="cd-panel"
+        ref={dialogRef}
+        {...getModalProps()}
+      >
         <div className="cd-header">
           <div className={`cd-icon cd-icon-${variant}`} aria-hidden="true" />
-          <h2 id="cd-title" className="cd-title">{title}</h2>
+          <h2 id={titleId} className="cd-title">{title}</h2>
         </div>
 
         <div className="cd-body">

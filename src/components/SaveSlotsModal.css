@@ -62,7 +62,7 @@
   margin: 0;
   font-size: 1rem;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   letter-spacing: 3px;
   font-weight: normal;
 }
@@ -324,5 +324,46 @@
 
   .slot-content {
     padding: 12px;
+  }
+}
+
+/* ========== 无障碍改造补充（追加）：可点击槽位改为真实 button 后的外观重置 ========== */
+.slot-content {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+/* 空槽位 / 自动存档信息块保持原来的居中提示样式 */
+.slot-content.empty-slot {
+  text-align: center;
+}
+
+/* 键盘用户需要可见焦点环 */
+.slot-content:focus-visible,
+.close-btn:focus-visible,
+.delete-btn:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
+}
+
+/* 空槽位被做成可用按钮时，保留它自己的提示文字颜色 */
+.slot-content.empty-slot {
+  color: #666;
+}
+
+/* ============================================================
+   触控点按目标（追加）：仅 any-pointer: coarse 生效（含触屏笔记本），
+   桌面鼠标下的视觉密度不变
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .close-btn,
+  .delete-btn {
+    min-height: 44px;
+    min-width: 44px;
   }
 }

@@ -20,23 +20,60 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - name: Install dependencies
         run: npm ci
-      - name: Build
-        run: npx vite build --base=./
+
+      - name: Typecheck and build
+        # base 已在 vite.config.js 内统一为 './'，这里不再需要 --base 覆盖
+        run: npm run build
         env:
           VITE_AI_API_KEY: ${{ secrets.VITE_AI_API_KEY }}
+
+      - name: Guard — fail if the access gate ever comes back
+        # 早期版本在 index.html 里有一道客户端口令门（明文口令 chongzhen）。
+        # 它是纯前端逻辑、毫无安全性，且会把玩家挡在门外，已彻底移除。
+        # 这里做一道回归防线：源码或产物里只要重新出现门禁痕迹就让构建失败。
+        run: |
+          set -e
+          PATTERN='cz-gate|czCheck|cz_ok|cz-pw'
+          if grep -RIlE "$PATTERN" dist/ index.html 2>/dev/null; then
+            echo "::error::检测到访问口令门残留（$PATTERN）。该门禁已废弃，请移除后再发布。"
+            exit 1
+          fi
+          echo "OK: 未发现口令门残留"
+
+      - name: Guard — fail if debug panel is not gated
+        # 「幽灵模式」面板可浏览全部事件与未解锁结局，正式构建里必须只在
+        # ?debug=1 时可出现。这里确认产物中仍带有调试开关的判断逻辑。
+        run: |
+          set -e
+          if ! grep -RIq 'chongzhen_debug_enabled' dist/assets/ 2>/dev/null; then
+            echo "::warning::构建产物中未找到调试开关标记，请确认 utils/debug.ts 的开关未被移除"
+          fi
+
+      - name: Report build size
+        run: |
+          echo "### 构建产物" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          du -sh dist >> $GITHUB_STEP_SUMMARY
+          find dist -name '*.js' -printf '%10s  %p\n' | sort -rn | head -15 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

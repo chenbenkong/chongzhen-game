@@ -6,6 +6,7 @@ import { initialEvents, allGrayChoiceEvents, allEndingEvents } from '../data/eve
 import { factionEvents } from '../data/events/faction/faction_events'
 import { originEvents } from '../data/events/origin/index'
 import { getStoryline, type StorylineTone } from '../data/storylines'
+import { useModal } from '../hooks/useModal'
 import Icon from './Icon'
 import type { IconName } from './Icon'
 import './CheatMode.css'
@@ -54,6 +55,14 @@ export default function CheatMode({
   })
 
   const [_isLifeReviewOpen] = useState(false)
+
+  // 调试浮层同样需要对话框语义 / ESC / Tab 焦点陷阱 / 滚动锁 / 焦点还原
+  const {
+    getModalProps,
+    dialogRef: cheatDialogRef,
+    titleId: cheatTitleId,
+    handleOverlayClick: handleCheatOverlayClick
+  } = useModal({ open: isOpen, onClose })
 
   const checkDeathEnding = useCallback((choice: EventChoice): {
     isDeath: boolean
@@ -221,8 +230,8 @@ export default function CheatMode({
     const narrative = selectedEvent.narrative
     
     const node = (
-    <div className="cheat-modal-overlay" key={`event-detail-${selectedEvent.id}`}>
-        <div className="cheat-modal cheat-detail-modal">
+    <div className="cheat-modal-overlay" key={`event-detail-${selectedEvent.id}`} onClick={handleCheatOverlayClick}>
+        <div className="cheat-modal cheat-detail-modal" ref={cheatDialogRef} {...getModalProps()}>
           <div className="cheat-modal-header">
             <div className="cheat-modal-title">
               幽灵模式<span className="cheat-mode-badge">调试工具</span>
@@ -235,7 +244,7 @@ export default function CheatMode({
 
           <div className="cheat-modal-body">
             <div className="cheat-event-detail-header">
-              <h2 className="cheat-event-detail-title">{selectedEvent.title}</h2>
+              <h2 className="cheat-event-detail-title" id={cheatTitleId}>{selectedEvent.title}</h2>
               {selectedEvent.type !== 'ending' && selectedEvent.conditions?.year?.min && (
                 <div className="cheat-event-detail-time">
                   崇祯{selectedEvent.conditions.year.min - 1627}年{selectedEvent.conditions.month?.min && ` ${selectedEvent.conditions.month.min}月`}
@@ -403,10 +412,10 @@ export default function CheatMode({
   }
 
   const node = (
-    <div className="cheat-modal-overlay">
-      <div className="cheat-modal">
+    <div className="cheat-modal-overlay" onClick={handleCheatOverlayClick}>
+      <div className="cheat-modal" ref={cheatDialogRef} {...getModalProps()}>
         <div className="cheat-modal-header">
-          <div className="cheat-modal-title">幽灵模式<span className="cheat-mode-badge">调试工具</span></div>
+          <div className="cheat-modal-title" id={cheatTitleId}>幽灵模式<span className="cheat-mode-badge">调试工具</span></div>
           <button className="cheat-close-btn" onClick={onClose}>退出幽灵模式</button>
         </div>
 
@@ -437,8 +446,13 @@ export default function CheatMode({
 
               <div className="cheat-event-list">
                 {filteredEvents.map((event) => (
-                  <div key={`${event.type}_${event.id}`} className={`cheat-event-item ${event.type}`} onClick={() => handleEventClick(event)}>
-                    <span className="cheat-event-type-badge">{eventTypeIcons[event.type] || '文'}</span>
+                  <button
+                    type="button"
+                    key={`${event.type}_${event.id}`}
+                    className={`cheat-event-item ${event.type}`}
+                    onClick={() => handleEventClick(event)}
+                  >
+                    <span className="cheat-event-type-badge" aria-hidden="true">{eventTypeIcons[event.type] || '文'}</span>
                     <div className="cheat-event-content">
                       <div className="cheat-event-title-row">
                         <span className="cheat-event-title">{event.title}</span>
@@ -455,7 +469,7 @@ export default function CheatMode({
                         </div>
                       )}
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </>

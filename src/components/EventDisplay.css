@@ -41,7 +41,7 @@
 .empty-icon::before {
   content: '卷';
   display: inline-block;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   color: #5a4830;
 }
 
@@ -264,7 +264,7 @@
   font-size: 1.1rem;
   color: #5a4830;
   line-height: 1;
-  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-family: var(--font-body);
 }
 
 .quote-mark-compact::before {
@@ -278,7 +278,7 @@
   font-size: 1.1rem;
   color: #5a4830;
   line-height: 1;
-  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-family: var(--font-body);
 }
 
 .quote-end-compact::before {
@@ -317,7 +317,7 @@
   color: #c9a227;
   font-size: 1.1rem;
   font-weight: bold;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
 }
 
 .speaker-info {
@@ -476,7 +476,7 @@
   position: absolute;
   right: 12px;
   top: 12px;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   font-size: 0.75rem;
   color: #5a3020;
   letter-spacing: 1px;
@@ -587,7 +587,10 @@
   flex-direction: column;
   gap: 8px;
   animation: fadeIn 0.4s ease;
+  /* vh 在前作为旧浏览器回退，dvh 在后覆盖：移动端动态工具栏下 100vh 会算出
+     比可视区更高的值，导致这一块被顶出屏幕 */
   max-height: min(520px, calc(100vh - 180px));
+  max-height: min(520px, calc(100dvh - 180px));
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -595,12 +598,14 @@
 @media (max-width: 768px) {
   .result-section {
     max-height: min(460px, calc(100vh - 160px));
+    max-height: min(460px, calc(100dvh - 160px));
   }
 }
 
 @media (max-width: 480px) {
   .result-section {
     max-height: min(400px, calc(100vh - 140px));
+    max-height: min(400px, calc(100dvh - 140px));
   }
 }
 
@@ -645,7 +650,7 @@
   color: #b0a070;
   letter-spacing: 2px;
   font-weight: normal;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   text-align: center;
 }
 
@@ -781,7 +786,7 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 3px;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   position: relative;
   overflow: hidden;
 }
@@ -872,9 +877,11 @@
   font-size: 1.5rem;
   color: #c9a227;
   letter-spacing: 16px;
-  font-weight: 700;
+  /* 标题字体只打包了 400 字重，且 index.css 关闭了 font-synthesis，
+     600/700 是死声明；改为 400 让实际渲染与设计意图一致 */
+  font-weight: 400;
   margin: 0;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
 }
 
@@ -975,7 +982,8 @@
   animation: fadeIn 0.4s ease;
   font-family: var(--font-heading);
   margin-top: 4px;
-  font-weight: 600;
+  /* 同上：标题字体仅 400 字重可用 */
+  font-weight: 400;
 }
 
 .dice-result-text.success {
@@ -1020,7 +1028,7 @@
   cursor: pointer;
   transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
   letter-spacing: 8px;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   font-weight: 600;
 }
 
@@ -1141,4 +1149,54 @@
   font-size: 0.85rem;
   color: #a05040;
   letter-spacing: 2px;
+}
+
+/* ============================================================
+   触控点按目标（追加）：仅 any-pointer: coarse 生效，
+   桌面鼠标下的视觉密度不变
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .undo-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ========== 无障碍改造补充（追加）：骰子弹窗键盘可达 ========== */
+/* 骰子区改为真实 button 后的外观重置（保留原来的 margin / cursor） */
+.dice-area {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.dice-area[aria-disabled="true"] {
+  cursor: default;
+}
+
+/* 页脚按钮沿用 .dice-confirm-btn 的视觉，这里保证禁用态可辨识 */
+.dice-modal-footer button {
+  min-width: 140px;
+}
+
+.dice-modal-footer button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* 键盘焦点环 */
+.dice-area:focus-visible,
+.dice-modal-footer button:focus-visible,
+.choice-card:focus-visible,
+.dice-attempt-btn:focus-visible,
+.continue-btn:focus-visible,
+.undo-btn:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
 }

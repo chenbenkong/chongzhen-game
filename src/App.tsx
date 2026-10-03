@@ -4,12 +4,12 @@ import NameInput, { NameInputResult } from './components/NameInput'
 import OriginSelect from './components/OriginSelect'
 import TitleScreen from './components/TitleScreen'
 import GameScreen from './components/GameScreen'
-import SaveNotification from './components/SaveNotification'
 import { BGMProvider } from './components/BGMContext'
 import { OriginType, DegreeType, Attributes } from './types/game'
-import { SaveData, getAllSaveSlots, getAutosavePreview, deleteAutosave } from './types/save'
+import { SaveData, getAllSaveSlots, deleteAutosave, loadAutosave } from './types/save'
 import { origins } from './data/origins'
 import { setAchievementData } from './types/achievement'
+import { DifficultyLevel, loadDifficulty, saveDifficulty } from './types/difficulty'
 
 // 懒加载模态组件
 const SaveSlotsModal = lazy(() => import('./components/SaveSlotsModal'))
@@ -22,20 +22,14 @@ type GamePhase = 'title' | 'name-input' | 'origin-select' | 'playing'
 function App() {
   const [phase, setPhase] = useState<GamePhase>('title')
   const [playerName, setPlayerName] = useState('')
-  const [playerCourtesyName, setPlayerCourtesyName] = useState('')  // 字
-  const [playerHometown, setPlayerHometown] = useState('')          // 籍贯
-  const [playerCustomAge, setPlayerCustomAge] = useState<number | null>(null)  // 自定义起始年龄
+  const [playerCourtesyName, setPlayerCourtesyName] = useState('') // 字
+  const [playerHometown, setPlayerHometown] = useState('') // 籍贯
+  const [playerCustomAge, setPlayerCustomAge] = useState<number | null>(null) // 自定义起始年龄
   const [selectedOrigin, setSelectedOrigin] = useState<OriginType | null>(null)
   const [finalDegree, setFinalDegree] = useState<DegreeType>('进士')
   const [finalAttributes, setFinalAttributes] = useState<Attributes | null>(null)
   const [loadSaveData, setLoadSaveData] = useState<SaveData | null>(null)
-
-  // 通知弹窗状态
-  const [notification, setNotification] = useState<{
-    isOpen: boolean;
-    message: string;
-    subMessage: string;
-  }>({ isOpen: false, message: '', subMessage: '' })
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(() => loadDifficulty())
 
   // 存档槽位弹窗状态
   const [isSaveSlotsOpen, setIsSaveSlotsOpen] = useState(false)
@@ -46,32 +40,52 @@ function App() {
 
   // 结局图鉴状态
   const [isCodexOpen, setIsCodexOpen] = useState(false)
-  
+
   // 教程弹窗状态
   const [showTutorial, setShowTutorial] = useState(false)
+
+  // 通知 index.html 移除启动占位层（必须在这里：懒加载的 App 真正挂载后才算就绪）
+  useEffect(() => {
+    window.dispatchEvent(new Event('app-ready'))
+  }, [])
+
+  const handleDifficultyChange = useCallback((next: DifficultyLevel) => {
+    setDifficulty(next)
+    saveDifficulty(next)
+  }, [])
+
+  /** 从存档对象恢复一局游戏的公共逻辑 */
+  const applySaveData = useCallback((saveData: SaveData) => {
+    if (!saveData || !saveData.character || !saveData.gameState) return
+    setLoadSaveData(saveData)
+    setSelectedOrigin(saveData.origin || '寒门')
+    if (saveData.degree) setFinalDegree(saveData.degree)
+    // 存档自带难度时以存档为准，否则沿用当前设置
+    if (saveData.difficulty) setDifficulty(saveData.difficulty)
+    // 读档时恢复成就
+    setAchievementData(saveData.achievements || { unlocked: [], unlockTimes: {} })
+    setPhase('playing')
+  }, [])
 
   // 监听从 GameScreen 发来的加载存档事件
   useEffect(() => {
     const handleLoadSaveEvent = (e: CustomEvent<SaveData>) => {
-      const saveData = e.detail
-      if (saveData && saveData.character && saveData.gameState) {
-        setLoadSaveData(saveData)
-        setSelectedOrigin(saveData.origin || '寒门')
-        if (saveData.degree) setFinalDegree(saveData.degree)
-        setPhase('playing')
-      }
+      applySaveData(e.detail)
     }
 
     window.addEventListener('loadSave', handleLoadSaveEvent as EventListener)
     return () => {
       window.removeEventListener('loadSave', handleLoadSaveEvent as EventListener)
     }
-  }, [])
+  }, [applySaveData])
 
   const handleStart = useCallback(() => {
     setLoadSaveData(null)
     // 新游戏开始时清掉旧的自动存档，避免下次 start 时继承上次的 character/事件进度
     deleteAutosave()
+    // 成就数据是模块级单例（每个存档独立一份）。新开一局必须清空，
+    // 否则上一局的成就状态会被沿用并写进新存档。
+    setAchievementData({ unlocked: [], unlockTimes: {} })
     setPhase('name-input')
   }, [])
 
@@ -98,39 +112,22 @@ function App() {
 
   // 加载自动存档（"继续上次游戏"按钮）
   const handleLoadAutosave = useCallback(() => {
-    const data = getAutosavePreview()
-    if (!data) return
-    // 重新读取 autosave 原始数据
-    const raw = localStorage.getItem('chongzhen_autosave')
-    if (!raw) return
-    try {
-      const saveData = JSON.parse(raw) as SaveData
-      if (saveData && saveData.character && saveData.gameState) {
-        setLoadSaveData(saveData)
-        setSelectedOrigin(saveData.origin || '寒门')
-        if (saveData.degree) setFinalDegree(saveData.degree)
-        setPhase('playing')
-        // 读 autosave 时恢复成就
-        setAchievementData(saveData.achievements || { unlocked: [], unlockTimes: {} })
-      }
-    } catch {
-      // ignore
-    }
-  }, [])
+    // 走统一的 loadAutosave()：内含 schema 迁移与隐藏属性规整，
+    // 不要再自己 JSON.parse 原始字符串（会绕过迁移）。
+    const saveData = loadAutosave()
+    if (!saveData) return
+    applySaveData(saveData)
+  }, [applySaveData])
 
-  const handleSelectSaveSlot = useCallback((slotId: number) => {
-    const slots = getAllSaveSlots()
-    const slot = slots.find(s => s.id === slotId)
-    if (slot?.data) {
-      setLoadSaveData(slot.data)
-      setSelectedOrigin(slot.data.origin || '寒门')
-      if (slot.data.degree) setFinalDegree(slot.data.degree)
+  const handleSelectSaveSlot = useCallback(
+    (slotId: number) => {
+      const slot = getAllSaveSlots().find(s => s.id === slotId)
+      if (!slot?.data) return
       setIsSaveSlotsOpen(false)
-      setPhase('playing')
-      // 读槽位存档时恢复成就
-      setAchievementData(slot.data.achievements || { unlocked: [], unlockTimes: {} })
-    }
-  }, [])
+      applySaveData(slot.data)
+    },
+    [applySaveData]
+  )
 
   const handleReturnToMenu = useCallback(() => {
     setLoadSaveData(null)
@@ -148,7 +145,8 @@ function App() {
             onOpenAchievements={() => setIsAchievementPanelOpen(true)}
             onOpenCodex={() => setIsCodexOpen(true)}
             onOpenTutorial={() => setShowTutorial(true)}
-            loadSaveData={loadSaveData ?? undefined}
+            difficulty={difficulty}
+            onDifficultyChange={handleDifficultyChange}
           />
         )}
 
@@ -156,10 +154,7 @@ function App() {
           <div className="setup-screen">
             <NameInput onConfirm={handleNameConfirm} />
             <div className="setup-actions">
-              <button 
-                className="back-btn"
-                onClick={() => setPhase('title')}
-              >
+              <button className="back-btn" onClick={() => setPhase('title')}>
                 ← 返回
               </button>
             </div>
@@ -170,10 +165,7 @@ function App() {
           <div className="setup-screen">
             <OriginSelect onSelect={handleOriginSelect} />
             <div className="setup-actions">
-              <button 
-                className="back-btn"
-                onClick={() => setPhase('name-input')}
-              >
+              <button className="back-btn" onClick={() => setPhase('name-input')}>
                 ← 返回
               </button>
             </div>
@@ -184,13 +176,15 @@ function App() {
           <GameScreen
             origin={selectedOrigin}
             degree={finalDegree || loadSaveData?.character?.degree}
-            bonusAttributes={finalAttributes || { 财帛: 0, 文韬: 0, 理政: 0, 武略: 0, 体质: 50 }}
-            playerName={playerName || (loadSaveData?.character?.name || '')}
-            playerCourtesyName={playerCourtesyName || (loadSaveData?.character?.courtesyName || '')}
-            playerHometown={playerHometown || (loadSaveData?.character?.hometown || '')}
-            playerCustomAge={playerCustomAge ?? (loadSaveData?.character?.age || null)}
+            bonusAttributes={
+              finalAttributes || { 财帛: 0, 文韬: 0, 理政: 0, 武略: 0, 体质: 50 }
+            }
+            playerName={playerName || loadSaveData?.character?.name || ''}
+            playerCourtesyName={playerCourtesyName || loadSaveData?.character?.courtesyName || ''}
+            playerHometown={playerHometown || loadSaveData?.character?.hometown || ''}
+            playerCustomAge={playerCustomAge ?? loadSaveData?.character?.age ?? null}
             loadSaveData={loadSaveData ?? undefined}
-            difficulty="normal"
+            difficulty={difficulty}
             onReturnToMenu={handleReturnToMenu}
           />
         )}
@@ -205,14 +199,6 @@ function App() {
           />
         </Suspense>
 
-        {/* 通知弹窗 */}
-        <SaveNotification
-          isOpen={notification.isOpen}
-          onClose={() => setNotification(prev => ({ ...prev, isOpen: false }))}
-          message={notification.message}
-          subMessage={notification.subMessage}
-        />
-
         {/* 成就面板 */}
         <Suspense fallback={null}>
           <AchievementPanel
@@ -222,10 +208,7 @@ function App() {
         </Suspense>
 
         <Suspense fallback={null}>
-          <EndingCodex
-            isOpen={isCodexOpen}
-            onClose={() => setIsCodexOpen(false)}
-          />
+          <EndingCodex isOpen={isCodexOpen} onClose={() => setIsCodexOpen(false)} />
         </Suspense>
 
         {/* 教程弹窗 */}
@@ -234,7 +217,11 @@ function App() {
             isOpen={showTutorial}
             onClose={() => setShowTutorial(false)}
             onComplete={() => {
-              localStorage.setItem('chongzhen_tutorial_seen', 'true')
+              try {
+                localStorage.setItem('chongzhen_tutorial_seen', 'true')
+              } catch {
+                // 隐私模式下写入失败，不影响继续游戏
+              }
               setShowTutorial(false)
             }}
           />

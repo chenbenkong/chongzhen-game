@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
-import { Character, GameStateValues, OriginType, DegreeType, Attributes, LifeRecord, LifeSummary, PlayerFaction } from '../types/game'
+import { Character, GameStateValues, OriginType, DegreeType, Attributes, LifeRecord, LifeSummary, PlayerFaction, HiddenAttributes, HIDDEN_DEFAULTS, normalizeHidden } from '../types/game'
 import { GameEvent, EventChoice } from '../types/event'
-import { SaveData, saveSaveSlot, loadSaveSlot, saveAutosave } from '../types/save'
+import { SaveData, PlayerStats, createEmptyPlayerStats, normalizePlayerStats, saveSaveSlot, loadSaveSlot, saveAutosave, deleteAutosave } from '../types/save'
 import { checkAndUnlockAchievements, loadAchievements, Achievement, AchievementContext } from '../types/achievement'
 import { DifficultyLevel, getDifficultyConfig } from '../types/difficulty'
 import { initialEvents, allGrayChoiceEvents } from '../data/events/index'
@@ -40,6 +40,21 @@ export const RANKS = [
 
 // 升官缓冲分：每升一级额外加20分，防止刚升官就贬官
 const PROMOTION_SCORE_BONUS = 20
+
+/**
+ * 把政绩分换算成 RANKS 里的「升序下标」（0 = 从九品司狱，越大官越高）。
+ * 注意 RANKS 是按 minScore 升序排列的，所以必须取「最后一个满足 score >= minScore」
+ * 的下标。早先此处误写成 `RANKS.findIndex(r => score >= r.minScore)`，由于
+ * RANKS[0].minScore === 0，该表达式恒等于 0，导致 checkDemotion 里
+ * `newRankIndex < previousRankIndex` 永远为假 —— 整条「贬官」机制形同虚设。
+ */
+function rankIndexForScore(score: number): number {
+  let index = 0
+  for (let i = 0; i < RANKS.length; i++) {
+    if (score >= RANKS[i].minScore) index = i
+  }
+  return index
+}
 
 // 计算政绩分 - 基于基础分加上属性变化的影响
 // 主角从正七品知县开始，基础分280分（250基准 + 30缓冲）
@@ -280,9 +295,10 @@ function checkDemotion(
 
   if (triggeredReasons.length > 0) {
     const worstReason = triggeredReasons.sort((a, b) => b.severity - a.severity)[0]
-    const currentRankIndex = RANKS.findIndex(r => currentScore >= r.minScore)
-    const previousRankIndex = RANKS.findIndex(r => previousScore >= r.minScore)
-    let demotionLevels = worstReason.severity
+    // 以「本回合结算前」的政绩分对应的官阶为基准扣减：
+    // currentScore 已经反映了本回合的下滑，若再以它为基准会重复惩罚。
+    const previousRankIndex = rankIndexForScore(previousScore)
+    const demotionLevels = worstReason.severity
 
     if (worstReason.severity >= 3) {
       return {
@@ -294,7 +310,7 @@ function checkDemotion(
       }
     }
 
-    const newRankIndex = Math.max(0, currentRankIndex - demotionLevels)
+    const newRankIndex = Math.max(0, previousRankIndex - demotionLevels)
     const newRank = RANKS[newRankIndex]
 
     if (newRankIndex < previousRankIndex) {
@@ -321,7 +337,8 @@ function createInitialCharacter(
   playerCustomAge?: number | null
 ): Character {
   const originData = origins[originType]
-  const hidden = originData.initialHidden
+  // 出身只声明部分隐藏属性，其余（含机敏值 / 忠诚值）补齐为默认值 50
+  const hidden = normalizeHidden(originData.initialHidden)
   const defaultAge = deg === '进士' ? 22 : deg === '举人' ? 24 : 16 + Math.floor(Math.random() * 6)
   const initialAge = (playerCustomAge != null && playerCustomAge >= 16) ? playerCustomAge : defaultAge
 
@@ -535,6 +552,16 @@ export function useGameEngine(props: UseGameEngineProps) {
     return undefined
   })
 
+  /**
+   * 局内统计计数（成就判定用，随存档持久化，见 SaveData.stats）。
+   * 升迁 / 贬官次数不在这里 —— 它们已经存在 character.promotionCount / demotionCount 上。
+   * 读档时按现有 useState 初始化模式从 loadSaveData 恢复；旧存档没有 stats 时补 0。
+   */
+  const [playerStats, setPlayerStats] = useState<PlayerStats>(() => {
+    if (loadSaveData) return normalizePlayerStats(loadSaveData.stats)
+    return createEmptyPlayerStats()
+  })
+
   // refs 用于在稳定回调中读取最新状态
   const characterRef = useRef(character)
   const gameStateRef = useRef(gameState)
@@ -549,6 +576,7 @@ export function useGameEngine(props: UseGameEngineProps) {
   const playTimeRef = useRef(playTime)
   const onReturnToMenuRef = useRef(onReturnToMenu)
   const currentStorylineRef = useRef(currentStoryline)
+  const playerStatsRef = useRef(playerStats)
 
   useEffect(() => { characterRef.current = character }, [character])
   useEffect(() => { gameStateRef.current = gameState }, [gameState])
@@ -563,6 +591,18 @@ export function useGameEngine(props: UseGameEngineProps) {
   useEffect(() => { playTimeRef.current = playTime }, [playTime])
   useEffect(() => { onReturnToMenuRef.current = onReturnToMenu }, [onReturnToMenu])
   useEffect(() => { currentStorylineRef.current = currentStoryline }, [currentStoryline])
+  useEffect(() => { playerStatsRef.current = playerStats }, [playerStats])
+
+  /**
+   * 更新局内统计。
+   * 同时写 ref 与 state：ref 保证同一 tick 内连续自增不丢（例如一次选项同时命中
+   * 「第一个选项」与连击计数），state 保证自动存档能读到最新值并触发重跑。
+   */
+  const updatePlayerStats = useCallback((updater: (prev: PlayerStats) => PlayerStats) => {
+    const next = updater(playerStatsRef.current)
+    playerStatsRef.current = next
+    setPlayerStats(next)
+  }, [])
 
   // 推断当前剧情线：优先使用玩家选择后持久化的剧情线，否则从历史事件反推
   const getCurrentStoryline = useCallback((): string | undefined => {
@@ -766,13 +806,29 @@ export function useGameEngine(props: UseGameEngineProps) {
   }, [])
 
   const checkAchievements = useCallback((hasEnded?: boolean, endingType?: string) => {
+    const stats = playerStatsRef.current
     const ctx: AchievementContext = {
       attributes: characterRef.current.attributes,
       gameState: gameStateRef.current,
       characterRank: characterRef.current.rank,
       eventHistory: eventHistoryRef.current,
       hasEnded: hasEnded,
-      endingType: endingType
+      endingType: endingType,
+      // 出身（noble_climb 成就需要按出身判定）
+      origin: characterRef.current.origin,
+      // 升迁 / 贬官次数直接读角色对象上的累计值（存档里也在角色身上，无需额外持久化）
+      promotionCount: characterRef.current.promotionCount ?? 0,
+      demotionCount: characterRef.current.demotionCount ?? 0,
+      // 以下计数来自局内统计（随存档持久化）
+      luckyStreak: stats.luckyStreak,
+      unluckyStreak: stats.unluckyStreak,
+      firstChoiceCount: stats.firstChoiceCount,
+      // randomChoiceCount 恒为 0：游戏内没有「随机选择选项」的入口
+      // （EventDisplay 只有普通选择 + 投骰成功率检定），因此本文件里不存在它的自增点。
+      // 对应成就 random_player 在 achievement.ts 里标记为 deadByDesign。
+      randomChoiceCount: stats.randomChoiceCount,
+      undoCount: stats.undoCount,
+      saveCount: stats.saveCount
     }
     const newlyUnlocked = checkAndUnlockAchievements(ctx)
     // 成就解锁后不再弹出弹窗，仅在后台记录
@@ -838,6 +894,36 @@ export function useGameEngine(props: UseGameEngineProps) {
     const stateForCheck = { ...newStateVals } as Record<string, number>
     const hiddenForCheck = { ...currentCharacter.hidden } as Record<string, number>
 
+    // ===== 成就统计（选项侧）=====
+
+    // 「果断抉择」：本次选择是否为当前事件的第一个选项
+    if (currentEvent?.choices[0]?.id === choice.id) {
+      updatePlayerStats(prev => ({ ...prev, firstChoiceCount: prev.firstChoiceCount + 1 }))
+    }
+
+    // 「时来运转 / 屋漏偏逢雨」的「负面回合」定义：
+    // 把本次选项**实际生效**的全部增量相加 ——
+    //   属性五项差值（已含难度倍率、出身修正与上下限裁剪）、
+    //   五方态度差值（已含出身修正与 0-100 裁剪）、
+    //   隐藏属性声明增量（实际写入时另有 0-100 裁剪，这里按声明值近似）。
+    // 总和 < 0 记为「负面回合」→ unluckyStreak+1 且 luckyStreak 清零；
+    // 总和 >= 0 记为「非负面回合」→ luckyStreak+1 且 unluckyStreak 清零。
+    const attrDelta = (Object.keys(newAttrs) as Array<keyof Attributes>)
+      .reduce((sum, key) => sum + ((newAttrs[key] ?? 0) - (currentCharacter.attributes[key] ?? 0)), 0)
+    const stateDelta = (Object.keys(newStateVals) as Array<keyof GameStateValues>)
+      .reduce((sum, key) => {
+        if (key === 'currentYear' || key === 'currentMonth' || key === 'turn') return sum
+        return sum + (((newStateVals[key] as number) ?? 0) - ((currentGameState[key] as number) ?? 0))
+      }, 0)
+    const hiddenEffects = choice.effects.hidden as Record<string, number> | undefined
+    const hiddenDelta = hiddenEffects
+      ? Object.keys(hiddenEffects).reduce((sum, key) => sum + (hiddenEffects[key] ?? 0), 0)
+      : 0
+    const netEffect = attrDelta + stateDelta + hiddenDelta
+    updatePlayerStats(prev => netEffect < 0
+      ? { ...prev, unluckyStreak: prev.unluckyStreak + 1, luckyStreak: 0 }
+      : { ...prev, luckyStreak: prev.luckyStreak + 1, unluckyStreak: 0 })
+
     setUndoHistory(prev => [...prev, {
       character: snapshotChar,
       gameState: snapshotState,
@@ -853,9 +939,16 @@ export function useGameEngine(props: UseGameEngineProps) {
       newChar.history = [...newChar.history, historyEntry]
 
       if (choice.effects.hidden) {
-        newChar.hidden = { ...newChar.hidden }
+        // 先规整：旧存档里可能缺键或是 NaN/null，直接相加会污染成 NaN
+        newChar.hidden = normalizeHidden(newChar.hidden)
         for (const [key, value] of Object.entries(choice.effects.hidden)) {
-          const hiddenKey = key as keyof typeof newChar.hidden
+          if (!(key in HIDDEN_DEFAULTS)) {
+            // 未知隐藏属性键：跳过而不是写入 NaN（NaN 会被 JSON 序列化成 null，
+            // 并让条件判定在「永远通过」和「永远不通过」之间摇摆）
+            console.warn('[effects] 未知的隐藏属性键，已忽略：', key)
+            continue
+          }
+          const hiddenKey = key as keyof HiddenAttributes
           const currentVal = newChar.hidden[hiddenKey]
           newChar.hidden[hiddenKey] = Math.max(0, Math.min(100, currentVal + value))
         }
@@ -1177,6 +1270,8 @@ export function useGameEngine(props: UseGameEngineProps) {
   const handleUndo = useCallback(() => {
     const history = undoHistoryRef.current
     if (history.length === 0) return
+    // 「谨慎行事」成就：只有真正执行了回退才计数
+    updatePlayerStats(prev => ({ ...prev, undoCount: prev.undoCount + 1 }))
     const snapshot = history[history.length - 1]
     setCharacter({ ...snapshot.character })
     setGameState(snapshot.gameState)
@@ -1184,6 +1279,11 @@ export function useGameEngine(props: UseGameEngineProps) {
     setUndoHistory(prev => prev.slice(0, -1))
   }, [])
 
+  /**
+   * 打开「存档槽」弹窗。
+   * 注意：这里不写盘，真正的写入在 handleSaveToSlot —— 因此手动存档计数
+   * （PlayerStats.saveCount）也只加在 handleSaveToSlot 里。
+   */
   const handleSave = useCallback(() => {
     setSaveSlotsMode('save')
     setIsSaveSlotsOpen(true)
@@ -1195,10 +1295,22 @@ export function useGameEngine(props: UseGameEngineProps) {
     const currentEventHistory = eventHistoryRef.current
     const currentLifeRecords = lifeRecordsRef.current
     const charForSave = { ...currentCharacter }
+    // 「习惯性存档」成就：手动存档计数（自动存档不计入）。
+    // 先把本次存档算进去，写盘成功后才落到内存 —— 写失败（配额不足）不虚增。
+    const statsForSave: PlayerStats = {
+      ...playerStatsRef.current,
+      saveCount: playerStatsRef.current.saveCount + 1
+    }
+    // 必须和自动存档写入同一组字段：事件 id 在下月时就已经进了 eventHistory，
+    // 若存档不带 currentEvent / pendingEvents，读档后该事件不会重放，
+    // 玩家会永久错过一个已经「消耗掉」的事件（早期手动存档就存在这个问题）。
     const saveData: SaveData = {
       character: charForSave as any,
       gameState: currentGameState,
       eventHistory: currentEventHistory,
+      currentEventId: currentEventRef.current?.id || null,
+      currentEvent: currentEventRef.current || null,
+      pendingEvents: pendingEventsRef.current,
       origin,
       degree,
       playerName: currentCharacter.name || playerName || '',
@@ -1206,9 +1318,16 @@ export function useGameEngine(props: UseGameEngineProps) {
       lifeRecords: currentLifeRecords,
       savedAt: new Date().toISOString(),
       playTime: playTimeRef.current,
-      achievements: loadAchievements()
+      achievements: loadAchievements(),
+      difficulty,
+      currentStoryline: currentStorylineRef.current,
+      stats: statsForSave
     }
     const ok = saveSaveSlot(slotId, saveData)
+    if (ok) {
+      playerStatsRef.current = statsForSave
+      setPlayerStats(statsForSave)
+    }
     setIsSaveSlotsOpen(false)
     if (ok) {
       setSaveNotification({
@@ -1223,7 +1342,7 @@ export function useGameEngine(props: UseGameEngineProps) {
         subMessage: 'localStorage 写入异常，请检查浏览器存储空间或隐私模式设置'
       })
     }
-  }, [origin, degree, playerName])
+  }, [origin, degree, playerName, difficulty])
 
   const handleLoadFromSlot = useCallback((slotId: number) => {
     const saveData = loadSaveSlot(slotId)
@@ -1238,22 +1357,81 @@ export function useGameEngine(props: UseGameEngineProps) {
     }
   }, [])
 
+  /**
+   * 重开一局（死亡 / 结局后的「重新开始」）。
+   *
+   * 这里必须重置**引擎的全部局内状态**。早先只重置了 gameState/lifeRecords/
+   * currentEvent/isGameOver，导致两个严重问题：
+   *   1. eventHistory 仍标记着上一局已触发过的全部事件 id，而事件选择器会过滤
+   *      `history.includes(id)`，于是新一局几乎没有事件可触发；
+   *   2. 角色（姓名、官阶、属性、升迁次数）沿用上一局的，等于用死者的身份重开。
+   * 现在按「用同样的出身与姓名重新捏一个角色」的语义做完整重置。
+   */
   const handleRestart = useCallback(() => {
-    setGameState({
+    const freshCharacter = createInitialCharacter(
+      origin,
+      degree,
+      bonusAttributes,
+      playerName,
+      playerCourtesyName,
+      playerHometown,
+      playerCustomAge
+    )
+    const originData = origins[origin]
+    const initialGameStateFromOrigin = originData.initialGameState || {}
+    const freshGameState: GameStateValues = {
       currentYear: 1628,
       currentMonth: 1,
       turn: 0,
-      圣眷: 50,
-      中官: 50,
-      清议: 50,
-      士绅: 50,
-      民望: 50,
+      圣眷: initialGameStateFromOrigin.圣眷 ?? 50,
+      中官: initialGameStateFromOrigin.中官 ?? 50,
+      清议: initialGameStateFromOrigin.清议 ?? 50,
+      士绅: initialGameStateFromOrigin.士绅 ?? 50,
+      民望: initialGameStateFromOrigin.民望 ?? 50,
       国势: 75
-    })
-    setLifeRecords([])
+    }
+    const freshMeritScore = calculateMeritScore(freshCharacter, freshGameState)
+
+    setCharacter(freshCharacter)
+    setGameState(freshGameState)
+    setEventHistory([])
+    setPendingEvents([])
     setCurrentEvent(null)
+    setUndoHistory([])
+    setMeritScore(freshMeritScore)
+    setPreviousMeritScore(freshMeritScore / difficultyConfig.promotionThresholdMultiplier)
+    setIdentityType('official')
+    setCurrentStoryline(undefined)
+    setBiography('')
+    setLifeRecords([])
+    setDeathEndingState({
+      show: false,
+      type: 'martyrdom',
+      title: '',
+      description: '',
+      echo: '',
+      tags: []
+    })
     setIsGameOver(false)
-  }, [])
+    setIsLifeReviewOpen(false)
+    setPromotionMessage(null)
+    setLastAutosaveFingerprint('')
+    // 新的一局：局内统计清零（否则上一局的存档次数 / 连击数会串进新局，成就等于白送）
+    const freshStats = createEmptyPlayerStats()
+    playerStatsRef.current = freshStats
+    setPlayerStats(freshStats)
+    // 清掉上一局的自动存档，否则返回标题后「继续游戏」会恢复已结束的那一局
+    deleteAutosave()
+  }, [
+    origin,
+    degree,
+    bonusAttributes,
+    playerName,
+    playerCourtesyName,
+    playerHometown,
+    playerCustomAge,
+    difficultyConfig
+  ])
 
   const handleReturnToMenu = useCallback(() => {
     setIsGameOver(false)
@@ -1444,6 +1622,11 @@ export function useGameEngine(props: UseGameEngineProps) {
     setPendingEvents((loadSaveData as any).pendingEvents || [])
     setCurrentEvent((loadSaveData as any).currentEvent || null)
 
+    // 局内统计随存档一起恢复（旧存档没有 stats → 全 0）
+    const restoredStats = normalizePlayerStats(loadSaveData.stats)
+    playerStatsRef.current = restoredStats
+    setPlayerStats(restoredStats)
+
     setMeritScore(currentScore)
     setPreviousMeritScore(currentScore)
 
@@ -1459,7 +1642,15 @@ export function useGameEngine(props: UseGameEngineProps) {
   }, [loadSaveData])
 
   // 组件挂载/读档时初始化第一个事件
+  // React 18 StrictMode 下挂载 effect 会执行两次（清理后重跑）。原守卫只依赖
+  // currentEventRef / isProcessingRef，而这两个 ref 是由另外的 effect 在渲染后同步的，
+  // 第二次执行时它们仍是旧值 → 事件 id 被重复写进 eventHistory、年龄被加两次。
+  // 这里加一次性 ref 守卫，保证初始化逻辑只跑一次。
+  const firstEventInitialisedRef = useRef(false)
   useEffect(() => {
+    if (firstEventInitialisedRef.current) return
+    firstEventInitialisedRef.current = true
+
     if (currentEventRef.current) return
     if (isProcessingRef.current) return
 
@@ -1541,7 +1732,9 @@ export function useGameEngine(props: UseGameEngineProps) {
       savedAt: new Date().toISOString(),
       playTime,
       achievements: loadAchievements(),
-      currentStoryline
+      difficulty,
+      currentStoryline,
+      stats: playerStats
     }
 
     const fingerprint = `${gameState.currentYear}|${gameState.currentMonth}|${gameState.turn}|${eventHistory.length}|${character.attributes.财帛}|${character.attributes.文韬}|${character.attributes.理政}|${character.attributes.武略}|${character.attributes.体质}|${gameState.圣眷}|${gameState.中官}|${gameState.清议}|${gameState.士绅}|${gameState.民望}|${gameState.国势}|${character.flags.length}|${currentEvent?.id || ''}|${currentStoryline || ''}`
@@ -1551,7 +1744,16 @@ export function useGameEngine(props: UseGameEngineProps) {
       window.clearTimeout(autosaveTimerRef.current)
     }
     autosaveTimerRef.current = window.setTimeout(() => {
-      saveAutosave(data)
+      const ok = saveAutosave(data)
+      if (!ok) {
+        // 写入失败（多为 localStorage 配额耗尽）。以前这里静默失败，
+        // 玩家会在毫无提示的情况下丢掉整局进度，现在明确告知。
+        setSaveNotification({
+          isOpen: true,
+          message: '自动存档失败',
+          subMessage: '浏览器本地存储已满，请删除旧存档或清理站点数据，否则进度可能丢失'
+        })
+      }
       setLastAutosaveFingerprint(fingerprint)
       autosaveTimerRef.current = null
     }, 400)
@@ -1562,7 +1764,7 @@ export function useGameEngine(props: UseGameEngineProps) {
         autosaveTimerRef.current = null
       }
     }
-  }, [character, gameState, eventHistory, currentEvent, pendingEvents, isProcessing, identityType, lifeRecords, playTime, lastAutosaveFingerprint, origin, degree, playerName])
+  }, [character, gameState, eventHistory, currentEvent, pendingEvents, isProcessing, identityType, lifeRecords, playTime, lastAutosaveFingerprint, origin, degree, playerName, difficulty, currentStoryline, playerStats])
 
   // 升官贬官检查
   useEffect(() => {

@@ -4,8 +4,11 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  /* 100vw 会把桌面端竖向滚动条宽度也算进去 → 横向滚动条；固定层用 100% 即可 */
+  width: 100%;
+  /* 100vh 在移动端动态工具栏下高于可视区域，底部按钮会被推出屏幕 */
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', 'SimSun', serif;
   z-index: 9999;
@@ -70,6 +73,7 @@
   width: 100%;
   max-width: 1280px;
   height: 100vh;
+  height: 100dvh;
   padding: 18px 32px;
   display: flex;
   flex-direction: column;
@@ -792,8 +796,8 @@
 }
 
 @media (max-width: 900px) {
-  .ending-screen { overflow-y: auto; height: auto; min-height: 100vh; }
-  .ending-container { height: auto; min-height: 100vh; }
+  .ending-screen { overflow-y: auto; height: auto; min-height: 100vh; min-height: 100dvh; }
+  .ending-container { height: auto; min-height: 100vh; min-height: 100dvh; }
   .ending-top { grid-template-columns: 1fr; }
   .ending-middle { grid-template-columns: 1fr; }
   .col-content { overflow-y: visible; }
@@ -887,7 +891,7 @@
 }
 
 .biography-title {
-  font-family: 'Ma Shan Zheng', 'STKaiti', 'KaiTi', '楷体', serif;
+  font-family: var(--font-heading);
   font-size: 1.05rem;
   letter-spacing: 6px;
   color: #d4af6f;
@@ -940,7 +944,7 @@
   border: 1px solid rgba(180,140,80,0.25);
   border-radius: 4px;
   color: #d4af6f;
-  font-family: 'Ma Shan Zheng','STKaiti','KaiTi','楷体',serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   letter-spacing: 4px;
   cursor: pointer;
@@ -954,7 +958,7 @@
 .counterfactual-icon::before {
   content: '变';
   display: inline-block;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   color: #d4af6f;
 }
 .counterfactual-label { color: #d4af6f; }
@@ -985,7 +989,7 @@
 }
 .counterfactual-item:last-child { border-bottom: none; padding-bottom: 0; }
 .counterfactual-title {
-  font-family: 'Ma Shan Zheng','STKaiti','KaiTi','楷体',serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   color: #c8a060;
   letter-spacing: 2px;

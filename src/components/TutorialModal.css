@@ -53,7 +53,7 @@
   font-size: 64px;
   margin-bottom: 20px;
   color: #c9a227;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
 }
 
 .tutorial-icon.welcome::before { content: '引'; }

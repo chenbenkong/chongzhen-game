@@ -1,6 +1,8 @@
 .game-screen {
   padding: 4px 20px 20px;
+  /* 100vh 在移动端动态工具栏下高于可视区域，底部操作栏会被推到屏幕外 */
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .game-main {
@@ -19,8 +21,10 @@
   }
 }
 
-/* 小平板 */
-@media (max-width: 900px) {
+/* 小平板 / 横屏手机：单列。
+   断点从 900px 提到 1024px —— 901~1024px 时两条侧栏 + 间距要吃掉 400px 以上，
+   中间事件正文不足 480px 且 grid 项目默认 min-width:auto 会撑宽 1fr 轨道，导致整页横向滚动。 */
+@media (max-width: 1024px) {
   .game-main {
     grid-template-columns: 1fr;
   }
@@ -63,12 +67,15 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  /* grid 项目默认 min-width:auto，宽子元素会撑宽轨道 → 整页横向滚动 */
+  min-width: 0;
 }
 
 .right-sidebar {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
 }
 
 .history-panel {
@@ -126,6 +133,8 @@
 
 .main-content {
   min-height: auto;
+  /* 允许 1fr 轨道被压缩，避免长文本/宽表格撑破布局 */
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -410,7 +419,8 @@
    ============================================================ */
 .promotion-toast {
   position: fixed;
-  top: 80px;
+  /* 避开刘海 / 状态栏：80px 基础间距 + 顶部安全区内缩 */
+  top: calc(80px + env(safe-area-inset-top, 0px));
   left: 50%;
   color: #d4c8a8;
   padding: 16px 32px;
@@ -444,4 +454,15 @@
 }
 .main-content {
   animation: fadeInUp 0.4s ease 0.15s both;
+}
+
+/* ============================================================
+   触控点按目标：仅 any-pointer: coarse 生效，
+   桌面鼠标布局不受影响
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .close-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

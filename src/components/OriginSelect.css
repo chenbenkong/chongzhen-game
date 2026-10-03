@@ -300,3 +300,13 @@
 .select-btn:active {
   transform: scale(0.98);
 }
+
+/* ========== 无障碍改造补充（追加）：出身卡片改为 role=button 后的键盘焦点样式 ========== */
+.origin-card[role="button"] {
+  outline: none;
+}
+
+.origin-card[role="button"]:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
+}

@@ -1,12 +1,13 @@
 // 结局图鉴组件：显示游戏中所有结局
 // 真实可触发的结局已在 BoundaryEventManager 注册，触发条件由 GameEvent.conditions 编译
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { GameEvent } from '../types/event'
 import { allEndingEvents } from '../data/events/ending'
 import { getUnlockedAchievements } from '../types/achievement'
 import { ENDING_ARCHETYPES, EndingArchetype } from '../utils/endingSystem'
+import { useModal } from '../hooks/useModal'
 import Icon from './Icon'
 import './EndingCodex.css'
 
@@ -46,6 +47,29 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
   const [unlockedIds, setUnlockedIds] = useState<Set<string>>(new Set())
   const [unlockTimes, setUnlockTimes] = useState<Record<string, string>>({})
   const [detail, setDetail] = useState<GameEvent | null>(null)
+
+  // 详情弹窗的初始焦点（关闭按钮）
+  const detailCloseRef = useRef<HTMLButtonElement>(null)
+
+  // 图鉴主弹窗：对话框语义 + ESC + Tab 焦点陷阱 + 焦点还原 + 滚动锁
+  const {
+    getModalProps: getCodexModalProps,
+    dialogRef: codexDialogRef,
+    titleId: codexTitleId,
+    handleOverlayClick: handleCodexOverlayClick
+  } = useModal({ open: isOpen, onClose })
+
+  // 详情弹窗（叠在图鉴之上）：同样需要完整语义，并指定初始焦点
+  const {
+    getModalProps: getDetailModalProps,
+    dialogRef: detailDialogRef,
+    titleId: detailTitleId,
+    handleOverlayClick: handleDetailOverlayClick
+  } = useModal({
+    open: isOpen && detail !== null,
+    onClose: () => setDetail(null),
+    initialFocusRef: detailCloseRef
+  })
 
   useEffect(() => {
     if (isOpen) {
@@ -97,19 +121,18 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
   }
 
   const detailNode = detail ? (
-    <div
-      className="codex-detail-overlay"
-      onClick={(e) => { if (e.target === e.currentTarget) setDetail(null) }}
-    >
+    <div className="codex-detail-overlay" onClick={handleDetailOverlayClick}>
       <div
         className={`codex-detail-modal ${unlockedIds.has(detail.id) ? '' : 'locked'} ${TIER_TONE[detail.endingConfig?.tier || 'mysterious']}`}
+        ref={detailDialogRef}
+        {...getDetailModalProps()}
       >
-        <button className="codex-detail-close" onClick={() => setDetail(null)} aria-label="关闭">关</button>
+        <button ref={detailCloseRef} className="codex-detail-close" onClick={() => setDetail(null)} aria-label="关闭">关</button>
         <div className="codex-detail-header">
           <div className="codex-detail-tier-tag">
             {TIER_LABEL[detail.endingConfig?.tier || ''] || '奇遇'}
           </div>
-          <h3 className="codex-detail-title">{detail.title}</h3>
+          <h3 className="codex-detail-title" id={detailTitleId}>{detail.title}</h3>
           <div className="codex-detail-meta">
             <span>ID: {detail.id}</span>
             {unlockedIds.has(detail.id) ? (
@@ -165,12 +188,12 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
   ) : null
 
   const node = (
-    <div className="ending-codex-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
-      <div className="ending-codex-modal">
+    <div className="ending-codex-overlay" onClick={handleCodexOverlayClick}>
+      <div className="ending-codex-modal" ref={codexDialogRef} {...getCodexModalProps()}>
         {/* 顶栏 */}
         <div className="codex-topbar">
           <div className="codex-title-area">
-            <div className="codex-title">结 局 图 鉴</div>
+            <h2 className="codex-title" id={codexTitleId}>结 局 图 鉴</h2>
             <div className="codex-subtitle">史 馆 藏 本</div>
           </div>
           <div className="codex-progress">
@@ -184,7 +207,7 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
             </div>
             <div className="codex-progress-label">已达成 {progressPercent}%</div>
           </div>
-          <button className="codex-close-btn" onClick={onClose}>关</button>
+          <button className="codex-close-btn" onClick={onClose} aria-label="关闭结局图鉴">关</button>
         </div>
 
         {/* 卷首 tab（8 大卷） */}
@@ -234,11 +257,12 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
                     ? (e.narrative?.situation || e.description || '')
                     : (e.description || e.narrative?.situation || '未达成 · 条件未知')
                   return (
-                    <div
+                    <button
                       key={e.id}
+                      type="button"
                       className={`codex-card ${unlocked ? 'unlocked' : 'locked'} ${TIER_TONE[tier]}`}
-                      title={unlocked ? `${e.title} · 双击查看详情` : `${e.title}（未达成）· 双击查看详情`}
-                      onDoubleClick={() => setDetail(e)}
+                      title={unlocked ? `${e.title} · 单击查看详情` : `${e.title}（未达成）· 单击查看详情`}
+                      onClick={() => setDetail(e)}
                     >
                       <div className="codex-card-name">
                         {displayName}
@@ -253,7 +277,7 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
                       {!unlocked && (
                         <div className="codex-card-seal">未 解 锁</div>
                       )}
-                    </div>
+                    </button>
                   )
                 })}
               </div>
@@ -267,8 +291,8 @@ export default function EndingCodex({ isOpen, onClose }: EndingCodexProps) {
 
         {/* 底栏 */}
         <div className="codex-footer">
-          <div className="codex-footer-hint">已达成高亮显示 · 灰色卡片代表尚未达成 · 双击卡片查看详情</div>
-          <button className="codex-footer-close" onClick={onClose}>关 闭</button>
+          <div className="codex-footer-hint">已达成高亮显示 · 灰色卡片代表尚未达成 · 单击卡片查看详情</div>
+          <button className="codex-footer-close" onClick={onClose} aria-label="关闭结局图鉴">关 闭</button>
         </div>
       </div>
 

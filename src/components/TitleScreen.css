@@ -10,6 +10,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100dvh;
   text-align: center;
   padding: 60px 40px;
   overflow: hidden;
@@ -32,7 +33,7 @@
     0 0 40px rgba(139,50,0,0.06),
     inset 0 0 80px rgba(0,0,0,0.3),
     inset 0 1px 0 rgba(197,165,90,0.05);
-  min-width: 780px;
+  min-width: min(780px, 100%);
   max-width: 92vw;
   border: none;
   display: flex;
@@ -154,6 +155,66 @@
 .title-quote::before { margin-bottom: 14px; }
 .title-quote::after { margin-top: 14px; }
 
+/* 难度选择 */
+.title-difficulty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  animation: fadeInUp 0.6s ease 0.7s both;
+}
+
+.title-difficulty__label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: rgba(197, 165, 90, 0.4);
+}
+
+.title-difficulty__options {
+  display: flex;
+  border: 1px solid rgba(197, 165, 90, 0.2);
+}
+
+.title-difficulty__option {
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(197, 165, 90, 0.2);
+  color: rgba(197, 165, 90, 0.55);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.25em;
+  text-indent: 0.25em;
+  padding: 8px 22px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.title-difficulty__option:last-child {
+  border-right: none;
+}
+
+.title-difficulty__option:hover {
+  color: rgba(197, 165, 90, 0.9);
+  background: rgba(197, 165, 90, 0.06);
+}
+
+.title-difficulty__option.is-active {
+  background: rgba(197, 165, 90, 0.14);
+  color: var(--gold);
+}
+
+.title-difficulty__desc {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: rgba(235, 230, 220, 0.42);
+  margin: 0;
+  min-height: 1.4em;
+}
+
 /* 标题屏按钮组 - 横向并排 */
 .title-buttons {
   display: flex;
@@ -226,8 +287,9 @@
 /* 右下角 - 成就 / 图鉴 / 帮助 */
 .title-corner-buttons {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  /* 避开 iPhone 刘海 / Home 指示条：24px 基础间距 + 安全区内缩 */
+  right: calc(24px + env(safe-area-inset-right, 0px));
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -278,4 +340,58 @@
   .title-btn { padding: 12px 30px; min-width: 180px; font-size: 0.9rem; letter-spacing: 0.3em; }
   .title-buttons { flex-direction: column; gap: 12px; }
   .title-version-topleft { top: 80px; left: 16px; }
+}
+
+/* ============================================================
+   矮屏适配：按高度而非宽度收缩
+   问题：标题框在 360x640 手机上高约 881px，横屏手机（高 390px）下更高，
+   导致主按钮「开 始 仕 途」被挤到折叠线以下，玩家必须先滚动才能开局。
+   这里按视口高度逐级压缩留白与字号，让主操作始终落在首屏内。
+   ============================================================ */
+@media (max-height: 820px) {
+  .title-screen { padding: 28px 32px; }
+  .title-frame { padding: 24px 48px; }
+  .title-main { font-size: 3.6rem; margin-bottom: 8px; }
+  .title-main::after { margin-top: 12px; }
+  .title-sub { margin-bottom: 20px; }
+  .title-tagline { margin-bottom: 12px; line-height: 1.75; }
+  .title-quote { margin-bottom: 22px; line-height: 1.75; }
+  .title-quote::before { margin-bottom: 9px; }
+  .title-quote::after { margin-top: 9px; }
+  .title-difficulty { margin-bottom: 20px; gap: 7px; }
+  .title-seal { margin-bottom: 12px; }
+}
+
+/* 更矮：手机竖屏（360x640 这类）与横屏手机。
+   此时印章与引语只是装饰，优先保证主按钮落在首屏内。
+   注意：这里**不**改 .title-buttons 的方向，方向交给上面的 max-width 规则决定，
+   避免在 360px 窄屏下把两个按钮并排挤出横向滚动。 */
+@media (max-height: 700px) {
+  .title-screen { padding: 14px 24px; }
+  .title-frame { padding: 16px 32px; }
+  .title-main { font-size: 2.9rem; line-height: 1.15; }
+  .title-main::after { margin-top: 9px; }
+  .title-seal { display: none; }
+  .title-quote { display: none; }
+  .title-sub { font-size: 0.66rem; margin-bottom: 12px; letter-spacing: 0.4em; }
+  .title-tagline { font-size: 0.72rem; line-height: 1.6; margin-bottom: 9px; }
+  .title-difficulty { margin-bottom: 12px; gap: 6px; }
+  .title-difficulty__label { font-size: 0.62rem; }
+  .title-difficulty__option { padding: 6px 16px; font-size: 0.74rem; }
+  .title-difficulty__desc { display: none; }
+  .title-buttons { gap: 9px; }
+  .title-btn { padding: 10px 26px; font-size: 0.86rem; }
+  .title-version-topleft { top: 8px; left: 12px; }
+}
+
+/* ============================================================
+   触控点按目标：仅 any-pointer: coarse 生效（触屏笔记本也命中），
+   不影响桌面鼠标下的视觉密度
+   ============================================================ */
+@media (any-pointer: coarse) {
+  .title-follow-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 14px;
+  }
 }

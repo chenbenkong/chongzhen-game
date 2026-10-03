@@ -1,0 +1,114 @@
+# ============================================================================
+#  electron-builder 配置（崇祯 · 宦海浮沉模拟器 桌面版）
+# ============================================================================
+#  说明：
+#   - 这里**不设置 publish**。发行由 owner 用 steamcmd 手工上传 depot 完成
+#     （见 steam/upload.mjs），不使用 electron-builder 自带的发布器。
+#   - web 构建产物通过 extraResources 复制进包，而不是塞进 asar，原因：
+#     打包后 index.html 在 <resources>/web/index.html，需与 main.cjs 的
+#     resolveAppEntry() 完全对应。extraResources 是"原样复制"语义，
+#     比 files + asarUnpack 更好推理。
+# ============================================================================
+
+appId: com.chenbenkong.chongzhen
+productName: 崇祯 · 宦海浮沉
+copyright: Copyright © 2024 chenbenkong
+
+directories:
+  output: release
+  buildResources: build
+
+# ---------------------------------------------------------------------------
+#  打进包的文件
+#  electron-builder 会自动带上 package.json 的 dependencies（含 optionalDependencies
+#  里的 steamworks.js）；native 模块会自动 unpack 到 app.asar.unpacked。
+#
+#  注意：这里**故意不包含** steam/steam_appid.txt。
+#  原因：steam_appid.txt 必须位于 exe 同级目录才会被 steam_api 读取，
+#  放进 resources/ 起不到作用；而且正式发行时应当由 Steam 客户端注入 AppID，
+#  depot 里带一个陈旧的 appid 文件反而是隐患。开发期需要时，
+#  直接把 desktop/steam/steam_appid.txt 拷到 release/win-unpacked/ 下面即可
+#  （main.cjs 也会从 desktop/steam/ 读取，见 applyDevAppIdConvenience()）。
+# ---------------------------------------------------------------------------
+files:
+  - main.cjs
+  - preload.cjs
+  - steam.cjs
+  - package.json
+
+# ---------------------------------------------------------------------------
+#  web 构建产物：仓库根 dist/ → <resources>/web/
+#  main.cjs 打包后从这里加载：<resources>/web/index.html
+#  ⚠️ 打包前必须先在仓库根执行 `npm run build`，否则这里会拷到旧产物或直接失败。
+# ---------------------------------------------------------------------------
+extraResources:
+  - from: ../dist
+    to: web
+    filter:
+      - '**/*'
+
+# asar 打包：源码不可直接翻看，但 native 模块会自动 unpack
+asar: true
+
+# ---------------------------------------------------------------------------
+#  Windows：NSIS 安装包 + zip 免安装包
+# ---------------------------------------------------------------------------
+win:
+  # build/icon.ico 由 scripts/generate-desktop-icons.py 生成
+  # （多尺寸 ICO：16/32/48/64/128/256，已回读校验包含 256 档）
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+  # 申请的 UAC 级别；perMachine: false 时需要 asInvoker
+  requestedExecutionLevel: asInvoker
+
+nsis:
+  # oneClick: false → 显示安装向导（选目录、选快捷方式），而不是静默一键装
+  oneClick: false
+  # 允许玩家改安装目录（Steam 用户经常要装到别的盘）
+  allowToChangeInstallationDirectory: true
+  # 只为当前用户安装，不需要管理员权限 —— Steam 场景下这是正确选择
+  perMachine: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: 崇祯宦海浮沉
+  # 卸载时保留玩家存档（存档在 %APPDATA% 下，本来就不会被删，这里只是显式声明）
+  deleteAppDataOnUninstall: false
+  artifactName: ${productName}-Setup-${version}-${arch}.${ext}
+
+# ---------------------------------------------------------------------------
+#  Linux：AppImage（必须在 Linux 上构建，或在 CI 的 Linux runner 上）
+#  注意：steamworks.js 的原生 .node 绑定是**按平台**分目录的，
+#        交叉编译不会替换它，所以每个平台都要在对应 OS 上出包。
+# ---------------------------------------------------------------------------
+linux:
+  # build/icon.png 由 scripts/generate-desktop-icons.py 生成（512x512）
+  icon: build/icon.png
+  category: Game
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+# ---------------------------------------------------------------------------
+#  macOS：dmg（必须在 macOS 上构建）
+#  ⚠️ Steam 上架 macOS 需要额外的签名与公证流程，本脚手架不覆盖。
+# ---------------------------------------------------------------------------
+mac:
+  # icon 故意留空：Pillow 无法生成 .icns，而指定一个不存在的路径会让打包报错。
+  # 如需出 macOS 包，请先在 macOS 上生成 desktop/build/icon.icns
+  # （步骤见 scripts/generate-desktop-icons.py 结尾的提示），
+  # 然后在这里加上 `icon: build/icon.icns`。
+  category: public.app-category.games
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  artifactName: ${productName}-${version}-${arch}.${ext}

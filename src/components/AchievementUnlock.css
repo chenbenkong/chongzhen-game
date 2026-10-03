@@ -89,7 +89,7 @@
   content: '功';
   display: inline-block;
   margin-right: 6px;
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
   color: #d4af37;
 }
 

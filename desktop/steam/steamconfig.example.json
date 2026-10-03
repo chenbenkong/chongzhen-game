@@ -1,0 +1,9 @@
+{
+  "appId": 480,
+  "depotId": 481,
+  "username": "your_steam_partner_account_name",
+  "contentRoot": "../release/win-unpacked",
+  "buildDescription": "崇祯·宦海浮沉 release build",
+  "branch": "",
+  "preview": false
+}

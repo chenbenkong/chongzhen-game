@@ -1,0 +1,15 @@
+{
+  "name": "chongzhen-game-e2e",
+  "private": true,
+  "version": "1.0.0",
+  "description": "端到端冒烟测试：真实浏览器里跑通「启动 → 开局 → 抉择 → 存档 → 读档」主链路，并校验多分辨率布局。",
+  "type": "module",
+  "scripts": {
+    "install:browser": "playwright install chromium",
+    "test": "node smoke.mjs",
+    "test:layout": "node layout.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

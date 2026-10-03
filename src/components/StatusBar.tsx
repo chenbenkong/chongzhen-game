@@ -1,6 +1,7 @@
 import { memo as ReactMemo } from 'react'
 import { Character, GameStateValues, DegreeType } from '../types/game'
 import { BGMInlineButton } from './BGM'
+import { isDebugModeEnabled } from '../utils/debug'
 import './StatusBar.css'
 
 interface StatusBarProps {
@@ -53,9 +54,19 @@ const StatusBarImpl = function StatusBar({ character, gameState, degree, onCheat
 
       <div className="status-right">
         <BGMInlineButton />
-        <button className="cheat-button" onClick={onCheatClick} title="进入幽灵模式（调试工具）">
-          幽灵模式
-        </button>
+        {/* 调试面板只在开发构建，或存有 ?debug=1 标记时出现。
+            它可以直接浏览全部事件与全部结局（含未解锁剧透），
+            正式发行版本必须隐藏。 */}
+        {isDebugModeEnabled() && (
+          <button
+            type="button"
+            className="cheat-button"
+            onClick={onCheatClick}
+            title="进入幽灵模式（调试工具）"
+          >
+            幽灵模式
+          </button>
+        )}
         <div className="origin-info">
           <span className="origin-label">出身</span>
           <span className="origin-value">{character.origin || '未知'}</span>

@@ -56,7 +56,7 @@
 
 .save-icon::before {
   content: '存';
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
 }
 
 @keyframes iconPulse {
@@ -83,14 +83,14 @@
   color: #c9a227;
   font-size: 1.1rem;
   font-weight: bold;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   text-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
 }
 
 .save-subtitle {
   color: #a09070;
   font-size: 0.9rem;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
 }
 
 /* 响应式 */

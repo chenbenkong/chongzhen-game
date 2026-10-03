@@ -78,7 +78,7 @@
   margin-bottom: 8px;
   animation: pulse 3s infinite;
   filter: drop-shadow(0 0 15px rgba(139, 0, 0, 0.5));
-  font-family: 'Ma Shan Zheng', serif;
+  font-family: var(--font-heading);
 }
 
 .death-ending-icon::before {

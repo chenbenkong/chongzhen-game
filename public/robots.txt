@@ -1,0 +1,7 @@
+# robots.txt — 崇祯·宦海浮沉模拟器
+# https://chenbenkong.github.io/chongzhen-game/
+
+User-agent: *
+Allow: /
+
+Sitemap: https://chenbenkong.github.io/chongzhen-game/sitemap.xml

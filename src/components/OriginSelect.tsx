@@ -1,3 +1,4 @@
+import { KeyboardEvent } from 'react'
 import { origins } from '../data/origins'
 import { OriginType, OriginData } from '../types/game'
 import './OriginSelect.css'
@@ -7,6 +8,15 @@ interface OriginSelectProps {
 }
 
 export default function OriginSelect({ onSelect }: OriginSelectProps) {
+  // 卡片内含"选此出身"按钮，button 不能嵌套 button（非法 HTML 且会破坏焦点模型），
+  // 因此卡片用 role="button" + tabIndex={0} 实现键盘可达，并自行处理 Enter / Space。
+  const handleCardKeyDown = (e: KeyboardEvent<HTMLDivElement>, origin: OriginData) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault()
+      onSelect(origin.type)
+    }
+  }
+
   return (
     <div className="origin-select">
       <h2>铨 选 出 身</h2>
@@ -14,10 +24,14 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
       
       <div className="origin-grid">
         {(Object.values(origins) as OriginData[]).map((origin) => (
-          <div 
-            key={origin.type} 
+          <div
+            key={origin.type}
             className={`origin-card origin-${origin.type}`}
+            role="button"
+            tabIndex={0}
+            aria-label={`选择出身：${origin.name}`}
             onClick={() => onSelect(origin.type)}
+            onKeyDown={(e) => handleCardKeyDown(e, origin)}
           >
             <div className="card-header">
               <h3>{origin.name}</h3>
@@ -67,11 +81,16 @@ export default function OriginSelect({ onSelect }: OriginSelectProps) {
               ))}
             </div>
 
+            {/* 内层按钮保留：键盘用户可直接 Tab 到它并回车选择；
+                阻止事件冒泡，避免触发卡片自身的 keydown 处理（否则会重复触发选择） */}
             <button 
               className="select-btn"
               onClick={(e) => {
                 e.stopPropagation()
                 onSelect(origin.type)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') e.stopPropagation()
               }}
             >
               选 此 出 身

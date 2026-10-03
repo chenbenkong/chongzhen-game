@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useModal } from '../hooks/useModal'
 import './TutorialModal.css'
 
 interface TutorialModalProps {
@@ -59,6 +60,13 @@ const tutorialSteps = [
 export default function TutorialModal({ isOpen, onClose, onComplete }: TutorialModalProps) {
   const [currentStep, setCurrentStep] = useState(0)
 
+  // 对话框语义 + ESC + Tab 焦点陷阱 + 焦点还原 + 滚动锁
+  // （教程与帮助会同时挂载两个实例，useId 保证标题 id 不冲突）
+  const { getModalProps, dialogRef, titleId, handleOverlayClick } = useModal({
+    open: isOpen,
+    onClose
+  })
+
   if (!isOpen) return null
 
   const currentStepData = tutorialSteps[currentStep]
@@ -79,13 +87,13 @@ export default function TutorialModal({ isOpen, onClose, onComplete }: TutorialM
   }
 
   const node = (
-    <div className="tutorial-overlay">
-      <div className="tutorial-modal">
-        <button className="tutorial-close" onClick={onClose}>×</button>
+    <div className="tutorial-overlay" onClick={handleOverlayClick}>
+      <div className="tutorial-modal" ref={dialogRef} {...getModalProps()}>
+        <button className="tutorial-close" onClick={onClose} aria-label="关闭">×</button>
         
         <div className="tutorial-content">
-          <div className={`tutorial-icon ${currentStepData.icon}`}></div>
-          <h2 className="tutorial-title">{currentStepData.title}</h2>
+          <div className={`tutorial-icon ${currentStepData.icon}`} aria-hidden="true"></div>
+          <h2 className="tutorial-title" id={titleId}>{currentStepData.title}</h2>
           <p className="tutorial-text">
             {currentStepData.content.split('\n').map((line, i) => (
               <span key={i}>

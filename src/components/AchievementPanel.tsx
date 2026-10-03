@@ -5,6 +5,7 @@ import {
   Achievement,
   ALL_ACHIEVEMENTS
 } from '../types/achievement'
+import { useModal } from '../hooks/useModal'
 import './AchievementPanel.css'
 
 interface AchievementPanelProps {
@@ -15,6 +16,12 @@ interface AchievementPanelProps {
 export default function AchievementPanel({ isOpen, onClose }: AchievementPanelProps) {
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const [filter, setFilter] = useState<'all' | 'unlocked' | 'locked'>('all')
+
+  // 对话框语义 + ESC + Tab 焦点陷阱 + 焦点还原 + 滚动锁
+  const { getModalProps, dialogRef, titleId, handleOverlayClick } = useModal({
+    open: isOpen,
+    onClose
+  })
 
   useEffect(() => {
     if (isOpen) {
@@ -64,10 +71,10 @@ export default function AchievementPanel({ isOpen, onClose }: AchievementPanelPr
   if (!isOpen) return null
 
   const node = (
-    <div className="achievement-panel-overlay visible" onClick={onClose}>
-      <div className="achievement-panel" onClick={e => e.stopPropagation()}>
+    <div className="achievement-panel-overlay visible" onClick={handleOverlayClick}>
+      <div className="achievement-panel" ref={dialogRef} {...getModalProps()}>
         <div className="achievement-panel-header">
-          <h2>成就系统</h2>
+          <h2 id={titleId}>成就系统</h2>
           <div className="achievement-stats">
             已解锁: <span className="highlight">{unlockedCount}/{totalCount}</span>
           </div>

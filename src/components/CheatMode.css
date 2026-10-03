@@ -9,7 +9,7 @@
   cursor: pointer;
   transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
   letter-spacing: 1px;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
   margin-bottom: 8px;
 }
 
@@ -233,7 +233,7 @@
   color: #c9a227;
   font-size: 1rem;
   font-weight: bold;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
 }
 
 .cheat-speaker-info {
@@ -406,7 +406,7 @@
   color: #b0a070;
   letter-spacing: 4px;
   font-weight: normal;
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
 }
 
 .cheat-effects-grid {
@@ -776,7 +776,8 @@
 /* ========== 结局图鉴 ========== */
 .cheat-ending-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  /* min(320px, 100%) —— 360px 视口下面板内可用宽度不足 320px 时会横向溢出 */
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: 12px;
   max-height: 420px;
   overflow-y: auto;
@@ -934,7 +935,7 @@
   white-space: nowrap;
   border: 1px solid rgba(197, 165, 90, 0.25);
   background: rgba(24, 18, 10, 0.6);
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-body);
 }
 
 .cheat-storyline-badge svg {
@@ -1066,4 +1067,19 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+/* ========== 无障碍改造补充（追加）：事件条目改为真实 button 后的外观重置 ========== */
+/* 只重置 button 的 UA 默认样式：background / border / padding 等视觉属性
+   仍由上面的 .cheat-event-item 规则决定，保持原设计不变 */
+.cheat-event-item {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.cheat-event-item:focus-visible {
+  outline: 2px solid #c9a227;
+  outline-offset: 2px;
 }

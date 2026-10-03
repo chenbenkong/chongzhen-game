@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useId } from 'react'
 import './NameInput.css'
 import { generateCourtesyName, randomHometown } from '../utils/naming'
 
@@ -42,6 +42,14 @@ export default function NameInput({ onConfirm }: NameInputProps) {
   const [hometown, setHometown] = useState('')           // 籍贯
   // 标记"字是否由系统自动填"，避免用户清空后又被覆盖
   const [autoGenCourtesy, setAutoGenCourtesy] = useState(true)
+
+  // 表单字段 id 前缀：useId 保证同名表单多次挂载也不会冲突
+  const formId = useId()
+  const surnameId = `${formId}-surname`
+  const givenNameId = `${formId}-given-name`
+  const courtesyId = `${formId}-courtesy`
+  const ageId = `${formId}-age`
+  const hometownId = `${formId}-hometown`
 
   const fullName = surname + name
 
@@ -122,8 +130,9 @@ export default function NameInput({ onConfirm }: NameInputProps) {
           {/* 第一行：姓 · 名 · 字 · 年岁 —— 横向 4 列排版，一屏装下 */}
           <div className="name-row primary-row">
             <div className="name-cell">
-              <label>姓</label>
+              <label htmlFor={surnameId}>姓</label>
               <input
+                id={surnameId}
                 type="text"
                 value={surname}
                 onChange={(e) => setSurname(e.target.value)}
@@ -134,8 +143,9 @@ export default function NameInput({ onConfirm }: NameInputProps) {
               />
             </div>
             <div className="name-cell">
-              <label>名</label>
+              <label htmlFor={givenNameId}>名</label>
               <input
+                id={givenNameId}
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -146,8 +156,9 @@ export default function NameInput({ onConfirm }: NameInputProps) {
               />
             </div>
             <div className="name-cell">
-              <label>字 <span className="auto-hint">（按名生成，可改）</span></label>
+              <label htmlFor={courtesyId}>字 <span className="auto-hint">（按名生成，可改）</span></label>
               <input
+                id={courtesyId}
                 type="text"
                 value={courtesyName}
                 onChange={(e) => handleCourtesyChange(e.target.value)}
@@ -158,8 +169,9 @@ export default function NameInput({ onConfirm }: NameInputProps) {
               />
             </div>
             <div className="name-cell age-cell">
-              <label>年岁 <span className="auto-hint">（16-60）</span></label>
+              <label htmlFor={ageId}>年岁 <span className="auto-hint">（16-60）</span></label>
               <input
+                id={ageId}
                 type="text"
                 inputMode="numeric"
                 value={age}
@@ -175,9 +187,10 @@ export default function NameInput({ onConfirm }: NameInputProps) {
           {/* 第二行：籍贯（带随机抽） */}
           <div className="name-row hometown-row">
             <div className="name-cell flex-grow">
-              <label>籍贯 <span className="auto-hint">（如：南直隶苏州府吴县）</span></label>
+              <label htmlFor={hometownId}>籍贯 <span className="auto-hint">（如：南直隶苏州府吴县）</span></label>
               <div className="hometown-input-wrap">
                 <input
+                  id={hometownId}
                   type="text"
                   value={hometown}
                   onChange={(e) => setHometown(e.target.value)}
@@ -228,7 +241,7 @@ export default function NameInput({ onConfirm }: NameInputProps) {
 
         <div className="suggested-names suggested-compact">
           <div className="suggest-section">
-            <h4>常见姓氏</h4>
+            <h3>常见姓氏</h3>
             <div className="suggest-list">
               {suggestedSurnames.map((s) => (
                 <button
@@ -241,7 +254,7 @@ export default function NameInput({ onConfirm }: NameInputProps) {
           </div>
 
           <div className="suggest-section">
-            <h4>雅致名讳（点选填入）</h4>
+            <h3>雅致名讳（点选填入）</h3>
             <div className="suggest-list">
               {suggestedNames.map((n) => (
                 <button
