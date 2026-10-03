@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // 测试里经常需要保留未使用的 mock 形参 / 只在类型层面使用的变量，
+    // 因此对测试放宽这两项；src 本身仍由 tsconfig.json 严格检查。
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src", "tests/unit"]
+}

@@ -184,7 +184,10 @@ chongzhen-game/
 │   ├── og-image.png              # 社交分享卡（1200×630）
 │   ├── robots.txt / sitemap.xml
 ├── desktop/                      # Electron + Steamworks（独立子工程，见其 README）
-├── tests/                        # Playwright 冒烟与布局回归（独立子工程）
+├── tests/
+│   ├── unit/                     # vitest 单元测试（引擎行为契约）+ 测试助手与 jsdom 环境兜底
+│   ├── smoke.mjs / layout.mjs    # Playwright 冒烟与 9 档视口布局回归（独立子工程）
+│   └── font-check.mjs            # 自托管字体分片加载诊断
 ├── scripts/
 │   ├── audit-events.ts           # 事件审计
 │   ├── audit-narrative-quality.ts
@@ -216,7 +219,28 @@ npm run preview      # 本地预览构建产物（http://localhost:4173）
 
 ### 运行测试
 
-端到端与布局测试是**独立子工程**，这样 GitHub Pages 的 CI 不必下载浏览器。
+测试分两层，互不依赖。
+
+#### 1. 单元测试（vitest + jsdom）—— 秒级，CI 必跑
+
+覆盖核心游戏引擎（`useGameEngine`，约 1900 行）的行为契约：读档恢复、升迁/贬官判定、
+临界事件调度、存档往返等。
+
+```bash
+npm run test:unit          # 跑一次
+npm run test:unit:watch    # 监听模式
+npm run typecheck:test     # 单独检查 src + tests/unit 的类型
+```
+
+> 环境提示：Node 22+ 内置了实验性的 `localStorage` 全局，Node 26 默认开启，
+> 且在没有 `--localstorage-file` 时返回 `undefined`，会把 jsdom 的实现覆盖掉，
+> 表现为引擎一读存档就抛 `Cannot read properties of undefined (reading 'getItem')`。
+> `tests/unit/setup.ts` 已装了一个符合 Storage 规范的内存实现来兜底，
+> 因此不需要额外传 Node 启动参数。
+
+#### 2. 端到端测试（Playwright + 真实 Chromium）—— 独立子工程
+
+放在 `tests/` 下自成一体，这样 GitHub Pages 的 CI 不必下载浏览器。
 
 ```bash
 # 终端 1：构建并起预览服务
@@ -227,8 +251,9 @@ npm run preview
 cd tests
 npm install
 npx playwright install chromium   # 首次需要下载浏览器
-npm test                          # 冒烟：口令门移除 / 启动 / 难度 / 开局 / 存档 / 无报错
-npm run test:layout               # 9 档视口横向溢出回归
+npm test                          # 冒烟：口令门移除 / 启动 / 字体 / 难度 / 开局 / 存档 / 无报错
+npm run test:layout               # 9 档视口：横向溢出 + 主按钮是否落在首屏内
+node font-check.mjs               # 自托管字体的分片按需加载诊断
 ```
 
 也可以直接对着线上地址跑：

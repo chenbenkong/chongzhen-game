@@ -42,6 +42,23 @@ export const RANKS = [
 const PROMOTION_SCORE_BONUS = 20
 
 /**
+ * 游玩时长的心跳周期（毫秒）。
+ * 取 30 秒是个折中：足够粗，不会因为频繁 setState 引起无谓重渲染；
+ * 又足够细，切屏/存档时被"舍去"的误差最多 30 秒。
+ * 真正写存档时用 getTotalPlayTime() 补齐不足一个周期的部分，所以误差不会累积。
+ */
+const PLAY_TIME_TICK_MS = 30_000
+
+/**
+ * crisis 类临界事件（如「重病缠身」）的触发概率门。
+ *
+ * 这些事件的条件本身就很苛刻（例如体质 < 20），所以 0.3 并不等于"每三回合必出一次"：
+ * 它只在玩家已经处于危险状态时才会被抽到，大致相当于身体状况差时每几个月发作一次。
+ * 挂载路径与 checkBoundary 共用这一个常量，避免两处概率漂移。
+ */
+const CRISIS_EVENT_PROBABILITY = 0.3
+
+/**
  * 把政绩分换算成 RANKS 里的「升序下标」（0 = 从九品司狱，越大官越高）。
  * 注意 RANKS 是按 minScore 升序排列的，所以必须取「最后一个满足 score >= minScore」
  * 的下标。早先此处误写成 `RANKS.findIndex(r => score >= r.minScore)`，由于
@@ -313,7 +330,22 @@ function checkDemotion(
     const newRankIndex = Math.max(0, previousRankIndex - demotionLevels)
     const newRank = RANKS[newRankIndex]
 
-    if (newRankIndex < previousRankIndex) {
+    // 是否构成一次"真实的降级"？
+    //
+    // previousRankIndex 是由**政绩分**推导出的档位，而目标官阶同样只取决于分数。
+    // 因此当某条降级理由持续成立时（例如体质长期低于 15 的「体弱多病」），
+    // 每次判定都会算出同一个目标官阶 —— 官阶并没有真的再降，
+    // 但只比较 `newRankIndex < previousRankIndex` 会让贬官次数一次次 +1、
+    // 「贬官一级」的生平记录一条条堆积，玩家会看到"隔一阵子又被贬一次"的荒谬场面。
+    //
+    // 改为与角色**当前实际官阶**比较：只有官阶真的会下降，才算一次贬官。
+    // 若当前官阶不在 RANKS 中（例如已被革职查办、或旧存档里的自定义官阶），
+    // 退回原来的分数档位比较，保持向后兼容。
+    const actualRankIndex = RANKS.findIndex(r => r.name === character.rank)
+    const isRealDemotion =
+      actualRankIndex >= 0 ? newRankIndex < actualRankIndex : newRankIndex < previousRankIndex
+
+    if (isRealDemotion) {
       return {
         demoted: true,
         newRank: newRank.name,
@@ -510,11 +542,13 @@ export function useGameEngine(props: UseGameEngineProps) {
   const [showAIAdvisor, setShowAIAdvisor] = useState(false)
   const [showImageGenerator, setShowImageGenerator] = useState(false)
 
-  const [playTime] = useState<number>(() => {
-    if (loadSaveData && (loadSaveData as any).playTime) {
-      return (loadSaveData as any).playTime
-    }
-    return 0
+  // 游玩时长（秒）。此前只有初值、没有 setter，因此新开一局的时长永远是 0，
+  // 存档预览里的"游玩时长"是个毫无意义的常量。现在按真实经过时间累计：
+  //   playTimeRef  —— 权威累计值（秒，浮点）
+  //   playTime     —— 仅供 UI 显示的镜像，由心跳定期同步
+  const [playTime, setPlayTime] = useState<number>(() => {
+    const saved = (loadSaveData as { playTime?: number } | undefined)?.playTime
+    return typeof saved === 'number' && Number.isFinite(saved) && saved > 0 ? saved : 0
   })
 
   const [lifeRecords, setLifeRecords] = useState<LifeRecord[]>(() => {
@@ -574,6 +608,10 @@ export function useGameEngine(props: UseGameEngineProps) {
   const isProcessingRef = useRef(isProcessing)
   const difficultyConfigRef = useRef(difficultyConfig)
   const playTimeRef = useRef(playTime)
+  // 上一次把「墙钟时间」折算进 playTimeRef 的时刻。两次折算之间经过的时间
+  // 尚未计入 playTimeRef，写存档时需要用 getTotalPlayTime() 补上，
+  // 否则每次都会丢掉不足一个心跳周期的那几秒。
+  const playTimeSessionStartRef = useRef<number>(Date.now())
   const onReturnToMenuRef = useRef(onReturnToMenu)
   const currentStorylineRef = useRef(currentStoryline)
   const playerStatsRef = useRef(playerStats)
@@ -588,10 +626,45 @@ export function useGameEngine(props: UseGameEngineProps) {
   useEffect(() => { lifeRecordsRef.current = lifeRecords }, [lifeRecords])
   useEffect(() => { isProcessingRef.current = isProcessing }, [isProcessing])
   useEffect(() => { difficultyConfigRef.current = difficultyConfig }, [difficultyConfig])
-  useEffect(() => { playTimeRef.current = playTime }, [playTime])
   useEffect(() => { onReturnToMenuRef.current = onReturnToMenu }, [onReturnToMenu])
   useEffect(() => { currentStorylineRef.current = currentStoryline }, [currentStoryline])
   useEffect(() => { playerStatsRef.current = playerStats }, [playerStats])
+
+  /**
+   * 游玩时长的**唯一**权威读取口：累计值 + 尚未折算进累计值的这一段（不足一个心跳）。
+   * 写存档一律走它，保证"刚玩完就存档"不会丢秒。
+   */
+  const getTotalPlayTime = useCallback((): number => {
+    const now = Date.now()
+    const pending = (now - playTimeSessionStartRef.current) / 1000
+    return Math.floor(playTimeRef.current + (pending > 0 ? pending : 0))
+  }, [])
+
+  // 游玩时长心跳：把经过的墙钟时间折算进 playTimeRef，并同步给 UI。
+  // 注意方向 —— 必须是「ref 为准、state 为镜像」。
+  // 早先这里写的是 `playTimeRef.current = playTime`（state 覆盖 ref），
+  // 一旦改成累计就会在每次 state 变化时被清零。
+  useEffect(() => {
+    const tick = () => {
+      const now = Date.now()
+      const elapsed = (now - playTimeSessionStartRef.current) / 1000
+      if (elapsed <= 0) return
+      playTimeSessionStartRef.current = now
+      playTimeRef.current += elapsed
+      setPlayTime(playTimeRef.current)
+    }
+    const timer = window.setInterval(tick, PLAY_TIME_TICK_MS)
+    return () => {
+      window.clearInterval(timer)
+      // 卸载时把最后不足一个心跳的一段也计入，避免频繁切屏时每次都丢几秒
+      const now = Date.now()
+      const elapsed = (now - playTimeSessionStartRef.current) / 1000
+      if (elapsed > 0) {
+        playTimeSessionStartRef.current = now
+        playTimeRef.current += elapsed
+      }
+    }
+  }, [])
 
   /**
    * 更新局内统计。
@@ -1177,6 +1250,16 @@ export function useGameEngine(props: UseGameEngineProps) {
         handleGameOver(triggeredEvent.event)
         return true
       }
+
+      // crisis 类临界事件此前**只在挂载 effect 里查过一次**，而那个 effect 带一次性守卫、
+      // 整个生命周期只跑一次。于是这类事件成了死内容：玩家只有在开局那一瞬间就已经
+      // 满足条件时才可能遇到，「重病缠身」之类在游戏中途永远触发不了。
+      // 这里补上同一条检查，概率门与挂载路径共用 CRISIS_EVENT_PROBABILITY。
+      const crisisEvent = boundaryEventManager.checkByType(params, 'crisis')
+      if (crisisEvent && Math.random() < CRISIS_EVENT_PROBABILITY) {
+        setCurrentEvent(crisisEvent.event)
+        return true
+      }
     } catch (e) {
       console.error('checkBoundary error:', e)
     }
@@ -1317,7 +1400,8 @@ export function useGameEngine(props: UseGameEngineProps) {
       identityType: identityTypeRef.current,
       lifeRecords: currentLifeRecords,
       savedAt: new Date().toISOString(),
-      playTime: playTimeRef.current,
+      // 用 getTotalPlayTime() 而不是 playTime state：后者最多滞后一个心跳周期
+      playTime: getTotalPlayTime(),
       achievements: loadAchievements(),
       difficulty,
       currentStoryline: currentStorylineRef.current,
@@ -1342,7 +1426,7 @@ export function useGameEngine(props: UseGameEngineProps) {
         subMessage: 'localStorage 写入异常，请检查浏览器存储空间或隐私模式设置'
       })
     }
-  }, [origin, degree, playerName, difficulty])
+  }, [origin, degree, playerName, difficulty, getTotalPlayTime])
 
   const handleLoadFromSlot = useCallback((slotId: number) => {
     const saveData = loadSaveSlot(slotId)
@@ -1420,6 +1504,10 @@ export function useGameEngine(props: UseGameEngineProps) {
     const freshStats = createEmptyPlayerStats()
     playerStatsRef.current = freshStats
     setPlayerStats(freshStats)
+    // 游玩时长同样从 0 重新计，并把心跳基准对齐到"现在"
+    playTimeRef.current = 0
+    playTimeSessionStartRef.current = Date.now()
+    setPlayTime(0)
     // 清掉上一局的自动存档，否则返回标题后「继续游戏」会恢复已结束的那一局
     deleteAutosave()
   }, [
@@ -1622,6 +1710,20 @@ export function useGameEngine(props: UseGameEngineProps) {
     setPendingEvents((loadSaveData as any).pendingEvents || [])
     setCurrentEvent((loadSaveData as any).currentEvent || null)
 
+    // 生平流水必须一起换掉。此前这里漏了 lifeRecords，导致在引擎已挂载的情况下
+    // 切换存档（切槽位 / 读另一份自动存档）时，新的「生平回顾」里混着上一辈子的记录。
+    // App.tsx 因为会先回标题页把 GameScreen 卸载，把这个缺陷掩盖了。
+    setLifeRecords(loadSaveData.lifeRecords || [])
+
+    // 游玩时长同样要换成存档里的值，并把心跳基准对齐到"现在"
+    const restoredPlayTime =
+      typeof loadSaveData.playTime === 'number' && Number.isFinite(loadSaveData.playTime)
+        ? loadSaveData.playTime
+        : 0
+    playTimeRef.current = restoredPlayTime
+    playTimeSessionStartRef.current = Date.now()
+    setPlayTime(restoredPlayTime)
+
     // 局内统计随存档一起恢复（旧存档没有 stats → 全 0）
     const restoredStats = normalizePlayerStats(loadSaveData.stats)
     playerStatsRef.current = restoredStats
@@ -1674,7 +1776,7 @@ export function useGameEngine(props: UseGameEngineProps) {
     }
 
     const crisisEvent = boundaryEventManager.checkByType(params, 'crisis')
-    if (crisisEvent && Math.random() < 0.3) {
+    if (crisisEvent && Math.random() < CRISIS_EVENT_PROBABILITY) {
       setCurrentEvent(crisisEvent.event)
       return
     }
@@ -1730,7 +1832,8 @@ export function useGameEngine(props: UseGameEngineProps) {
       identityType,
       lifeRecords,
       savedAt: new Date().toISOString(),
-      playTime,
+      // 同手动存档：累计值 + 尚未折算进累计值的当前区间
+      playTime: getTotalPlayTime(),
       achievements: loadAchievements(),
       difficulty,
       currentStoryline,
@@ -1872,8 +1975,17 @@ export function useGameEngine(props: UseGameEngineProps) {
     }
 
     setPreviousMeritScore(adjustedScore)
+    // 依赖数组必须是"判定真正读过的一切"。此前漏了 4 个：
+    //   character.attributes.体质  —— 「体弱多病」贬官理由
+    //   character.hidden.野心值     —— 「结党营私」贬官理由
+    //   character.degree            —— calculateMeritScore 里的功名加成（进士 +60 / 举人 +30）
+    //   gameState.国势              —— 「失职渎职」贬官理由
+    // 漏掉的后果是这些字段单独变化时判定根本不重跑，那几条理由形同虚设。
+    //
+    // 刻意**不**加入 character.rank：rank 会被贬官/升官本身改写，
+    // 一旦进依赖就会形成「贬官 → rank 变 → 重新判定 → 再贬」的自激循环。
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [character.attributes.理政, character.attributes.文韬, character.attributes.武略, character.attributes.财帛, character.hidden.道德值, character.hidden.欲望值, gameState.圣眷, gameState.中官, gameState.清议, gameState.士绅, gameState.民望, difficultyConfig, identityType, previousMeritScore])
+  }, [character.attributes.理政, character.attributes.文韬, character.attributes.武略, character.attributes.财帛, character.attributes.体质, character.hidden.道德值, character.hidden.欲望值, character.hidden.野心值, character.degree, gameState.圣眷, gameState.中官, gameState.清议, gameState.士绅, gameState.民望, gameState.国势, difficultyConfig, identityType, previousMeritScore])
 
   return {
     // 状态

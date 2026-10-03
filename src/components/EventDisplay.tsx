@@ -419,6 +419,32 @@ function EventDisplay({
   // 事件级投骰状态：整个事件只能投一次
   const [eventDiceUsed, setEventDiceUsed] = useState(false)
 
+  /**
+   * 投骰流程里排下的所有定时器 id。
+   *
+   * 结算链路是「一级 setTimeout → 在 setState 更新函数里再排一级 setTimeout」，
+   * 卸载时若不清理就会留下一批悬挂的定时器。当前 React 会丢弃已卸载组件的状态更新，
+   * 所以暂时没有可观察的后果；但一旦它被触发，回调里会走到 `onChoice`（父组件的回调，
+   * 永久生效：属性扣减、人生记录都会重复写）。这里统一登记、卸载时一并清掉。
+   */
+  const diceTimersRef = useRef<number[]>([])
+
+  const scheduleDiceTimer = useCallback((fn: () => void, ms: number) => {
+    const id = window.setTimeout(() => {
+      diceTimersRef.current = diceTimersRef.current.filter(t => t !== id)
+      fn()
+    }, ms)
+    diceTimersRef.current.push(id)
+  }, [])
+
+  const clearDiceTimers = useCallback(() => {
+    diceTimersRef.current.forEach(id => window.clearTimeout(id))
+    diceTimersRef.current = []
+  }, [])
+
+  // 卸载时清空所有悬挂的投骰定时器
+  useEffect(() => clearDiceTimers, [clearDiceTimers])
+
   const [diceModal, setDiceModal] = useState<{
     show: boolean
     choice: EventChoice | null
@@ -580,7 +606,7 @@ function EventDisplay({
   const rollDice = useCallback(() => {
     setDiceModal(prev => ({ ...prev, isRolling: true }))
 
-    setTimeout(() => {
+    scheduleDiceTimer(() => {
       setDiceModal(dicePrev => {
         const choice = dicePrev.choice
         if (!choice) return dicePrev
@@ -598,7 +624,7 @@ function EventDisplay({
         if (success) {
           // 成功：用原 effects / result
           setChoiceResults(r => new Map(r).set(choice.id, true))
-          setTimeout(() => {
+          scheduleDiceTimer(() => {
             if (isGhostMode) {
               onChoiceSelect?.(choice.id)
             } else {
@@ -613,7 +639,7 @@ function EventDisplay({
           setAttemptedChoices(r => new Set(r).add(choice.id))
           setChoiceResults(r => new Map(r).set(choice.id, false))
 
-          setTimeout(() => {
+          scheduleDiceTimer(() => {
             if (isGhostMode) {
               onChoiceSelect?.(choice.id)
             } else {
@@ -653,7 +679,7 @@ function EventDisplay({
         }
       })
     }, motionDelay(800))
-  }, [isGhostMode, onChoiceSelect, onChoice])
+  }, [isGhostMode, onChoiceSelect, onChoice, scheduleDiceTimer])
 
   const handleContinue = () => {
     if (isGhostMode) {
