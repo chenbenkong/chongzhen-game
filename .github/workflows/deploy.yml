@@ -58,13 +58,16 @@ jobs:
           fi
           echo "OK: 未发现口令门残留"
 
-      - name: Guard — fail if debug panel is not gated
-        # 「幽灵模式」面板可浏览全部事件与未解锁结局，正式构建里必须只在
-        # ?debug=1 时可出现。这里确认产物中仍带有调试开关的判断逻辑。
+      - name: Verify debug switch is present
+        # 「幽灵模式」调试入口当前**默认常驻可见**（项目所有者的明确选择），
+        # 代价是线上访客也能点开并浏览全部事件与未解锁结局。
+        # 这里只确认开关模块仍被打进产物 —— 它是 `?debug=0` 逃生口的依据；
+        # 若连它都没了，说明 utils/debug.ts 被整体移除，需要人工确认是否有意为之。
         run: |
-          set -e
           if ! grep -RIq 'chongzhen_debug_enabled' dist/assets/ 2>/dev/null; then
-            echo "::warning::构建产物中未找到调试开关标记，请确认 utils/debug.ts 的开关未被移除"
+            echo "::warning::构建产物中未找到调试开关，请确认 utils/debug.ts 是否被整体移除"
+          else
+            echo "OK: 调试开关（?debug=0 逃生口）仍在产物中"
           fi
 
       - name: Report build size

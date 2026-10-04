@@ -54,9 +54,10 @@ const StatusBarImpl = function StatusBar({ character, gameState, degree, onCheat
 
       <div className="status-right">
         <BGMInlineButton />
-        {/* 调试面板只在开发构建，或存有 ?debug=1 标记时出现。
-            它可以直接浏览全部事件与全部结局（含未解锁剧透），
-            正式发行版本必须隐藏。 */}
+        {/* 「幽灵模式」调试入口。当前**默认常驻可见**（项目所有者的选择）。
+            需要注意代价：面板里能直接浏览全部事件与全部结局（含未解锁剧透）。
+            开关在 src/utils/debug.ts —— 加 ?debug=0 可临时隐藏，
+            要发行时把那里的默认返回值改成 false 即可。 */}
         {isDebugModeEnabled() && (
           <button
             type="button"

@@ -310,10 +310,17 @@ async function main() {
     if (hiddenRows >= 5) pass(`隐藏属性条目 = ${hiddenRows}（含新增的机敏值/忠诚值）`)
     else warn(`隐藏属性条目 = ${hiddenRows}，期望 ≥5`)
 
-    // 调试面板必须对普通玩家隐藏（发布阻断项 R1）
+    // 「幽灵模式」调试入口：当前**默认常驻可见**（项目所有者的明确选择）。
+    // 面板里能浏览全部事件与未解锁结局，属于剧透 —— 这条断言把该决定记录在案，
+    // 免得日后有人看到按钮常驻、以为是漏了门禁又默默地关掉。
     const cheatVisible = await page.locator('.cheat-button').isVisible().catch(() => false)
-    if (cheatVisible) fail('「幽灵模式」调试按钮在正式构建里可见 —— 会剧透全部事件与结局')
-    else pass('调试面板「幽灵模式」已隐藏')
+    if (cheatVisible) {
+      pass('「幽灵模式」调试入口按当前设定常驻可见')
+    } else {
+      warn(
+        '「幽灵模式」入口不可见 —— 若是有意关闭（?debug=0 或改了 utils/debug.ts 的默认值）可忽略'
+      )
+    }
   } else {
     warn('未能自动走到主玩法界面，跳过游戏内断言')
   }
