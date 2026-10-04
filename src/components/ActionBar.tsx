@@ -2,37 +2,54 @@ import { memo as ReactMemo } from 'react'
 import './ActionBar.css'
 
 interface ActionBarProps {
+  /** 统一的"往前推进"：有事件则续下一个事件，无事件则进入下月 */
   onNextMonth: () => void
   onSave: () => void
   onOpenAchievements?: () => void
   onOpenHelp?: () => void
   onOpenAIAdvisor?: () => void
-  onOpenImageGenerator?: () => void
   onReturnToMenu?: () => void
   turn: number
   canProceed: boolean
+  /** 本月还有几个事件待处理（显示在回合旁边，玩家不用回头看事件面板） */
+  pendingCount?: number
   /**
-   * 按钮不可点时的原因（会显示给玩家）。
+   * 按钮不可点时的原因（常驻显示给玩家）。
    *
-   * 为什么需要它：「进 下 月」只在**没有待处理事件**时才可用
-   * （canProceed = !currentEvent）。而实际上几乎每个月都会生成事件，
-   * 所以这个按钮在正常游玩中**长期处于禁用状态**。
-   * 玩家看到的是一个灰掉的、带边框的、看起来像坏了的主按钮，
-   * 却没有任何说明 —— 于是被当成 bug 报上来（"下月的按钮怎么无法点击了"）。
-   *
-   * 真正推进流程的是事件面板里的「继 续」按钮。这里把这件事说清楚，
-   * 比让玩家反复试错要有效得多。
+   * 措辞必须与真实状态一致：还没做出抉择时，面板里的「继 续」按钮
+   * **根本还不存在**（它只在结果态渲染）。此前这里写的是"点「继 续」推进"，
+   * 把玩家引向一个此刻看不到的按钮 —— 于是有了"我没看到有继续的按钮啊"。
    */
   blockedReason?: string
 }
 
-const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievements, onOpenHelp, onOpenAIAdvisor, onOpenImageGenerator, onReturnToMenu, turn, canProceed, blockedReason }: ActionBarProps) {
-  const hint = canProceed ? null : blockedReason || '需先处理本月待办事件'
+const ActionBarImpl = function ActionBar({
+  onNextMonth,
+  onSave,
+  onOpenAchievements,
+  onOpenHelp,
+  onOpenAIAdvisor,
+  onReturnToMenu,
+  turn,
+  canProceed,
+  pendingCount = 0,
+  blockedReason
+}: ActionBarProps) {
+  const hint = canProceed ? null : blockedReason || '请先处理当前事件'
+
+  // 文案随状态走：玩家一眼就知道点下去会发生什么
+  // 有待办 → 推进的是"下一件事"；无待办 → 才是"进下月"
+  const advanceLabel = canProceed && pendingCount > 0 ? '下 一 件' : '进 下 月'
 
   return (
     <div className="action-bar">
       <div className="action-left">
         <span className="turn-info">第 {turn} 回合</span>
+        {pendingCount > 0 && (
+          <span className="pending-chip" title="本月尚未处理的事件数">
+            待办 {pendingCount}
+          </span>
+        )}
       </div>
 
       <div className="action-center">
@@ -40,13 +57,13 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
           className={`action-btn primary ${!canProceed ? 'disabled' : ''}`}
           onClick={onNextMonth}
           disabled={!canProceed}
-          title={hint || '进入下一个月'}
+          title={hint || (pendingCount > 0 ? '处理下一个待办事件' : '进入下一个月')}
           aria-describedby={hint ? 'action-next-hint' : undefined}
         >
           <span className="btn-icon">进</span>
-          <span>下 月</span>
+          <span>{advanceLabel}</span>
         </button>
-        {/* 禁用原因常驻显示：光靠灰按钮玩家猜不出为什么 */}
+        {/* 禁用原因常驻显示：光靠一个灰按钮，玩家猜不出为什么 */}
         {hint && (
           <span className="action-hint" id="action-next-hint">
             {hint}
@@ -74,26 +91,18 @@ const ActionBarImpl = function ActionBar({ onNextMonth, onSave, onOpenAchievemen
           <span className="btn-icon">问</span>
           <span>帮助</span>
         </button>
+        {/* 「丹青」入口已从底栏移除：事件面板里本来就有「丹青此景 / 立即作丹青」，
+            而且它天然就该贴着当前事件出现（要知道给哪张图配图），
+            放在全局底栏既重复又误导。AI 插图仍可从事件面板进入。 */}
         {onOpenAIAdvisor && (
           <button
             className="action-btn secondary ai-advisor-btn"
             onClick={onOpenAIAdvisor}
-            title="询问 AI 谋士"
+            title="询问 AI 谋士（需自备 API Key）"
             aria-label="AI 谋士"
           >
             <span className="btn-icon">策</span>
             <span>谋士</span>
-          </button>
-        )}
-        {onOpenImageGenerator && (
-          <button
-            className="action-btn secondary image-generator-btn"
-            onClick={onOpenImageGenerator}
-            title="AI 生成场景插图"
-            aria-label="丹青画卷"
-          >
-            <span className="btn-icon">绘</span>
-            <span>丹青</span>
           </button>
         )}
         <button className="action-btn secondary" onClick={onSave}>

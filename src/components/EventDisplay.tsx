@@ -1,5 +1,6 @@
 import { memo, useState, useEffect, useId, useMemo, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { isTypingTarget } from '../utils/isTypingTarget'
 import { GameEvent, EventChoice } from '../types/event'
 import { Character, GameStateValues, Attributes } from '../types/game'
 import { ATTR_DISPLAY_MAP, STATE_DISPLAY_MAP } from '../utils/constants'
@@ -22,6 +23,20 @@ interface EventDisplayProps {
   canUndo?: boolean
   isProcessing?: boolean
   pendingCount?: number
+  /**
+   * 当前事件的抉择是否已作出（结果态）。
+   *
+   * 底部「进 下 月」要靠它决定自己该不该可点：
+   *   · 还没选 → 不能点（否则玩家会跳过抉择）
+   *   · 已选   → 可以点，作用等同于面板里的「继 续」
+   *
+   * 此前这个状态只存在于本组件内部，外层完全看不到，
+   * 于是「进 下 月」只能用 `!currentEvent` 判断 —— 只要有事件就永久禁用，
+   * 实际游玩 120 步里可点状态出现 0 次，成了死 UI。
+   */
+  onResolvedChange?: (resolved: boolean) => void
+  /** 是否启用 1-9 数字键选选项（弹窗打开时应关掉） */
+  shortcutsEnabled?: boolean
   isGhostMode?: boolean
   onChoiceSelect?: (choiceId: string) => void
   showResult?: boolean
@@ -383,6 +398,8 @@ function EventDisplay({
   canUndo,
   isProcessing,
   pendingCount = 0,
+  onResolvedChange,
+  shortcutsEnabled = true,
   isGhostMode,
   onChoiceSelect,
   showResult: externalShowResult,
@@ -415,7 +432,15 @@ function EventDisplay({
   const showResult = isGhostMode ? externalShowResult : internalShowResult
   const setSelectedChoice = isGhostMode ? () => {} : setInternalSelectedChoice
   const setShowResult = isGhostMode ? () => {} : setInternalShowResult
-  
+
+  // 把「已作出抉择」这个状态同步给外层（供底部「进 下 月」判断能否点击）。
+  // 依赖 event?.id 而非 event 对象：事件切换时下面那个 effect 会把 showResult
+  // 复位成 false，这里跟着把外层也复位 —— 否则上一个事件的"已选"会漏到下一个事件，
+  // 玩家在还没做选择时就能点「进 下 月」，等于可以跳过抉择。
+  useEffect(() => {
+    onResolvedChange?.(!!showResult)
+  }, [event?.id, showResult, onResolvedChange])
+
   // 事件级投骰状态：整个事件只能投一次
   const [eventDiceUsed, setEventDiceUsed] = useState(false)
 
@@ -624,6 +649,35 @@ function EventDisplay({
     const picked = available[Math.floor(Math.random() * available.length)]
     handleSelectChoice(picked, { random: true })
   }, [event, choiceChecks, isProcessing, showResult, handleSelectChoice])
+
+  /**
+   * 数字键 1–9 选择对应序号的选项。
+   *
+   * 为什么放在这里而不是 GameScreen：判断"这个选项能不能点"
+   * 依赖 choiceChecks / choiceResults / 投骰状态，都在本组件内，
+   * 放到外层就得把这些再暴露一遍。
+   *
+   * 序号按**当前显示顺序**（含锁定项）计数，这样屏幕上第 3 个就是按 3，
+   * 不会出现"我按 3 却选中了另一个"。锁定项按下去等同于点击 ——
+   * 由 handleSelectChoice 自己弹出投骰/锁定原因，行为与鼠标一致。
+   */
+  useEffect(() => {
+    if (!shortcutsEnabled) return
+    const handler = (e: KeyboardEvent) => {
+      if (!/^[1-9]$/.test(e.key)) return
+      if (isTypingTarget(e.target)) return
+      if (e.ctrlKey || e.altKey || e.metaKey) return
+      if (!event || isProcessing || showResult || isGhostMode) return
+
+      const idx = Number(e.key) - 1
+      const choice = event.choices[idx]
+      if (!choice) return
+      e.preventDefault()
+      handleSelectChoice(choice)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [event, isProcessing, showResult, isGhostMode, shortcutsEnabled, handleSelectChoice])
 
   const openDiceModal = useCallback((choice: EventChoice) => {
     const check = choiceChecks.get(choice.id)
@@ -1009,6 +1063,13 @@ function EventDisplay({
                     aria-describedby={!check.available ? lockReasonId : undefined}
                   >
                     <div className="choice-content">
+                      {/* 序号徽标：既是 1–9 快捷键的可见提示，也让"点第几个"
+                          与"按几"对应上，减少误点。仅前 9 个选项显示。 */}
+                      {idx < 9 && shortcutsEnabled && (
+                        <span className="choice-index" aria-hidden="true">
+                          {idx + 1}
+                        </span>
+                      )}
                       <div className="choice-title">
                         {choice.text}
                         {choice.storyline && choice.storyline !== event.storyline && (

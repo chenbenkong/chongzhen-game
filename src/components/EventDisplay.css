@@ -476,7 +476,7 @@
 
 .choice-card {
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 12px 8px 28px; /* 左侧留出序号徽标的位置 */
   background: linear-gradient(180deg, #1a1510 0%, #12100c 100%);
   border: 1px solid #2a2015;
   border-radius: 4px;
@@ -535,6 +535,41 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: relative;
+}
+
+/* 选项序号徽标（对应 1–9 快捷键）。
+   绝对定位到左上角，不占正文宽度；鼠标悬停时略微加深，让"键盘也能选"这件事
+   在玩家扫一眼选项时就被注意到。 */
+.choice-index {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -22px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  border: 1px solid rgba(197, 165, 90, 0.3);
+  background: #12100c;
+  color: rgba(197, 165, 90, 0.7);
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  line-height: 1;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.choice-card:hover .choice-index,
+.choice-card:focus-visible .choice-index {
+  color: #1a1410;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.choice-card.locked .choice-index {
+  opacity: 0.35;
 }
 
 .choice-title {

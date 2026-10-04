@@ -1,7 +1,8 @@
-import { lazy, Suspense, memo, useEffect, useMemo, useRef } from 'react'
+import { lazy, Suspense, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { OriginType, DegreeType, Attributes } from '../types/game'
 import { SaveData } from '../types/save'
 import { DifficultyLevel } from '../types/difficulty'
+import { useGameShortcuts } from '../hooks/useGameShortcuts'
 import { useGameEngine, RANKS } from '../hooks/useGameEngine'
 import StatusBar from './StatusBar'
 import AttributePanel from './AttributePanel'
@@ -165,6 +166,66 @@ function GameScreen(props: GameScreenProps) {
   // 否则键盘用户可以 Tab 进被 z-index 9999 盖住的游戏界面，结局也不会被播报。
   const endingContainerRef = useRef<HTMLDivElement>(null)
 
+  /**
+   * 当前事件的抉择是否已作出（由 EventDisplay 上报）。
+   *
+   * 「进 下 月」此前只看 `!currentEvent`，于是只要屏幕上有事件就永久禁用 ——
+   * 实测正常游玩 120 步，它的可点状态出现 **0** 次，是死 UI。
+   * 而玩家看到的是一个灰掉的、看起来像主操作的按钮，必然当成 bug。
+   *
+   * 现在按真实语义判断：
+   *   · 没有事件            → 可点，直接进入下月
+   *   · 有事件且已作出抉择  → 可点，作用等同于事件面板里的「继 续」
+   *   · 有事件但还没选      → 禁用（必须先做抉择，否则等于可以跳过）
+   */
+  const [eventResolved, setEventResolved] = useState(false)
+
+  // 无需在此额外复位：EventDisplay 的 onResolvedChange 依赖 event?.id，
+  // 事件一变（包括读档、重开）就会自动上报 false。
+
+  /** 统一的"往前推进"：有事件就续事件，没事件就进月 */
+  const handleAdvance = useCallback(() => {
+    if (currentEvent) {
+      handleContinue()
+    } else {
+      handleNextMonth()
+    }
+  }, [currentEvent, handleContinue, handleNextMonth])
+
+  const canAdvance = !currentEvent || isProcessing || eventResolved
+
+  const advanceHint = useMemo(() => {
+    if (canAdvance) return null
+    // 还没选 —— 这里不能说"点继 续"，因为此刻「继 续」按钮还不存在
+    // （它只在结果态渲染）。此前正是这句不准确的文案把人引到找不到按钮。
+    return '请先在事件面板中做出选择'
+  }, [canAdvance])
+
+  /** 是否有弹窗 / 面板处于打开状态。打开时不该响应游戏快捷键 */
+  const modalOpen =
+    isCheatModeOpen ||
+    isSaveSlotsOpen ||
+    showTutorial ||
+    showHelp ||
+    showAIAdvisor ||
+    showImageGenerator ||
+    isLifeReviewOpen ||
+    isAchievementPanelOpen ||
+    resignConfirmModal.isOpen
+
+  // Space / Enter 推进，S 存档，A 成就，H 帮助。
+  // 数字键在 EventDisplay 内部处理（它才知道哪个选项可选）。
+  useGameShortcuts({
+    onPickChoice: () => {
+      /* 由 EventDisplay 自行处理，这里不参与 */
+    },
+    onAdvance: handleAdvance,
+    onSave: handleSave,
+    onAchievements: openAchievementPanel,
+    onHelp: openHelp,
+    blocked: modalOpen || !canAdvance
+  })
+
   useEffect(() => {
     if (!isGameOver) return
     // 等 GameOverScreen 挂载完成后再移入焦点
@@ -281,6 +342,8 @@ function GameScreen(props: GameScreenProps) {
               gameState={gameState}
               onChoice={handleChoice}
               onContinue={handleContinue}
+              onResolvedChange={setEventResolved}
+              shortcutsEnabled={!modalOpen}
               onUndo={handleUndo}
               onGameOver={handleGameOver}
               onDeathEnding={handleDeathEnding}
@@ -313,22 +376,16 @@ function GameScreen(props: GameScreenProps) {
         </div>
 
         <ActionBar
-          onNextMonth={handleNextMonth}
+          onNextMonth={handleAdvance}
           onSave={handleSave}
           onOpenAchievements={openAchievementPanel}
           onOpenHelp={openHelp}
           onOpenAIAdvisor={openAIAdvisor}
-          onOpenImageGenerator={openImageGenerator}
           onReturnToMenu={handleReturnToMenu}
           turn={gameState.turn}
-          canProceed={!currentEvent || isProcessing}
-          blockedReason={
-            currentEvent
-              ? pendingEvents.length > 0
-                ? `本月尚有 ${pendingEvents.length} 个事件待处理 —— 请在事件面板中逐个处理，点「继 续」推进`
-                : '请先处理当前事件，点「继 续」推进'
-              : undefined
-          }
+          pendingCount={pendingEvents.length}
+          canProceed={canAdvance}
+          blockedReason={advanceHint ?? undefined}
         />
 
         <ResignConfirmDialog
