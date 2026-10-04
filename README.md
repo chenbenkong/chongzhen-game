@@ -100,7 +100,13 @@
 
 - **存档**：3 个手动槽 + 独立自动存档槽，带格式版本号与自动迁移
   （`SAVE_SCHEMA_VERSION`，旧存档读到即升级）
-- **存档失败不再静默**：`localStorage` 配额耗尽会明确提示，而不是悄悄丢进度
+- **存档失败不再静默**：写入失败（配额满）与读取失败（存档损坏）都会在屏幕
+  右上角给出可读提示，而不是只往 console 里写一条日志 ——
+  写失败时自动存档可能没存上，读失败时「继续上次游戏」按钮会消失，
+  这两种以前都会被玩家当成"闪退 / 丢档"。
+- **读档不会白屏**：`migrateSave` 对 `character` 的**每一个**字段都做兜底
+  （含 `attributes` 与 `hidden`），任何畸形存档要么被安全拒绝、要么被修复，
+  不会在渲染第一帧抛异常。详见 [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) 二点五。
 - **排版基准**：全局字号由 `html { font-size }` 统一控制（当前 **18px**），
   各组件用 rem 排版，改这一个值即可整体缩放。实测事件正文 **17.1px**、
   选项标题 **17.6px**、选项描述 **15.8px**（此前分别为 12.8 / 13.6 / 12px）
@@ -152,7 +158,7 @@
 | 持久化 | `localStorage`（带 schema 版本与迁移） |
 | 桌面端 | Electron + electron-builder（见 `desktop/`） |
 | Steam 接入 | steamworks.js，带完整 mock 驱动（无 AppID 也能跑） |
-| 测试 | Playwright（真实 Chromium 冒烟 + 9 档视口布局回归） |
+| 测试 | vitest（**71 例**）+ Playwright（真实 Chromium 冒烟、9 档视口 × 两屏布局回归、崩溃压力、存档模糊、内存检查） |
 | 部署 | GitHub Actions → GitHub Pages |
 
 ## 目录结构
@@ -285,7 +291,15 @@ node font-check.mjs               # 自托管字体的分片按需加载诊断
 node store-assets.mjs             # 生成 Steam 商店页物料到 store-assets/
 ```
 
-> 根目录也有等价脚本：`npm run test:e2e`、`npm run test:layout`。
+根目录也有等价脚本：`npm run test:e2e` / `test:layout` / `test:crash` / `test:fuzz` / `test:mem`。
+
+**三个稳定性脚本**（排查"闪退"时加的，可重复执行）：
+
+| 脚本 | 查什么 |
+| --- | --- |
+| `npm run test:crash` | 乱按压力测试：三连击选项与推进、结算中点别的、反复开关每个弹窗、存档往返、**localStorage 写满后继续玩**、中途刷新。判定口径：未捕获异常 / ErrorBoundary / 白屏 |
+| `npm run test:fuzz` | **37 个畸形存档**逐一加载（缺字段、null、字符串、超长、含已删除的成就 id、非法 JSON）。曾经抓出读档白屏 |
+| `npm run test:mem` | 60 次弹窗开关后的堆占用；不同长度 `eventHistory` 下的帧间隔 |
 
 也可以直接对着线上地址跑：
 

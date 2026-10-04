@@ -75,9 +75,110 @@
 
 ---
 
+---
+
+## 二点五、第五轮：闪退专项
+
+这一节记录"动不动就闪退"的排查过程与结论。**先说最重要的一条**：
+
+> ### 排查过程中发现：C: 盘当时是 100% 满的（0 字节可用）
+>
+> 这不是游戏代码的问题，但它本身就会导致各种异常（存档写不进去、
+> 临时文件创建失败、Electron 起不来），很可能与你感受到的"闪退"直接相关。
+> 已清理 5.2 GB 孤儿 Chromium 临时目录（`%TEMP%\scoped_dir*`，185 个）恢复空间。
+>
+> **请确认磁盘剩余空间**。Electron / Steam 版对可用空间比浏览器版敏感得多。
+
+### 排查方法
+
+"闪退"是个主观词，先要确定它指的是哪一种。三种形态、三种查法：
+
+| 形态 | 判定方式 | 工具 |
+| --- | --- | --- |
+| 未捕获异常 | `page.on('pageerror')` | `tests/crash-hunt.mjs` |
+| React 错误界面 | DOM 里有 `.error-boundary` | 同上 |
+| 白屏 | `#root` 的 childElementCount === 0 | 同上 |
+
+新增的三个可复用脚本（都在 `tests/`，需先 `npm run build && npm run preview`）：
+
+| 脚本 | 作用 |
+| --- | --- |
+| `npm run test:crash` | 乱按压力测试：三连击选项与推进、结算进行中点别的、反复开关每个弹窗、存档往返、localStorage 写满后继续玩、中途刷新 |
+| `npm run test:fuzz` | 存档模糊测试：**37 个畸形存档**（缺字段 / null / 字符串 / 超长 / 已删除的成就 id / 非法 JSON）逐一加载 |
+| `npm run test:mem` | 内存与帧率：60 次弹窗开关后的堆占用、以及不同长度 `eventHistory` 下的帧间隔 |
+
+### 找到并修复的真缺陷
+
+| 严重度 | 缺陷 | 后果 |
+| --- | --- | --- |
+| **高** | `character` 存在但**整个 `attributes` 缺失**时，读档后渲染第一帧就抛 `Cannot read properties of undefined (reading '理政')` | **白屏**。抛在 AttributePanel（它直接下标访问 `attributes.理政`），整个游戏被 ErrorBoundary 接管 |
+| **高** | 游戏内存档面板的「继续上次游戏」自己 `JSON.parse`，**绕过 `migrateSave`** | 同一个存档从标题屏读没事、从游戏内读就崩 —— 而这正是玩家最容易误触的路径 |
+| **高** | `STORAGE_ERROR_EVENT` 一直在派发，但**没有任何组件订阅** | 文档里"存档失败不再静默"其实并不成立：localStorage 写满时玩家毫无提示地丢掉整局进度 |
+| 高 | 存档损坏时「继续上次游戏」按钮直接消失，只有一条 console.error | 看起来像"存档被吃掉"，通常被当成丢档 / 闪退投诉 |
+| 中 | Electron 主进程**没有** `uncaughtException` / `unhandledRejection` 监听 | 主进程任何未捕获异常都会让整个应用立即退出、无栈无提示 —— 这正是桌面端"闪退"的字面含义 |
+| 中 | 没有 `render-process-gone` 监听 | 渲染进程 OOM 时窗口变白，玩家无法恢复也不知道发生了什么 |
+| 中 | 启动流程失败只 `console.error` | 结果是"进程活着但一个窗口都没有"，玩家看到应用闪一下就没了 |
+| 低 | `migrateSave` 只判 `!raw.character` 不判类型 | `character` 是字符串时抛 "Cannot create property 'hidden' on string"，虽被 catch 吞掉但日志误导 |
+
+### 修复要点
+
+`migrateSave` 此前为**每一个**字段都做了兜底，唯独漏了 `attributes`：
+
+```ts
+if (!Array.isArray(character.flags)) character.flags = []
+raw.character.hidden = normalizeHidden(raw.character.hidden)
+// ... 但没有 attributes，于是崩溃点被推迟到渲染期
+```
+
+现在：
+
+```ts
+raw.character.attributes = normalizeAttributes(raw.character.attributes)
+```
+
+`normalizeAttributes` 与 `normalizeHidden` 对称：缺键 / null / NaN 一律取默认值，
+越界夹到 0–100。**关键在于它在读档路径上无条件执行** ——
+渲染组件是直接下标访问属性的，兜底必须发生在数据层，不能指望每个组件自己判空。
+
+### 验证结果
+
+- 存档模糊测试：**37 个用例，0 崩溃**（修复前 1 个真白屏，外加 1 条绕过迁移的路径）
+- 压力测试：11 次健康检查全绿，0 未捕获异常
+- 内存：60 次弹窗开关后堆占用 5.5 → 6.1 MB **完全持平**，无泄露
+- 帧率：注入 600 条 `eventHistory` 的长存档并不比 5 条的慢（样本偏少，仅作趋势参考）
+
+### 两条方法论教训
+
+**一、不要把"日志"和"崩溃"混为一谈。**
+第一版检测器把**任何** `console.error` 都算作崩溃，于是报出"还有 3 个白屏"。
+实际上那 3 个都是「存档损坏 → 被 try/catch 正确捕获 → 打一条诊断日志」，
+root 完好、无 ErrorBoundary、无未捕获异常 —— 那是**正确行为**。
+
+真正的闪退只有三种：`pageerror` / ErrorBoundary 接管 / `#root` 被清空。
+混为一谈会让你去修不存在的问题，同时掩盖真正要修的地方。
+这条已写进 `tests/save-fuzz.mjs` 的注释里。
+
+**二、渲染早于 effect，只靠事件通知会漏。**
+标题屏在**渲染阶段**就调用 `hasAutosave()`，而订阅事件发生在 `useEffect` 里 ——
+渲染早于 effect，所以只在构造完成时派发的读错误事件会被整个漏掉，
+提示永远不会出现。这正是"存档坏了却没人告诉玩家"的直接原因之一。
+因此读错误额外在内存里留了一份供 UI 挂载时补取（`takePendingReadError`）。
+
 ## 三、已修复的问题（按轮次索引）
 
-回归测试共 **54 例**，分 12 个文件，全部在 `tests/unit/`。
+回归测试共 **71 例**，分 13 个文件，全部在 `tests/unit/`。
+
+### 第五轮：闪退专项
+
+见上方「二点五」。新增回归测试 `tests/unit/save.crash.test.ts`（17 例）：
+
+| 缺陷 | 回归测试 |
+| --- | --- |
+| `character` 缺 `attributes` → 渲染第一帧白屏 | `save.crash.test.ts`（normalizeAttributes 6 例 + migrateSave 6 例 + loadAutosave 4 例） |
+| `migrateSave` 不判类型，character 是字符串时抛异常 | 同上 |
+| 游戏内读档绕过迁移 | 同上（loadAutosave 是唯一入口） |
+| 存档损坏无任何提示 | 人工验证（`tests/save-fuzz.mjs` 断言 alert 出现） |
+| Electron 主进程无崩溃防护 | 人工验证（本机无法下载 Electron 二进制，未实机跑） |
 
 ### 第四轮：面向交付的整改
 

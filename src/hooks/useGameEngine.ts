@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Character, GameStateValues, OriginType, DegreeType, Attributes, LifeRecord, LifeSummary, PlayerFaction, HiddenAttributes, HIDDEN_DEFAULTS, normalizeHidden } from '../types/game'
 import { GameEvent, EventChoice } from '../types/event'
-import { SaveData, PlayerStats, createEmptyPlayerStats, normalizePlayerStats, saveSaveSlot, loadSaveSlot, saveAutosave, deleteAutosave } from '../types/save'
+import { SaveData, PlayerStats, createEmptyPlayerStats, normalizePlayerStats, saveSaveSlot, loadSaveSlot, saveAutosave, loadAutosave, deleteAutosave } from '../types/save'
 import { checkAndUnlockAchievements, loadAchievements, Achievement, AchievementContext } from '../types/achievement'
 import { DifficultyLevel, getDifficultyConfig } from '../types/difficulty'
 import { initialEvents, allGrayChoiceEvents } from '../data/events/index'
@@ -1684,16 +1684,16 @@ export function useGameEngine(props: UseGameEngineProps) {
 
   const handleLoadAutosave = useCallback(() => {
     setIsSaveSlotsOpen(false)
-    const raw = localStorage.getItem('chongzhen_autosave')
-    if (!raw) return
-    try {
-      const saveData = JSON.parse(raw) as SaveData
-      if (saveData && saveData.character && saveData.gameState) {
-        window.dispatchEvent(new CustomEvent('loadSave', { detail: saveData }))
-      }
-    } catch (e) {
-      console.error('[onLoadAutosave] failed:', e)
-    }
+    // 必须走统一的 loadAutosave()，它内含 schema 迁移与隐藏属性/属性规整。
+    //
+    // 原来这里是自己 localStorage.getItem + JSON.parse —— 也就是**绕过了迁移**。
+    // 后果：同一个自动存档，从标题屏读是好的（App.tsx 走 loadAutosave），
+    // 从游戏内存档面板的「继续上次游戏」读就会绕过所有兜底直接进渲染，
+    // 旧存档缺 attributes 时当场白屏（ErrorBoundary 接管）。
+    // 这条路径玩家最容易误触（"读档闪退"），所以必须收敛到同一个入口。
+    const saveData = loadAutosave()
+    if (!saveData) return
+    window.dispatchEvent(new CustomEvent('loadSave', { detail: saveData }))
   }, [])
 
   // 当 loadSaveData 变化时（读档），恢复存档数据

@@ -15,7 +15,7 @@
 
 'use strict'
 
-const { app, BrowserWindow, Menu, shell, session, globalShortcut, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, shell, session, globalShortcut, ipcMain, dialog } = require('electron')
 const path = require('node:path')
 const fs = require('node:fs')
 
@@ -253,6 +253,121 @@ function applyNavigationHardening(webContents) {
 }
 
 /* ==========================================================================
+ *  崩溃防护
+ * ==========================================================================
+ *  为什么必须加：
+ *
+ *  Electron 的**主进程**里任何未捕获的异常或未处理的 Promise 拒绝，
+ *  都会让整个应用立即退出 —— 没有栈、没有提示、窗口直接消失。
+ *  玩家看到的就��"闪退"，而且往往复现不了、也报不了错。
+ * 这在一款要商业发行的游戏里是不可接受的。
+ *
+ * 高发的几个来源（本项目都真实存在）：
+ *   · steamworks.js 是**原生模块**。Steam 客户端没启动 / 中途退出 /
+ *     depot 更新时，它的调用可能同步抛；
+ *   · 30Hz 的回调泵（runCallbacks）由定时器驱动，抛了就是 uncaughtException；
+ *   · IPC handler 里任何一处漏了 try/catch；
+ *   · 存档读写（磁盘满、权限、文件被占用）。
+ *
+ * 渲染进程崩溃（最常见原因是内存耗尽，其次是 GPU 进程异常）则是另一回事：
+ * 主进程不会死，但窗口会变白/空白。原先没有 render-process-gone 监听，
+ * 玩家只看到一个死窗口，既不能自动恢复也不知道发生了什么。
+ * ========================================================================== */
+
+/** 主进程崩溃日志：同时写文件，避免玩家报问题时日志已经随窗口一起没了 */
+function logFatal(scope, err) {
+  const detail = err && err.stack ? err.stack : String(err)
+  console.error(`[main][${scope}] 未捕获异常：`, detail)
+  try {
+    const dir = app.getPath('logs')
+    fs.mkdirSync(dir, { recursive: true })
+    fs.appendFileSync(
+      path.join(dir, 'main.log'),
+      `\n===== ${new Date().toISOString()} [${scope}] =====\n${detail}\n`
+    )
+  } catch {
+    // 日志写不了就算了，不能因为写日志再抛一次
+  }
+}
+
+// 注意：uncaughtException 处理器必须自己保证不再抛，
+// 否则会变成"处理异常时又异常"的无限循环。
+process.on('uncaughtException', (err) => {
+  logFatal('uncaughtException', err)
+  // 不退出。对游戏来说，丢一次功能远好过整个应用消失。
+  // 若确实已经无法恢复（例如窗口都没了），下面的 before-quit 会收尾。
+})
+
+process.on('unhandledRejection', (reason) => {
+  logFatal('unhandledRejection', reason)
+})
+
+/**
+ * 渲染进程崩溃 / 卡死的兜底。
+ * @param {Electron.BrowserWindow} win
+ */
+function applyCrashGuards(win) {
+  const wc = win.webContents
+
+  wc.on('render-process-gone', (_event, details) => {
+    // reason: 'clean-exit' | 'abnormal-exit' | 'killed' | 'crashed' | 'oom' | 'launch-failed' | 'integrity-failure'
+    if (details.reason === 'clean-exit') return
+    console.error(
+      `[main] 渲染进程异常退出：reason=${details.reason} exitCode=${details.exitCode}`
+    )
+    logFatal('render-process-gone', new Error(`reason=${details.reason} exitCode=${details.exitCode}`))
+
+    if (mainWindow === null || mainWindow.isDestroyed()) return
+    const message =
+      details.reason === 'oom'
+        ? '游戏内存占用过高，页面已停止响应。建议关闭其他程序后重试。'
+        : '游戏页面意外停止响应。'
+    // 不用 dialog 阻塞（此时渲染进程已死，模态框可能也显示不出来），
+    // 改为加载一个纯 HTML 的错误页 —— 它只依赖主进程，不依赖渲染进程。
+    wc.loadURL(
+      'data:text/html;charset=utf-8,' +
+        encodeURIComponent(
+          `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">` +
+            `<title>游戏已停止响应</title><style>` +
+            `body{background:#0A0807;color:#F5E6C8;font-family:'Songti SC','SimSun',serif;` +
+            `display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center}` +
+            `h1{color:#C5A55A;font-size:28px;font-weight:600;margin:0 0 16px}` +
+            `p{opacity:.75;line-height:1.9;margin:0 0 28px}` +
+            `button{font:inherit;font-size:16px;padding:10px 28px;cursor:pointer;` +
+            `color:#1a1410;background:#C5A55A;border:0;border-radius:4px}</style></head><body>` +
+            `<div><h1>${message}</h1>` +
+            `<p>进度已保存在本地，重新载入即可继续。<br>若反复出现，可在日志目录查看 main.log。</p>` +
+            `<button onclick="location.reload()">重新载入</button></div></body></html>`
+        )
+    )
+  })
+
+  wc.on('unresponsive', () => {
+    console.warn('[main] 渲染进程无响应（超过阈值未响应）')
+  })
+  wc.on('responsive', () => {
+    console.warn('[main] 渲染进程已恢复响应')
+  })
+
+  // 渲染进程自身的未捕获异常不会冒泡到主进程，但可以在这里留痕
+  wc.on('console-message', (_event, level, message, line, sourceId) => {
+    if (level >= 3) {
+      // level 3 = error
+      try {
+        const dir = app.getPath('logs')
+        fs.mkdirSync(dir, { recursive: true })
+        fs.appendFileSync(
+          path.join(dir, 'renderer.log'),
+          `[${new Date().toISOString()}] ${message} (${sourceId}:${line})\n`
+        )
+      } catch {
+        // ignore
+      }
+    }
+  })
+}
+
+/* ==========================================================================
  *  开发期快捷键
  * ========================================================================== */
 
@@ -318,6 +433,7 @@ function createWindow() {
   })
 
   applyNavigationHardening(mainWindow.webContents)
+  applyCrashGuards(mainWindow)
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -500,7 +616,21 @@ if (!gotSingleInstanceLock) {
       if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
   }).catch((err) => {
+    // 之前这里只 console.error 一下就结束 —— 结果是"进程活着但一个窗口都没有"，
+    // 玩家看到的就是应用闪了一下就没了，而且没有任何可读的错误信息。
+    // 这在商业发行里是最糟的失败形态：既复现不了也报不了错。
     console.error('[main] 启动流程异常：', err)
+    try {
+      dialog.showErrorBox(
+        '游戏启动失败',
+        '初始化时发生错误，无法创建窗口。\n\n' +
+          (err && err.stack ? err.stack : String(err)) +
+          '\n\n请把以上信息反馈给开发者。'
+      )
+    } catch {
+      // 连 dialog 都失败就只能靠日志了
+    }
+    app.exit(1)
   })
 }
 

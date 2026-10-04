@@ -1,0 +1,101 @@
+/* 本地存储故障提示浮层（非阻塞，自动消失）
+   位置：右上角，避开状态栏里的时间/官职信息与右侧「幽灵模式」入口。
+   z-index 高于弹窗（弹窗是 1000~2000），低于启动兜底层（9999）——
+   存储故障时游戏本身仍在运行，不该被引导去"重新加载"。 */
+
+.storage-alerts {
+  position: fixed;
+  top: 72px;
+  right: 20px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(380px, calc(100vw - 40px));
+  pointer-events: none;
+}
+
+.storage-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(197, 165, 90, 0.35);
+  background: linear-gradient(180deg, rgba(42, 28, 18, 0.97), rgba(26, 16, 8, 0.97));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  animation: storageAlertIn 0.3s ease both;
+  pointer-events: auto;
+}
+
+.storage-alert--error {
+  border-color: rgba(180, 60, 40, 0.55);
+}
+
+.storage-alert--warning {
+  border-color: rgba(197, 165, 90, 0.5);
+}
+
+.storage-alert__icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  line-height: 1;
+  color: #1a1410;
+  background: var(--gold);
+}
+
+.storage-alert--error .storage-alert__icon {
+  background: #c0392b;
+  color: #fff5e6;
+}
+
+.storage-alert__body {
+  min-width: 0;
+}
+
+.storage-alert__message {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--parchment);
+}
+
+.storage-alert__sub {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: rgba(245, 230, 200, 0.65);
+}
+
+@keyframes storageAlertIn {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 720px) {
+  .storage-alerts {
+    top: auto;
+    bottom: 84px;
+    left: 12px;
+    right: 12px;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storage-alert {
+    animation: none;
+  }
+}

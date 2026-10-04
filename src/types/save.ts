@@ -1,4 +1,4 @@
-import { Character, GameStateValues, OriginType, DegreeType, LifeRecord, normalizeHidden } from './game'
+import { Character, GameStateValues, OriginType, DegreeType, LifeRecord, normalizeHidden, normalizeAttributes } from './game'
 import { AchievementData } from './achievement'
 import type { DifficultyLevel } from './difficulty'
 import type { GameEvent } from './event'
@@ -124,12 +124,24 @@ export const SAVE_SIZE_SOFT_LIMIT = 1_200_000
  * 返回 null 表示这份数据无法救活（缺 character / gameState）。
  */
 function migrateSave(parsed: unknown): SaveData | null {
-  if (!parsed || typeof parsed !== 'object') return null
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
   const raw = parsed as Record<string, any>
-  if (!raw.character || !raw.gameState) return null
+  // 类型也要校验，不能只看真值。
+  // 原先只有 `!raw.character` 一句，于是 character 是个字符串时，
+  // 下面的 `raw.character.hidden = ...` 会抛
+  //   TypeError: Cannot create property 'hidden' on string 'not an object'
+  // 异常虽然被 loadAutosave 的 try/catch 吞掉、不会白屏，
+  // 但上层永远拿不到"这份存档已丢弃"的正常结论，日志里只剩一个
+  // 与真实原因无关的 TypeError，排查时极易误判。
+  if (!raw.character || typeof raw.character !== 'object' || Array.isArray(raw.character)) return null
+  if (!raw.gameState || typeof raw.gameState !== 'object' || Array.isArray(raw.gameState)) return null
 
   // v1 -> v2：隐藏属性可能缺键，或被 NaN 污染（NaN 经 JSON 序列化会变成 null）
   raw.character.hidden = normalizeHidden(raw.character.hidden)
+  // 个人能力同理，且更重要 —— 组件是直接下标访问 attributes.理政 的，
+  // 整个 attributes 缺失会在渲染第一帧就白屏。
+  // （此前 migrateSave 为每个字段都兜了底，唯独漏了它。）
+  raw.character.attributes = normalizeAttributes(raw.character.attributes)
 
   // 角色字段兜底：旧存档可能缺少后来才加入的字段
   const character = raw.character as Character
@@ -192,8 +204,21 @@ export function getSaveKey(slotId: number): string {
   return `chongzhen_save_slot_${slotId}`
 }
 
-/** 存储写入失败时派发的事件名，UI 可监听以提示玩家 */
+/**
+ * 存储写入失败时派发的事件名，UI 可监听以提示玩家。
+ *
+ * ⚠️ 这里的"可监听"曾经是句空话 —— 事件一直在派发，但**没有任何组件订阅**，
+ * 所以文档里"存档失败不再静默"实际上并不成立：localStorage 写满时
+ * 玩家只会丢掉整局进度且看不到任何提示。现已由 `useStorageAlerts` 接上。
+ */
 export const STORAGE_ERROR_EVENT = 'chongzhen-storage-error'
+
+/**
+ * 存储**读取**失败（存档损坏 / 被外部改坏）时派发。
+ * 与写入失败分开，因为玩家的诉求不同：写失败是"这次没存上"，
+ * 读失败是"你之前的存档读不出来"，后者更需要解释与下一步指引。
+ */
+export const STORAGE_READ_ERROR_EVENT = 'chongzhen-storage-read-error'
 
 function reportStorageError(context: string, error: unknown): void {
   const err = error as { name?: string; message?: string }
@@ -208,6 +233,46 @@ function reportStorageError(context: string, error: unknown): void {
           message: isQuota
             ? '浏览器本地存储已满，本次进度未能保存'
             : '本地存储写入失败，本次进度未能保存'
+        }
+      })
+    )
+  } catch {
+    // 非浏览器环境（脚本 / 测试）忽略
+  }
+}
+
+/**
+ * 存档读不出来时通知玩家。
+ *
+ * 除了派事件，还把最后一条读错误**留在内存里**供后来者取用。
+ * 原因：标题屏在**渲染阶段**就会调用 hasAutosave() → loadAutosave()，
+ * 而 UI 订阅事件是在 useEffect 里 —— 渲染早于 effect，
+ * 所以只在构造完成时派发的事件会被整个漏掉，提示永远不会出现。
+ * 这正是修复前"存档坏了却没人告诉玩家"的直接原因之一。
+ */
+let lastReadError: { context: string; message: string } | null = null
+
+/** 只提示一次，避免刷新后反复弹 */
+let readErrorNotified = false
+
+/** 取出（并清空）最近一次读错误，供 UI 在挂载时补取 */
+export function takePendingReadError(): { context: string; message: string } | null {
+  const e = lastReadError
+  lastReadError = null
+  return e
+}
+
+function reportStorageReadError(context: string, detail: string): void {
+  console.warn(`[save] ${context} 读取失败：${detail}`)
+  lastReadError = { context, message: `${context}无法读取` }
+  if (readErrorNotified) return
+  readErrorNotified = true
+  try {
+    window.dispatchEvent(
+      new CustomEvent(STORAGE_READ_ERROR_EVENT, {
+        detail: {
+          context,
+          message: '本地存档无法读取，可能已损坏。本次进度将从头开始（原存档不会被覆盖，可尝试清空后重试）。'
         }
       })
     )
@@ -231,11 +296,13 @@ export function loadSaveSlot(slotId: number): SaveData | null {
     const migrated = migrateSave(JSON.parse(rawData))
     if (!migrated) {
       console.warn(`[load] slot ${slotId} 缺少 character/gameState，已忽略`)
+      reportStorageReadError(`槽位 ${slotId}`, '结构不完整（缺 character 或 gameState）')
       return null
     }
     return migrated
   } catch (e) {
     console.error(`[load] slot ${slotId} 解析失败：`, e)
+    reportStorageReadError(`槽位 ${slotId}`, e instanceof Error ? e.message : String(e))
     return null
   }
 }
@@ -319,12 +386,28 @@ export function saveAutosave(data: SaveData): boolean {
 
 /** 读取自动存档（不存在 / 解析失败时返回 null） */
 export function loadAutosave(): SaveData | null {
+  let raw: string | null = null
   try {
-    const raw = localStorage.getItem(AUTOSAVE_KEY)
-    if (!raw) return null
-    return migrateSave(JSON.parse(raw))
+    raw = localStorage.getItem(AUTOSAVE_KEY)
   } catch (e) {
     console.error('[autosave] 读取失败：', e)
+    return null
+  }
+  if (!raw) return null
+
+  // 注意：解析与迁移要分开 try。
+  // 之前把 localStorage.getItem 与 JSON.parse 放在同一个 try 里，
+  // 于是"存档内容损坏"这种**最常见的**情况也会走进 catch，
+  // 玩家只会看到按钮消失 + 一条 console.error，无法分辨是读失败还是解析失败。
+  try {
+    const migrated = migrateSave(JSON.parse(raw))
+    if (!migrated) {
+      reportStorageReadError('自动存档', '结构不完整（缺 character 或 gameState）')
+    }
+    return migrated
+  } catch (e) {
+    console.error('[autosave] 解析失败：', e)
+    reportStorageReadError('自动存档', e instanceof Error ? e.message : String(e))
     return null
   }
 }
@@ -347,3 +430,13 @@ export function deleteAutosave(): void {
     // ignore
   }
 }
+
+/**
+ * 仅供测试：直接调用迁移函数。
+ *
+ * migrateSave 是"读档不崩"的唯一防线，但它此前只被 loadSaveSlot / loadAutosave
+ * 内部调用，单测无法直接验证它对畸形输入的行为（只能间接观察"返回 null"，
+ * 区分不出"干净拒绝"和"抛异常后被吞掉"这两种完全不同的情况）。
+ * 这个别名就是为了让测试能钉住那条区别。
+ */
+export const migrateSaveForTest = migrateSave

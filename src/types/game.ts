@@ -34,6 +34,50 @@ export interface Attributes {
   体质: number  // 身体健康
 }
 
+/** 个人能力的默认值（新角色初始化与旧存档迁移共用） */
+export const ATTRIBUTE_DEFAULTS: Attributes = {
+  财帛: 20,
+  文韬: 20,
+  理政: 20,
+  武略: 20,
+  体质: 50
+}
+
+/**
+ * 规整个人能力（可见属性）。
+ *
+ * 与 {@link normalizeHidden} 同理，但**这条更关键**：
+ * 隐藏属性只被条件判定与数值运算读取，缺了顶多判定失真；
+ * 而 `character.attributes` 被 AttributePanel / StatusBar / EndingCodex
+ * 等组件**直接下标访问**（`attributes.理政`）。
+ * 一旦读档时 `attributes` 整体缺失（undefined），渲染第一帧就抛
+ *
+ *   TypeError: Cannot read properties of undefined (reading '理政')
+ *
+ * 整个游戏被 ErrorBoundary 接管 —— 玩家看到的是崩溃界面而不是游戏。
+ * 历史上 migrateSave 为**每一个**字段都做了兜底（flags / faction /
+ * difficulty / stats / hidden …），唯独漏了 `attributes`，
+ * 于是"缺 character 或 gameState 才拒绝"的那道校验放行了它，
+ * 崩溃点被推迟到渲染期 —— 这正是最难排查的那种白屏。
+ *
+ * 因此读档路径必须无条件过一遍这个函数。
+ */
+export function normalizeAttributes(
+  input: Partial<Record<keyof Attributes, number | null | undefined>> | null | undefined
+): Attributes {
+  const out: Attributes = { ...ATTRIBUTE_DEFAULTS }
+  if (!input || typeof input !== 'object') return out
+  for (const key of Object.keys(ATTRIBUTE_DEFAULTS) as Array<keyof Attributes>) {
+    const value = input[key]
+    // NaN 经 JSON 序列化会变成 null；两者都要当"缺失"处理，
+    // 否则 `null + 5 === 5` 会把属性悄悄算错。
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      out[key] = Math.max(0, Math.min(100, Math.round(value)))
+    }
+  }
+  return out
+}
+
 // 【隐藏属性】五大心性
 // 说明：机敏值 / 忠诚值 在事件数据中被引用 54 次（src/data/events/**），
 // 但历史上 HiddenAttributes 只声明了前三项，导致：

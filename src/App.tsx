@@ -5,6 +5,7 @@ import OriginSelect from './components/OriginSelect'
 import TitleScreen from './components/TitleScreen'
 import GameScreen from './components/GameScreen'
 import { BGMProvider } from './components/BGMContext'
+import StorageAlerts from './components/StorageAlerts'
 import { OriginType, DegreeType, Attributes } from './types/game'
 import { SaveData, getAllSaveSlots, deleteAutosave, loadAutosave } from './types/save'
 import { origins } from './data/origins'
@@ -136,6 +137,9 @@ function App() {
 
   return (
     <BGMProvider>
+      {/* 本地存储故障提示。挂在最外层，标题屏与游戏内都覆盖 ——
+          "存档读不出来"恰恰发生在标题屏，此时玩家最需要知道发生了什么。 */}
+      <StorageAlerts />
       <div className="app">
         {phase === 'title' && (
           <TitleScreen
