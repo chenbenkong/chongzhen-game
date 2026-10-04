@@ -7,10 +7,11 @@
   "license": "UNLICENSED",
   "main": "main.cjs",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.22.2"
   },
   "scripts": {
     "dev": "electron . --dev",
+    "predist": "npm --prefix .. run build:steam",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist:win": "electron-builder --win",

@@ -2,7 +2,11 @@ import { useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { Character, GameStateValues } from '../types/game'
 import { GameEvent, EventChoice } from '../types/event'
-import { initialEvents, allGrayChoiceEvents, allEndingEvents } from '../data/events/index'
+import { initialEvents, allGrayChoiceEvents } from '../data/events/index'
+// 结局数据刻意不走 events/index 那个 barrel —— 见该文件里的说明：
+// 走 barrel 会把 81 KB 结局连同 boundaryEvents 拖进首屏模块图。
+// CheatMode 自身是 lazy 组件，不在首屏关键路径上，按路径直接取即可。
+import { allEndingEvents } from '../data/events/ending'
 import { factionEvents } from '../data/events/faction/faction_events'
 import { originEvents } from '../data/events/origin/index'
 import { getStoryline, type StorylineTone } from '../data/storylines'

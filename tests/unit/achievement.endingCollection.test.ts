@@ -49,9 +49,15 @@ describe('K-7：结局收藏成就依赖跨局已解锁成就，而不是单局�
     expect(newly).toContain('ending_collection_5')
   })
 
-  it('解锁 15 个结局后，「阅历大明」应当解锁', () => {
+  it('解锁 15 个结局后不再有独立的中间档成就', () => {
+    // 原先存在 ending_collection_15（5/15/30 三档）。该档已删除，原因：
+    //   1. getUnlockedAchievements() 按 group 分桶、每组只展示 priority 最高的那一项，
+    //      所以 15 档对玩家不可见；
+    //   2. Steam 单 App 成就上限 100，删除它才能把总数压到上限之内。
+    // 这里钉住"删除后不会再冒出来"，防止有人把它加回去。
     const newly = unlockEndingsAndCheck(15)
-    expect(newly).toContain('ending_collection_15')
+    expect(newly).not.toContain('ending_collection_15')
+    expect(newly).toContain('ending_collection_5')
   })
 
   it('解锁 30 个结局后，「百味人生」应当解锁', () => {

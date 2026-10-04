@@ -234,14 +234,14 @@
 
 @media (max-width: 900px) {
   .status-hint {
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     min-width: 36px;
   }
 }
 
 @media (max-width: 480px) {
   .status-hint {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     min-width: 32px;
   }
 }
@@ -337,7 +337,7 @@
 
 @media (max-width: 480px) {
   .fortune-title {
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     letter-spacing: 2px;
   }
 }
@@ -421,14 +421,14 @@
 .fortune-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.65rem;
+  font-size: 0.82rem;
   color: #5a4830;
   letter-spacing: 1px;
 }
 
 @media (max-width: 480px) {
   .fortune-labels {
-    font-size: 0.6rem;
+    font-size: 0.82rem;
   }
 }
 

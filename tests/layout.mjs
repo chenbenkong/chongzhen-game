@@ -130,11 +130,110 @@ async function checkViewport(browser, vp) {
   await context.close()
 }
 
+/**
+ * 进入主玩法后再查一遍。
+ *
+ * 为什么标题屏通过还不够：主玩法那条链（.game-screen → .game-screen-body →
+ * .game-main → .main-content → .event-display）被改成了纵向 flex 骨架，
+ * 让事件面板吃满剩余高度并在内部滚动。这套 flex 只有在真实内容下才会暴露问题：
+ *   · 面板被压扁（高度算错）
+ *   · 整页被顶高，底部操作栏被推出屏幕（playwright 的纵向溢出检查覆盖不到，
+ *     因为 documentElement.scrollHeight 变大是"正常"的滚动）
+ *   · 横向溢出（侧栏固定 220px + 放大的字号）
+ * 所以这里逐档断言：底部操作栏必须完整落在视口内、事件面板不得被压到过矮。
+ */
+async function checkGameViewport(browser, vp) {
+  const context = await browser.newContext({
+    viewport: { width: vp.width, height: vp.height },
+    deviceScaleFactor: 1,
+    isMobile: vp.width <= 480,
+    hasTouch: vp.width <= 1024
+  })
+  const page = await context.newPage()
+  await page.goto(BASE_URL, { waitUntil: 'load', timeout: 60000 })
+  await page.waitForTimeout(2200)
+
+  await page.locator('.title-btn', { hasText: '开' }).first().click()
+  await page.waitForTimeout(600)
+  const inputs = page.locator('.setup-screen input[type="text"], .setup-screen input:not([type])')
+  const n = await inputs.count()
+  for (let i = 0; i < n; i++) {
+    const el = inputs.nth(i)
+    if (!(await el.inputValue().catch(() => ''))) await el.fill(['测试', '字明', '苏州府'][i] || '测').catch(() => {})
+  }
+  await page.locator('.setup-screen .confirm-btn').first().click()
+  await page.waitForTimeout(700)
+  await page.locator('.origin-card button, .origin-card').first().click().catch(() => {})
+  await page.waitForTimeout(1600)
+
+  if (!(await page.locator('.game-screen').isVisible().catch(() => false))) {
+    fail(`[${vp.name}] 未能进入主玩法界面`)
+    await context.close()
+    return
+  }
+
+  // 横向溢出
+  const m = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth
+  }))
+  if (m.scrollWidth - m.clientWidth > 1) {
+    fail(`[${vp.name}] 主玩法横向溢出 ${m.scrollWidth - m.clientWidth}px`)
+  } else {
+    pass(`[${vp.name}] 主玩法无横向溢出`)
+  }
+
+  // 底部操作栏的位置。
+  //
+  // 这里必须区分两种布局，不能一刀切：
+  //  · 宽屏（>1024px）：三栏并列，操作栏属于"始终可见"的固定区域。
+  //    它一旦被顶出视口就是回归 —— 玩家想点"进 下 月"还得先滚动。
+  //  · 窄屏（≤1024px）：单列堆叠，侧栏排在事件面板**之后**，
+  //    整页本来就要滚动，操作栏在页面末尾是设计如此，不是缺陷。
+  //    对这种布局断言"必须在首屏内"会得到一片假失败。
+  const stacked = vp.width <= 1024
+  const bar = await page.evaluate(
+    new Function('sel', `return (${WITHIN_VIEWPORT})(sel)`),
+    '.action-bar'
+  )
+  if (!bar.found) {
+    fail(`[${vp.name}] 找不到 .action-bar`)
+  } else if (stacked) {
+    pass(`[${vp.name}] 单列堆叠布局，操作栏随页面滚动（bottom=${bar.bottom}）`)
+  } else if (bar.overflowBottom > 1) {
+    fail(`[${vp.name}] 宽屏下底部操作栏被顶出视口 ${bar.overflowBottom}px`)
+  } else {
+    pass(`[${vp.name}] 底部操作栏在视口内 (h=${bar.height})`)
+  }
+
+  // 事件面板不得被压扁（flex 链算错时的典型症状）
+  const ev = await page.evaluate(
+    new Function('sel', `return (${WITHIN_VIEWPORT})(sel)`),
+    '.event-display'
+  )
+  if (!ev.found) {
+    fail(`[${vp.name}] 找不到 .event-display`)
+  } else if (ev.height < 80) {
+    fail(`[${vp.name}] 事件面板被压扁，仅 ${ev.height}px 高`)
+  } else {
+    pass(`[${vp.name}] 事件面板高度正常 (${ev.width}x${ev.height})`)
+  }
+
+  await page.screenshot({ path: `${SHOT_DIR}game-${vp.name}.png` })
+  await context.close()
+}
+
 async function main() {
   mkdirSync(SHOT_DIR, { recursive: true })
   const browser = await chromium.launch({ headless: true })
   for (const vp of VIEWPORTS) {
     await checkViewport(browser, vp)
+  }
+  console.log('\n' + '='.repeat(60))
+  console.log('标题屏检查完毕，开始检查主玩法界面')
+  console.log('='.repeat(60))
+  for (const vp of VIEWPORTS) {
+    await checkGameViewport(browser, vp)
   }
   await browser.close()
 

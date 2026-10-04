@@ -144,6 +144,16 @@ export function pickEvent(
 ): GameEvent | null {
   if (availableEvents.length === 0) return null
 
+  // 已触发事件集合。
+  //
+  // 改造前每个 tier 都用 `eventHistory.includes(e.id)` 判重。eventHistory 一局下来
+  // 能涨到 200+ 项，availableEvents 常有上千项，于是这一步是 O(n×m) 的字符串比较 ——
+  // 单次推进月份要做几万到几十万次比较，而这正是玩家感知到的"卡"，
+  // 且随存档变老**越来越卡**（历史越长越慢）。
+  // 换成 Set 后是 O(n+m)，与历史长度基本无关。
+  // 语义完全一致（Array#includes 用 SameValueZero，Set#has 亦然）。
+  const seen = new Set(eventHistory)
+
   // 加权抽样：构造一个 weight 数组，按 storyline 命中次数加权
   const weightedPick = (pool: GameEvent[]): GameEvent => {
     if (pool.length === 1) return pool[0]
@@ -166,20 +176,23 @@ export function pickEvent(
   // 1) 支线触发窗口
   const branchEvents = availableEvents.filter(e => e.type === 'emotion' || e.type === 'gray')
   if (branchEvents.length > 0 && Math.random() < 0.3) {
-    const recent = eventHistory.slice(-5).filter(id => branchEvents.some(e => e.id === id))
-    const notRecent = branchEvents.filter(e => !recent.includes(e.id))
+    // 注意语义：这里排除的是「最近 5 条历史里出现过的」，不是「历史上出现过的一切」。
+    // 支线事件是可重复的（玩家会反复遇到同一段感情/权色事件），
+    // 所以不能用上面的 seen 集合，否则支线会被永久耗尽。
+    const recent = new Set(eventHistory.slice(-5))
+    const notRecent = branchEvents.filter(e => !recent.has(e.id))
     const pool = notRecent.length > 0 ? notRecent : branchEvents
     return weightedPick(pool)
   }
 
   // 2) historical
-  const historical = availableEvents.filter(e => e.type === 'historical' && !eventHistory.includes(e.id))
+  const historical = availableEvents.filter(e => e.type === 'historical' && !seen.has(e.id))
   if (historical.length > 0) {
     return weightedPick(historical)
   }
 
   // 3) transition
-  const transition = availableEvents.filter(e => e.type === 'transition' && !eventHistory.includes(e.id))
+  const transition = availableEvents.filter(e => e.type === 'transition' && !seen.has(e.id))
   if (transition.length > 0) {
     return weightedPick(transition)
   }
@@ -187,14 +200,15 @@ export function pickEvent(
   // 4) random（包含 emotion/gray 兜底）
   const random = availableEvents.filter(e => e.type === 'random' || e.type === 'emotion' || e.type === 'gray')
   if (random.length > 0) {
-    const recent = eventHistory.slice(-5).filter(id => random.some(e => e.id === id))
-    const notRecent = random.filter(e => !recent.includes(e.id))
+    // 同上：只看最近 5 条，random 类事件设计上就是可重复的
+    const recent = new Set(eventHistory.slice(-5))
+    const notRecent = random.filter(e => !recent.has(e.id))
     const pool = notRecent.length > 0 ? notRecent : random
     return weightedPick(pool)
   }
 
   // 5) normal
-  const normal = availableEvents.filter(e => e.type === 'normal' && !eventHistory.includes(e.id))
+  const normal = availableEvents.filter(e => e.type === 'normal' && !seen.has(e.id))
   if (normal.length > 0) {
     return weightedPick(normal)
   }

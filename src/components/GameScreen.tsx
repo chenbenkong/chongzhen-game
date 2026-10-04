@@ -24,7 +24,6 @@ import './GameScreen.css'
 
 const AIAdvisor = lazy(() => import('./AIAdvisor'))
 const ImageGenerator = lazy(() => import('./ImageGenerator'))
-
 /**
  * inert 属性在 React 18 的 JSX 类型里还没有声明，这里用条件展开绕过类型限制
  * （返回的是收窄的联合类型，可安全展开到 JSX 上），运行时就是原生属性。
@@ -200,7 +199,7 @@ function GameScreen(props: GameScreenProps) {
     : '一介布衣，无权无势'
 
   return (
-    <div className="game-screen">
+    <div className={`game-screen ${isGameOver ? 'game-screen--ended' : ''}`}>
       {isGameOver && (
         <div ref={endingContainerRef} tabIndex={-1}>
           <GameOverScreen
@@ -242,18 +241,20 @@ function GameScreen(props: GameScreenProps) {
           eventCount={eventHistory.length}
         />
 
-        <CheatMode
-          isOpen={isCheatModeOpen}
-          onClose={closeCheatMode}
-          currentGameState={{
-            currentYear: gameState.currentYear,
-            currentMonth: gameState.currentMonth,
-            turn: 0,
-            eventHistory: []
-          }}
-          currentCharacter={character}
-          currentGameStateValues={gameState}
-        />
+        <Suspense fallback={null}>
+          <CheatMode
+            isOpen={isCheatModeOpen}
+            onClose={closeCheatMode}
+            currentGameState={{
+              currentYear: gameState.currentYear,
+              currentMonth: gameState.currentMonth,
+              turn: 0,
+              eventHistory: []
+            }}
+            currentCharacter={character}
+            currentGameStateValues={gameState}
+          />
+        </Suspense>
 
         <div className="game-main">
           <aside className="sidebar">

@@ -29,7 +29,7 @@
 }
 
 .storyline-bar__caption {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: rgba(197, 165, 90, 0.55);
   letter-spacing: 3px;
   font-family: var(--font-heading);
@@ -54,7 +54,7 @@
 }
 
 .storyline-bar__intro {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: rgba(245, 230, 200, 0.55);
   letter-spacing: 1px;
   white-space: nowrap;
@@ -68,7 +68,7 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: rgba(197, 165, 90, 0.45);
   letter-spacing: 1px;
   font-family: var(--font-heading);
@@ -183,9 +183,9 @@
     order: 3;
   }
   .storyline-bar__intro {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
   }
   .storyline-bar__meta {
-    font-size: 0.65rem;
+    font-size: 0.8rem;
   }
 }

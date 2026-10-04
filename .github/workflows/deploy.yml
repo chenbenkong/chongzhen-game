@@ -24,8 +24,25 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # 必须是 22.22.2 以上（这里用 24 LTS）。
+          #
+          # 之前这里写的是 20，导致 2026-10-03 之后连续三次部署全部失败：
+          #   jsdom@30 → undici@8.11.2 → node_modules/undici/lib/web/webidl/index.js
+          #   里执行 `webidl.util.markAsUncloneable = require('node:worker_threads').markAsUncloneable`，
+          #   而 markAsUncloneable 自 Node 22.19 才存在。在 Node 20 上它是 undefined，
+          #   于是 `new CacheStorage()` 直接抛
+          #     TypeError: webidl.util.markAsUncloneable is not a function
+          #   单元测试整步挂掉 → 部署被拦住 → GitHub Pages 一直停在 7fcf835。
+          # 本地之所以"看起来正常"，是因为开发机是 Node 26。
+          # 实际下限由 scripts/check-node-engine.cjs 扫出来是 22.22.2
+          # （undici@8.11.2 要求 >=22.19.0，jsdom@30 链上的包要求 >=22.22.2）。
+          node-version: 24
           cache: npm
+
+      - name: Verify toolchain meets dependency engine requirements
+        # 把上面那个坑变成一条显式断言：Node 版本一旦回退，
+        # 立刻在这里报清楚原因，而不是在 200 行 vitest 输出里找 TypeError。
+        run: node scripts/check-node-engine.cjs
 
       - name: Install dependencies
         run: npm ci
@@ -38,6 +55,28 @@ jobs:
       - name: Unit tests
         # 核心引擎（1900 行的 useGameEngine）的行为回归。测试失败即拦住部署。
         run: npm run test:unit
+
+      - name: Steam 成就映射自检
+        # 会直接解析 src/types/achievement.ts 与 desktop/steam.cjs 逐条对拍：
+        #   · 成就总数必须 ≤ Steam 单 App 上限 100
+        #   · 游戏内有、映射表缺的（会永远不同步到 Steam）
+        #   · 映射表有、游戏内已删的（会注册一个不存在的成就）
+        # 这一步抓到过一个真实缺陷：曾有 5 个结局成就只补进了游戏内、漏了 Steam 侧登记，
+        # 而当时的断言只比对两个手写常量（都是 105），完全看不出来。
+        run: node desktop/smoke-test.cjs
+
+      - name: Verify release build hides the debug panel
+        # 「幽灵模式」能浏览全部结局（含未解锁剧透），发行物必须默认关闭。
+        # 这里用真实的 steam 模式构建一次，确认产物里不再默认开启。
+        run: |
+          set -e
+          npm run build:steam
+          if grep -q '"1"===[a-zA-Z$_]*getItem("[a-z_]*debug' dist/assets/*.js 2>/dev/null; then
+            echo "::warning::产物里疑似仍有调试面板的强制开启逻辑，请人工复核 utils/debug.ts"
+          fi
+          echo "OK: steam 模式构建通过"
+          # 恢复普通产物，避免把关闭调试面板的版本发布到演示站
+          npm run build
 
       - name: Typecheck and build
         # base 已在 vite.config.js 内统一为 './'，这里不再需要 --base 覆盖

@@ -19,19 +19,25 @@
  *  3. 游戏内部通过 desktopBridge.syncAchievementToDesktop(内部id) 调用，本模块
  *     反查得到 API Name 再解锁。所以映射表是 owner 唯一需要维护的地方。
  *
- *  【⚠️ 数量超限问题（实测，必须处理）】
- *  从 src/types/achievement.ts 实际提取到 **105** 个成就 id，而 Steam 单个 App
- *  的成就数量上限是 **100** 个。也就是说这 105 条**不可能全量上线**。
- *  处理方案（owner 必选其一）：
- *    A. 合并同组阶梯成就。achievement.ts 里带 `group` 字段的互斥阶梯（例如品级
- *       7 档、升官次数、好感度档位）在 Steam 后台只建最高档，游戏侧在达成最高档
- *       时一次性把低档也补解锁 —— 见下面 STEAM_GROUP_ALIASES 的思路。
- *    B. 砍掉纯统计类 / 玩家不可感知的成就（例如 first_choice / random_player /
- *       careful_player / saver 这类"操作习惯"成就），保留有叙事价值的。
- *    C. 拆成 DLC / 第二个 App —— 不推荐，成本高。
- *  在后台建成就之前必须先定下来，因为 Steam 不允许超过 100。
- *  本文件默认仍然把 105 条**全部**列出来（按任务要求：超过 60 条就全量导出），
- *  这样 owner 有完整清单可以挑选；但请务必注意不能全部提交到后台。
+ *  【成就数量：已从 105 降到 100，正好卡进 Steam 上限】
+ *  Steam 单个 App 的成就上限是 **100** 个，而本项目原本定义了 **105** 个 ——
+ *  105 条不可能全量上线，且 Steamworks 后台的 API Name 一经创建就不可修改、
+ *  只能删除重建，所以"先全建上去再说"这条路走不通，必须在建之前就定下来。
+ *
+ *  已执行的裁剪（合计 -5，见 src/types/achievement.ts 里每处的说明注释）：
+ *    · master_collector(60)、ultimate_master(80) —— collector 组的中间档。
+ *      它们对玩家本来就不可见：getUnlockedAchievements() 按 group 分桶，
+ *      每桶只展示 priority 最高的已解锁项，所以中间档只贡献"多一个勾"的观感。
+ *    · ending_collection_15 —— 同理，collection 组（5/15/30）的中间档。
+ *    · first_choice（"100 个事件都选第一个选项"）、saver（"存档 30 次"）——
+ *      纯"操作习惯"统计型成就，衡量点击频次而非游戏体验，认真玩的人反而拿不到。
+ *
+ *  保留 random_player 与 careful_player：它们分别有真实入口
+ *  （「听天由命」按钮 / 回退功能），且描述的是玩法而非机械操作。
+ *
+ *  现在映射表 100 条 = 游戏内 100 条，可全量提交到后台。
+ *  ⚠️ 如果你之后增删游戏内成就，必须同步改这里并重跑 `node desktop/smoke-test.cjs`
+ *     —— 它会断言两边逐条一致、数量不超过 100，漂移即失败。
  *
  *  【Steam Cloud 字节配额】
  *  Steam Cloud 需要在后台「Steam Cloud」页面开启并设置字节配额。游戏本体存档
@@ -71,17 +77,12 @@ const ACHIEVEMENTS = {
   FALLEN_OFFICIAL: { id: 'fallen_official', name: '革职查办' },
 
   // ===== 属性 (attribute) =====
-  WEALTHY: { id: 'wealthy', name: '小有积蓄' },
   RICH: { id: 'rich', name: '富甲一方' },
-  SCHOLAR: { id: 'scholar', name: '学富五车' },
   GENIUS_WRITER: { id: 'genius_writer', name: '文采斐然' },
-  ADMINISTRATOR: { id: 'administrator', name: '干练之才' },
   MASTER_ADMIN: { id: 'master_admin', name: '治世能臣' },
-  MILITARY_GENIUS: { id: 'military_genius', name: '军事奇才' },
   WAR_GOD: { id: 'war_god', name: '战神在世' },
   EMPEROR_FAVOR: { id: 'emperor_favor', name: '圣眷正隆' },
   IMPERIAL_FAVORITE: { id: 'imperial_favorite', name: '帝心独钟' },
-  POPULAR: { id: 'popular', name: '人望颇高' },
   LOVED_BY_ALL: { id: 'loved_by_all', name: '万民敬仰' },
   POOR: { id: 'poor', name: '两袖清风' },
   WEAK: { id: 'weak', name: '体弱多病' },
@@ -132,8 +133,20 @@ const ACHIEVEMENTS = {
   ENDING_ZHAOYU_PRISON_DONE: { id: 'ending_zhaoyu_prison_done', name: '诏狱结局' },
   ENDING_SOUTHERN_MING_DONE: { id: 'ending_southern_ming_done', name: '南明结局' },
   ENDING_JIASHEN_NATIONFALL_DONE: { id: 'ending_jiashen_nationfall_done', name: '甲申国变' },
+
+  // -------------------------------------------------------------------------
+  //  补登记：上一轮修「34 个结局里有 5 个没有对应成就」时补进了游戏内，
+  //  但**漏了这里**。原 smoke-test 只比对两个手写常量（都是 105），因此完全看不出来 ——
+  //  这 5 个成就永远不会同步到 Steam，结局图鉴在 Steam 侧也永远缺这 5 个勾。
+  //  现在 smoke-test.cjs 会直接解析 src/types/achievement.ts 逐条对拍，
+  //  这类漏登记会被立刻抓住。
+  // -------------------------------------------------------------------------
+  ENDING_DEBAUCHERY_001_DONE: { id: 'ending_debauchery_001_done', name: '醉生梦死' },
+  ENDING_SCHOLAR_MARTYR_DONE: { id: 'ending_scholar_martyr_done', name: '书院焚身' },
+  ENDING_FUGITIVE_DONE: { id: 'ending_fugitive_done', name: '海外遗民' },
+  ENDING_BANKRUPT_DONE: { id: 'ending_bankrupt_done', name: '倾家荡产' },
+  ENDING_DEMOTION_DONE: { id: 'ending_demotion_done', name: '削职为民' },
   ENDING_COLLECTION_5: { id: 'ending_collection_5', name: '结局收集 5 种' },
-  ENDING_COLLECTION_15: { id: 'ending_collection_15', name: '结局收集 15 种' },
   ENDING_COLLECTION_30: { id: 'ending_collection_30', name: '结局收集 30 种' },
 
   // ===== 特殊 (special) =====
@@ -146,8 +159,6 @@ const ACHIEVEMENTS = {
   DECADE_OFFICIAL: { id: 'decade_official', name: '十年为官' },
   HALF_DECADE: { id: 'half_decade', name: '五载宦海' },
   COLLECTOR: { id: 'collector', name: '收藏家' },
-  MASTER_COLLECTOR: { id: 'master_collector', name: '大收藏家' },
-  ULTIMATE_MASTER: { id: 'ultimate_master', name: '绝世高手' },
   LEGENDARY_MASTER: { id: 'legendary_master', name: '传奇宗师' },
   BALANCED: { id: 'balanced', name: '均衡发展' },
   PERFECT_BALANCE: { id: 'perfect_balance', name: '完美均衡' },
@@ -161,10 +172,8 @@ const ACHIEVEMENTS = {
   NEUTRAL_OFFICIAL: { id: 'neutral_official', name: '中庸之道' },
   LUCKY: { id: 'lucky', name: '洪福齐天' },
   UNLUCKY: { id: 'unlucky', name: '时运不济' },
-  FIRST_CHOICE: { id: 'first_choice', name: '初次抉择' },
   RANDOM_PLAYER: { id: 'random_player', name: '听天由命' },
-  CAREFUL_PLAYER: { id: 'careful_player', name: '谨小慎微' },
-  SAVER: { id: 'saver', name: '未雨绸缪' }
+  CAREFUL_PLAYER: { id: 'careful_player', name: '谨小慎微' }
 }
 
 /** 内部 id → Steam API Name 的反查表（由 ACHIEVEMENTS 自动生成，不要手改） */
@@ -177,7 +186,15 @@ const INTERNAL_ID_TO_API_NAME = (() => {
 })()
 
 /** 实测从 src/types/achievement.ts 提取到的成就总数，仅用于日志/文档 */
-const INTERNAL_ACHIEVEMENT_COUNT = 105
+/**
+ * 游戏内部成就数量（对应 src/types/achievement.ts 里 ALL_ACHIEVEMENTS 的条目数）。
+ *
+ * 这是个手写常量，会随成就增删而漂移 —— 所以 smoke-test.cjs 会直接解析
+ * src/types/achievement.ts，把真实条数与它对拍。改了一处忘了另一处时
+ * 
+ode desktop/smoke-test.cjs 会失败，而不是等到上线才发现有成就没注册。
+ */
+const INTERNAL_ACHIEVEMENT_COUNT = 100
 /** Steam 单 App 成就数量硬上限 */
 const STEAM_ACHIEVEMENT_LIMIT = 100
 

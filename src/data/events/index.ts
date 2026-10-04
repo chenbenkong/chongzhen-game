@@ -98,8 +98,19 @@ export const initialEvents: GameEvent[] = [
 // 灰色支线（type='gray'，会进入 findAvailableEvent 走"30% 支线触发窗口"）
 export { allGrayChoiceEvents };
 
-// 全部结局（仅用于 EndingCodex / CheatMode 展示/筛选，**不**进入 findAvailableEvent 事件池）
-// 真实触发由 BoundaryEventManager 负责（见 data/boundaryEvents.ts）
-export { allEndingEvents };
+// ⚠️ 全部结局（81 KB）**刻意不再**从这里导出。
+//
+// 原来这里有一行 `export { allEndingEvents }`，而 useGameEngine 是从本 barrel
+// 取 initialEvents 的 —— 于是结局数据（连同 boundaryEvents / endings_all /
+// debauchery）被硬拖进首屏模块图：45 个分片、1.3 MB 在启动时全部预取，
+// 其中结局那一坨只在玩家打开「结局图鉴」或调试面板时才用得上。
+//
+// 现在只有真正需要它的两处直接按路径 import：
+//   - components/EndingCodex.tsx  → data/events/ending（该组件本身是 lazy 的）
+//   - components/CheatMode.tsx    → data/events/ending（该组件也是 lazy 的）
+// 两者都不在首屏关键路径上，因此结局数据不再阻塞首屏。
+//
+// 真实触发仍由 BoundaryEventManager 负责（见 data/boundaryEvents.ts），
+// 结局也不进入 findAvailableEvent 的事件池。
 
 export { emotionEvents };

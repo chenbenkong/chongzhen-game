@@ -534,10 +534,15 @@ export function useGameEngine(props: UseGameEngineProps) {
   const [isAchievementPanelOpen, setIsAchievementPanelOpen] = useState(false)
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null)
 
-  const [showTutorial, setShowTutorial] = useState(() => {
-    const hasSeenTutorial = localStorage.getItem('chongzhen_tutorial_seen')
-    return !hasSeenTutorial && !loadSaveData
-  })
+  // 教程不再自动弹出。
+  //
+  // 原来这里是 `!hasSeenTutorial && !loadSaveData`：首次进入游戏会被一个
+  // 8 页的模态框挡住，必须点满"下一步"或点"跳过教程"才能开始玩。
+  // 玩家的真实反馈是"进入时有一段验证"，把它误认为已删除的口令门。
+  // 现在改为完全不拦截：教程保持随时可从状态栏「帮助」打开，
+  // 但不再成为进入游戏的必经步骤。`chongzhen_tutorial_seen` 标记
+  // 仍然照写不误（用于统计看过教程的玩家，也兼容旧存档）。
+  const [showTutorial, setShowTutorial] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showAIAdvisor, setShowAIAdvisor] = useState(false)
   const [showImageGenerator, setShowImageGenerator] = useState(false)
@@ -677,28 +682,33 @@ export function useGameEngine(props: UseGameEngineProps) {
     setPlayerStats(next)
   }, [])
 
+  // 全量事件池 —— 模块级构建一次。
+  //
+  // 改造前这里在 4 个函数体内各写了一遍 `const allEvents = [...initialEvents, ...allGrayChoiceEvents]`。
+  // 每次调用都要新建一个约 2000 项的数组并逐个拷贝，而这几个函数是**每月推进都会跑**
+  // 的热路径（findAvailableEvent / findAvailableEventWithState / findAllEventsForState /
+  // getCurrentStoryline），一局 17 年下来是数千次无谓的 2000 元素数组分配。
+  const ALL_EVENTS: GameEvent[] = [...initialEvents, ...allGrayChoiceEvents]
+
   // 推断当前剧情线：优先使用玩家选择后持久化的剧情线，否则从历史事件反推
   const getCurrentStoryline = useCallback((): string | undefined => {
     if (currentStorylineRef.current) return currentStorylineRef.current
-    const allEvents = [...initialEvents, ...allGrayChoiceEvents]
     const history = eventHistoryRef.current
     for (let i = history.length - 1; i >= Math.max(0, history.length - 8); i--) {
       const id = history[i]
-      const ev = allEvents.find(e => e.id === id)
+      const ev = ALL_EVENTS.find(e => e.id === id)
       if (ev?.storyline) return ev.storyline
     }
     return undefined
   }, [])
 
   const findAvailableEvent = useCallback((): GameEvent | null => {
-    const allEvents = [...initialEvents, ...allGrayChoiceEvents]
-    const available = allEvents.filter(e => checkEventConditions(e, characterRef.current, gameStateRef.current))
+    const available = ALL_EVENTS.filter(e => checkEventConditions(e, characterRef.current, gameStateRef.current))
     return pickEvent(available, eventHistoryRef.current, getCurrentStoryline())
   }, [])
 
   const findAvailableEventWithState = useCallback((state: GameStateValues): GameEvent | null => {
-    const allEvents = [...initialEvents, ...allGrayChoiceEvents]
-    const available = allEvents.filter(e => checkEventConditions(e, characterRef.current, state))
+    const available = ALL_EVENTS.filter(e => checkEventConditions(e, characterRef.current, state))
     return pickEvent(available, eventHistoryRef.current, getCurrentStoryline())
   }, [])
 
@@ -722,17 +732,27 @@ export function useGameEngine(props: UseGameEngineProps) {
   }, [])
 
   const findAllEventsForState = useCallback((state: GameStateValues): GameEvent[] => {
-    const allEvents = [...initialEvents, ...allGrayChoiceEvents]
     const history = eventHistoryRef.current
-    const available = allEvents.filter(e => checkEventConditions(e, characterRef.current, state))
+    const available = ALL_EVENTS.filter(e => checkEventConditions(e, characterRef.current, state))
     if (available.length === 0) return []
 
     const activeStoryline = getCurrentStoryline()
 
+    // 已触发集合与「最后一次出现位置」表，各构建一次。
+    //
+    // 改造前：下面 4 处 `!history.includes(e.id)` 各自对最多 2000 个候选做一次线性扫描，
+    // 而 history 一局能涨到 200+ 项 —— 单次推进要做几十万次字符串比较。
+    // 更糟的是 lastOccurrenceDistance 用 `history.lastIndexOf()`，
+    // 在 withCooldown 里对每个可重复事件各扫一遍，是本函数最大的热点。
+    // 两张表建一次、之后全是 O(1) 查询，语义与原来完全一致。
+    const seen = new Set(history)
+    const lastIndexById = new Map<string, number>()
+    for (let i = 0; i < history.length; i++) lastIndexById.set(history[i], i)
+
     // 计算某个事件 ID 距离上次触发有多远（月数）
     const lastOccurrenceDistance = (eventId: string): number => {
-      const lastIndex = history.lastIndexOf(eventId)
-      if (lastIndex === -1) return Infinity
+      const lastIndex = lastIndexById.get(eventId)
+      if (lastIndex === undefined) return Infinity
       return history.length - lastIndex
     }
 
@@ -753,19 +773,19 @@ export function useGameEngine(props: UseGameEngineProps) {
     const results: GameEvent[] = []
 
     // 1. 历史大事件（一次性）
-    const historical = available.filter(e => e.type === 'historical' && !history.includes(e.id))
+    const historical = available.filter(e => e.type === 'historical' && !seen.has(e.id))
     const pickedHistorical = weightedPick(historical, activeStoryline)
     if (pickedHistorical) {
       results.push(pickedHistorical)
     } else {
       // 2. 过渡事件（一次性），结局前奏优先
       const prelude = available.find(
-        e => e.type === 'transition' && e.isPreEnding === true && !history.includes(e.id)
+        e => e.type === 'transition' && e.isPreEnding === true && !seen.has(e.id)
       )
       if (prelude) {
         results.push(prelude)
       } else {
-        const transition = available.filter(e => e.type === 'transition' && !history.includes(e.id))
+        const transition = available.filter(e => e.type === 'transition' && !seen.has(e.id))
         const pickedTransition = weightedPick(transition, activeStoryline)
         if (pickedTransition) {
           results.push(pickedTransition)
@@ -783,7 +803,7 @@ export function useGameEngine(props: UseGameEngineProps) {
     }
 
     // 4. 支线事件：emotion 一次性，gray/character/national/faction 可重复但带冷却
-    const branchEmotion = available.filter(e => e.type === 'emotion' && !history.includes(e.id))
+    const branchEmotion = available.filter(e => e.type === 'emotion' && !seen.has(e.id))
     const branchRepeatableTypes = ['gray', 'character', 'national', 'faction'] as const
     const branchRepeatable = branchRepeatableTypes.flatMap(type =>
       withCooldown(available.filter(e => e.type === type), type)

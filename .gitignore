@@ -98,3 +98,9 @@ tests/screenshots/
 # --- GitHub CLI local config ---
 .gh-config/
 commit_msg.txt
+
+# --- Steam store assets (regenerate: cd tests && node store-assets.mjs) ---
+# 8.8 MB of PNGs. They're build artifacts, not source: the generator is
+# tests/store-assets.mjs and the manifest explains which Steamworks slot each
+# file goes into, so there's no reason to version 15MB of binaries.
+store-assets/

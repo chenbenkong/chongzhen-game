@@ -168,13 +168,13 @@
 }
 
 .attr-item.small .attr-name {
-  font-size: 0.74rem;
+  font-size: 0.82rem;
   width: 46px;
 }
 
 .attr-name {
   width: 42px;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   color: #9a8870;
   text-align: right;
   letter-spacing: 1px;
@@ -185,7 +185,7 @@
 @media (max-width: 480px) {
   .attr-name {
     width: 38px;
-    font-size: 0.74rem;
+    font-size: 0.82rem;
   }
 }
 
@@ -243,7 +243,7 @@
 
 .attr-num {
   width: 28px;
-  font-size: 0.76rem;
+  font-size: 0.84rem;
   color: #d4a520;
   font-weight: bold;
   font-family: 'Georgia', serif;
@@ -255,7 +255,7 @@
 @media (max-width: 480px) {
   .attr-num {
     width: 26px;
-    font-size: 0.72rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -318,7 +318,7 @@
 
 .attr-hint {
   width: 42px;
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   color: #6b5a3a;
   text-align: center;
   flex-shrink: 0;
@@ -328,7 +328,7 @@
 @media (max-width: 480px) {
   .attr-hint {
     width: 36px;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -371,11 +371,11 @@
 }
 
 .attr-warning-small {
-  font-size: 0.75rem;
+  font-size: 0.83rem;
 }
 
 .hidden-attrs .panel-note {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: #4a3820;
   margin-top: 12px;
   padding-top: 10px;
@@ -386,7 +386,7 @@
 
 @media (max-width: 480px) {
   .hidden-attrs .panel-note {
-    font-size: 0.68rem;
+    font-size: 0.8rem;
     margin-top: 8px;
     padding-top: 8px;
   }
@@ -398,7 +398,7 @@
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 4px 12px;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
 }
 
 .attr-desc dt {
@@ -413,7 +413,7 @@
 
 @media (max-width: 480px) {
   .attr-desc {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     gap: 3px 8px;
   }
 }

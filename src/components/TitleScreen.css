@@ -167,7 +167,7 @@
 
 .title-difficulty__label {
   font-family: var(--font-body);
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   letter-spacing: 0.5em;
   text-indent: 0.5em;
   color: rgba(197, 165, 90, 0.4);
@@ -208,7 +208,7 @@
 
 .title-difficulty__desc {
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   letter-spacing: 0.05em;
   color: rgba(235, 230, 220, 0.42);
   margin: 0;
@@ -300,7 +300,7 @@
   background: none;
   border: 1px solid rgba(197,165,90,0.15);
   color: rgba(197,165,90,0.5);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   padding: 5px 14px;
   letter-spacing: 0.1em;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -321,7 +321,7 @@
   top: 60px;
   left: 24px;
   z-index: 2;
-  font-size: 0.65rem;
+  font-size: 0.73rem;
   color: rgba(197,165,90,0.25);
   letter-spacing: 0.1em;
   font-family: var(--font-body);
@@ -335,8 +335,8 @@
     width: 100%;
   }
   .title-main { font-size: 3rem; letter-spacing: 0.3em; }
-  .title-sub  { font-size: 0.7rem; letter-spacing: 0.4em; }
-  .title-tagline { font-size: 0.75rem; }
+  .title-sub  { font-size: 0.78rem; letter-spacing: 0.4em; }
+  .title-tagline { font-size: 0.8rem; }
   .title-btn { padding: 12px 30px; min-width: 180px; font-size: 0.9rem; letter-spacing: 0.3em; }
   .title-buttons { flex-direction: column; gap: 12px; }
   .title-version-topleft { top: 80px; left: 16px; }
@@ -348,7 +348,7 @@
    导致主按钮「开 始 仕 途」被挤到折叠线以下，玩家必须先滚动才能开局。
    这里按视口高度逐级压缩留白与字号，让主操作始终落在首屏内。
    ============================================================ */
-@media (max-height: 820px) {
+@media (max-height: 950px) {
   .title-screen { padding: 28px 32px; }
   .title-frame { padding: 24px 48px; }
   .title-main { font-size: 3.6rem; margin-bottom: 8px; }
@@ -366,22 +366,47 @@
    此时印章与引语只是装饰，优先保证主按钮落在首屏内。
    注意：这里**不**改 .title-buttons 的方向，方向交给上面的 max-width 规则决定，
    避免在 360px 窄屏下把两个按钮并排挤出横向滚动。 */
-@media (max-height: 700px) {
+@media (max-height: 780px) {
   .title-screen { padding: 14px 24px; }
   .title-frame { padding: 16px 32px; }
   .title-main { font-size: 2.9rem; line-height: 1.15; }
   .title-main::after { margin-top: 9px; }
   .title-seal { display: none; }
   .title-quote { display: none; }
-  .title-sub { font-size: 0.66rem; margin-bottom: 12px; letter-spacing: 0.4em; }
-  .title-tagline { font-size: 0.72rem; line-height: 1.6; margin-bottom: 9px; }
+  .title-sub { font-size: 0.74rem; margin-bottom: 12px; letter-spacing: 0.4em; }
+  .title-tagline { font-size: 0.8rem; line-height: 1.6; margin-bottom: 9px; }
   .title-difficulty { margin-bottom: 12px; gap: 6px; }
-  .title-difficulty__label { font-size: 0.62rem; }
-  .title-difficulty__option { padding: 6px 16px; font-size: 0.74rem; }
+  .title-difficulty__label { font-size: 0.7rem; }
+  .title-difficulty__option { padding: 6px 16px; font-size: 0.8rem; }
   .title-difficulty__desc { display: none; }
   .title-buttons { gap: 9px; }
   .title-btn { padding: 10px 26px; font-size: 0.86rem; }
   .title-version-topleft { top: 8px; left: 12px; }
+}
+
+/* ============================================================
+   窄屏竖屏手机（iPhone 12/13/14 一类：宽 360–430，高 780–950）
+   ============================================================
+   为什么需要这一档：iPhone 14 竖屏是 390x844 —— 高度 844 落在上面两档之间
+   （> 780 所以引语没被隐藏，< 950 所以拿到了压缩档），可它偏偏是全项目里
+   最常见的一个尺寸，而内容总高会超出视口，把主按钮「开 始 仕 途」顶到折叠线以下：
+   玩家必须先滚动才能开局。
+
+   引语（.title-quote）是纯装饰，在窄屏上要 174px + 44px 下边距 ≈ 218px，
+   占了整个标题屏预算的四分之一。所以这里直接隐藏它，
+   与 max-height:780px 档的做法一致 —— 优先保证主操作可见。
+   ============================================================ */
+@media (max-width: 480px) {
+  .title-screen { padding: 16px 20px; }
+  .title-frame { padding: 20px 24px; }
+  .title-quote,
+  .title-seal { display: none; }
+  .title-sub { font-size: 0.74rem; margin-bottom: 14px; letter-spacing: 0.4em; }
+  .title-tagline { font-size: 0.85rem; line-height: 1.7; margin-bottom: 12px; }
+  .title-difficulty { margin-bottom: 14px; gap: 6px; }
+  .title-difficulty__label { font-size: 0.7rem; }
+  .title-difficulty__desc { display: none; }
+  .title-btn { padding: 11px 28px; font-size: 0.88rem; }
 }
 
 /* ============================================================

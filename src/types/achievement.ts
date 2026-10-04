@@ -273,18 +273,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     unlocked: false
   },
   // 属性成就
-  {
-    id: 'wealthy',
-    name: '富甲一方',
-    description: '财帛属性达到 80 以上',
-    icon: '富',
-    category: 'attribute',
-    group: 'wealth',
-    priority: 80,
-    checkUnlock: (ctx) => ctx.attributes.财帛 >= 80,
-    unlocked: false
-  },
-  {
+    {
     id: 'rich',
     name: '家财万贯',
     description: '财帛属性达到 95 以上',
@@ -295,18 +284,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     checkUnlock: (ctx) => ctx.attributes.财帛 >= 95,
     unlocked: false
   },
-  {
-    id: 'scholar',
-    name: '文采斐然',
-    description: '文韬属性达到 80 以上',
-    icon: '文',
-    category: 'attribute',
-    group: 'intellect',
-    priority: 80,
-    checkUnlock: (ctx) => ctx.attributes.文韬 >= 80,
-    unlocked: false
-  },
-  {
+    {
     id: 'genius_writer',
     name: '才高八斗',
     description: '文韬属性达到 95 以上',
@@ -317,18 +295,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     checkUnlock: (ctx) => ctx.attributes.文韬 >= 95,
     unlocked: false
   },
-  {
-    id: 'administrator',
-    name: '治世能臣',
-    description: '理政属性达到 80 以上',
-    icon: '治',
-    category: 'attribute',
-    group: 'admin',
-    priority: 80,
-    checkUnlock: (ctx) => ctx.attributes.理政 >= 80,
-    unlocked: false
-  },
-  {
+    {
     id: 'master_admin',
     name: '治国奇才',
     description: '理政属性达到 95 以上',
@@ -339,18 +306,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     checkUnlock: (ctx) => ctx.attributes.理政 >= 95,
     unlocked: false
   },
-  {
-    id: 'military_genius',
-    name: '军事奇才',
-    description: '武略属性达到 80 以上',
-    icon: '军',
-    category: 'attribute',
-    group: 'military',
-    priority: 80,
-    checkUnlock: (ctx) => ctx.attributes.武略 >= 80,
-    unlocked: false
-  },
-  {
+    {
     id: 'war_god',
     name: '战神转世',
     description: '武略属性达到 95 以上',
@@ -383,18 +339,7 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     checkUnlock: (ctx) => ctx.gameState.圣眷 >= 95,
     unlocked: false
   },
-  {
-    id: 'popular',
-    name: '民望所归',
-    description: '民望值达到 80 以上',
-    icon: '望',
-    category: 'attribute',
-    group: 'reputation',
-    priority: 80,
-    checkUnlock: (ctx) => ctx.gameState.民望 >= 80,
-    unlocked: false
-  },
-  {
+    {
     id: 'loved_by_all',
     name: '万民爱戴',
     description: '民望值达到 95 以上',
@@ -912,17 +857,9 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     unlocked: false
   },
   {
-    id: 'ending_collection_15',
-    name: '阅历大明',
-    description: '解锁 15 种不同的结局',
-    icon: '历',
-    category: 'endgame',
-    group: 'collection',
-    priority: 15,
-    checkUnlock: (ctx) => countUnlockedEndings(ctx) >= 15,
-    unlocked: false
-  },
-  {
+    // 原 collection 组是 5 / 15 / 30 三档，删掉了中间 15 档。
+    // 同 collector 组的理由：getUnlockedAchievements() 按 group 只展示最高档，
+    // 15 档对玩家不可见；而 Steam 单 app 成就上限 100，这里正好腾出一个名额。
     id: 'ending_collection_30',
     name: '百味人生',
     description: '解锁 30 种不同的结局',
@@ -1017,35 +954,24 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     unlocked: false
   },
   {
+    // 注：原 collector 组有 4 档（30/60/80/全部）。这里删掉了中间两档
+    // （master_collector 60、ultimate_master 80），只留 collector(30) 与 legendary_master(全部)。
+    //
+    // 删的理由不是"凑数"，而是它们本来就对玩家不可见：
+    // getUnlockedAchievements() 按 group 分桶，每桶只展示 priority 最高的那个已解锁成就。
+    // 所以解锁 60 档之后，玩家在成就面板里看到的仍然是 60 档而不是 30 档 ——
+    // 中间档位只贡献了一个"多一个勾"的观感，不贡献任何信息。
+    //
+    // 更关键的是 Steam 对单个 app 的成就数有上限（100），而原来定义了 105 个，
+    // 上线时 105 个无法全部注册（Steamworks 后台的 API Name 一经创建不可改，只能删重建）。
+    // 少两个不可见的中间档，正好把这个硬约束解决掉。
     id: 'collector',
-    name: '成就收集者',
+    name: '成就收藏家',
     description: '解锁 30 个以上成就',
-    icon: '集',
+    icon: '藏',
     category: 'special',
     group: 'collector',
     priority: 30,
-    checkUnlock: () => false, // 这个需要特殊处理
-    unlocked: false
-  },
-  {
-    id: 'master_collector',
-    name: '成就大师',
-    description: '解锁 60 个以上成就',
-    icon: '师',
-    category: 'special',
-    group: 'collector',
-    priority: 60,
-    checkUnlock: () => false, // 这个需要特殊处理
-    unlocked: false
-  },
-  {
-    id: 'ultimate_master',
-    name: '至尊大师',
-    description: '解锁 80 个以上成就',
-    icon: '尊',
-    category: 'special',
-    group: 'collector',
-    priority: 80,
     checkUnlock: () => false, // 这个需要特殊处理
     unlocked: false
   },
@@ -1182,15 +1108,9 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     unlocked: false
   },
   {
-    id: 'first_choice',
-    name: '果断抉择',
-    description: '在 100 个事件中都选择了第一个选项',
-    icon: '决',
-    category: 'special',
-    checkUnlock: (ctx) => ctx.firstChoiceCount >= 100,
-    unlocked: false
-  },
-  {
+    // 已删除 first_choice（"100 个事件都选第一个选项"）。
+    // 它衡量的是玩家的点击习惯而不是游戏体验，属于典型的"刷指标"型成就 ——
+    // 认真玩的人反而拿不到。腾出的名额给了真正有意义的成就。
     id: 'random_player',
     name: '随心所欲',
     description: '随机选择选项 50 次以上',
@@ -1210,16 +1130,10 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
     category: 'special',
     checkUnlock: (ctx) => ctx.undoCount >= 10,
     unlocked: false
-  },
-  {
-    id: 'saver',
-    name: '习惯性存档',
-    description: '存档次数达到 30 次以上',
-    icon: '存',
-    category: 'special',
-    checkUnlock: (ctx) => ctx.saveCount >= 30,
-    unlocked: false
   }
+  // 注：此处原有 saver（"存档次数达到 30 次以上"），已删除。
+  // 理由同已删除的 first_choice：统计操作频次而非游戏体验的"刷指标"型成就，
+  // 认真玩的人拿不到，删掉腾出的名额给了更有意义的成就。
 ]
 
 // 成就数据（每个存档独立一份，不再用 localStorage 共享）
@@ -1231,11 +1145,35 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
 let currentAchievementData: AchievementData = { unlocked: [], unlockTimes: {} }
 
 /** 拷贝一份成就数据，切断与内部状态的引用共享 */
+/**
+ * 拷贝成就数据，并在拷贝时剔除已删除的成就 id。
+ *
+ * 为什么必须剔除：老存档里可能还留着 master_collector / ultimate_master /
+ * ending_collection_15 / saver / first_choice。它们已不在 ALL_ACHIEVEMENTS 里，
+ * 但如果不清掉：
+ *   1. "已解锁 N 个"的计数会虚高 —— collector(30) 与 legendary_master 的判据都依赖
+ *      data.unlocked.length / 包含关系，计数偏大会让它们提前达成；
+ *   2. 成就面板会渲染出玩家从未见过的幽灵条目。
+ *
+ * 放在这里而不是各个入口，是因为本函数是 loadAchievements / setAchievementData /
+ * saveAchievements / getCurrentAchievementData 共同的唯一入口 ——
+ * 等于给所有边界上了同一道防线（与此前修过的"引用别名"是同一处）。
+ */
 function cloneAchievementData(data: AchievementData): AchievementData {
-  return {
-    unlocked: [...(data.unlocked ?? [])],
-    unlockTimes: { ...(data.unlockTimes ?? {}) }
+  const unlocked: string[] = []
+  const unlockTimes: Record<string, string> = {}
+  const retired = RETIRED_ACHIEVEMENT_IDS as readonly string[]
+
+  for (const id of data.unlocked ?? []) {
+    if (retired.includes(id)) continue
+    unlocked.push(id)
   }
+  for (const [id, at] of Object.entries(data.unlockTimes ?? {})) {
+    if (retired.includes(id)) continue
+    unlockTimes[id] = at
+  }
+
+  return { unlocked, unlockTimes }
 }
 
 /** 获取当前内存中的成就数据（返回副本，改它不会影响内部状态） */
@@ -1270,17 +1208,42 @@ export function saveAchievements(data: AchievementData): void {
  */
 export const COLLECTOR_CHAIN_ACHIEVEMENT_IDS = [
   'collector',
-  'master_collector',
-  'ultimate_master',
   'legendary_master'
 ] as const
 
-/** 收集链各档阈值（保持原有数值不变） */
+/** 收集链各档阈值（只保留 30 档；60/80 两档已删除，理由见上方 collector 定义处的注释） */
 const COLLECTOR_CHAIN_THRESHOLDS: ReadonlyArray<{ id: string; threshold: number }> = [
-  { id: 'collector', threshold: 30 },
-  { id: 'master_collector', threshold: 60 },
-  { id: 'ultimate_master', threshold: 80 }
+  { id: 'collector', threshold: 30 }
 ]
+
+/**
+ * 已被删除的成就 id —— 用于存档迁移。
+ *
+ * 两类：
+ *  1. 收集链 / 结局收藏的中间档（master_collector、ultimate_master、ending_collection_15）
+ *  2. 属性阈值 80 档（wealthy、scholar、administrator、military_genius、popular）——
+ *     与各自的 95 档同属一个 group，而 getUnlockedAchievements() 每组只展示
+ *     priority 最高的那一个，所以低档对玩家不可见。
+ *
+ * 加上 first_choice / saver 两个纯"操作频次"统计成就，合计正好腾出 10 个名额，
+ * 让 110 条降到 100 条 —— 卡进 Steam 单 App 成就上限。
+ *
+ * 旧存档里可能还留着这些 id（玩家在删除之前解锁过）。
+ * 它们对当前版本已无意义，且会让"已解锁 N 个"的计数虚高，
+ * 进而让 collector / legendary_master 的判据算错，所以读写时一律清掉。
+ */
+export const RETIRED_ACHIEVEMENT_IDS = [
+  'master_collector',
+  'ultimate_master',
+  'ending_collection_15',
+  'saver',
+  'first_choice',
+  'wealthy',
+  'scholar',
+  'administrator',
+  'military_genius',
+  'popular'
+] as const
 
 /** 直接写入一条已解锁成就（内部使用） */
 function grantAchievement(id: string, data: AchievementData): void {

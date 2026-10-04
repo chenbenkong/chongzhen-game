@@ -79,7 +79,48 @@ check('内部 id 全部小写蛇形', apiNames.every((n) => /^[a-z0-9_]+$/.test(
 const dupes = apiNames.length - new Set(apiNames.map((n) => steam.ACHIEVEMENTS[n].id)).size
 check('内部 id 无重复', dupes, 0)
 if (apiNames.length > steam.STEAM_ACHIEVEMENT_LIMIT) {
-  console.log(`⚠️  注意：${apiNames.length} 条超过 Steam 上限 ${steam.STEAM_ACHIEVEMENT_LIMIT}，上线前必须裁剪/合并。`)
+  console.log(`❌ 严重：${apiNames.length} 条超过 Steam 上限 ${steam.STEAM_ACHIEVEMENT_LIMIT}，无法全量注册。`)
+  failures++
+}
+
+// ---------------------------------------------------------------------------
+// 6b. 与源码对拍 —— 这是最关键的一条断言
+//
+// 上面那条「映射表条数 = 内部成就数」只比对了两个**手写常量**，它们完全可能一起漂移。
+// 这里直接解析 src/types/achievement.ts 的 ALL_ACHIEVEMENTS 数组，把真实 id 集合与
+// 映射表逐条对拍：数量、缺失、多余，三种漂移都会被抓到。
+// 这样"改了游戏内成就忘了改 steam.cjs"会立刻失败，而不是等上线才发现。
+// ---------------------------------------------------------------------------
+console.log('\n=== 6b. 与源码 achievement.ts 逐条对拍 ===')
+const ACH_SRC = path.join(__dirname, '..', 'src', 'types', 'achievement.ts')
+if (!fs.existsSync(ACH_SRC)) {
+  console.log('❌ 找不到 src/types/achievement.ts，无法对拍')
+  failures++
+} else {
+  const src = fs.readFileSync(ACH_SRC, 'utf8')
+  // 取 ALL_ACHIEVEMENTS 数组体，避免误抓文件里其它数组
+  const arrayBody = src.slice(src.indexOf('ALL_ACHIEVEMENTS'))
+  const srcIds = [...arrayBody.matchAll(/^\s{4}id:\s*'([a-z0-9_]+)',/gm)].map(m => m[1])
+  const srcSet = new Set(srcIds)
+  const mapSet = new Set(apiNames.map(n => steam.ACHIEVEMENTS[n].id))
+
+  console.log(`源码中的成就 id：${srcIds.length} 条（去重后 ${srcSet.size} 条）`)
+  check('源码 id 无重复', srcIds.length, srcSet.size)
+
+  const missing = [...srcSet].filter(id => !mapSet.has(id))
+  const extra = [...mapSet].filter(id => !srcSet.has(id))
+  check('源码有、映射表缺的成就数', missing.length, 0)
+  if (missing.length) console.log('   缺：' + missing.join(', '))
+  check('映射表有、源码已删除的多余成就数', extra.length, 0)
+  if (extra.length) console.log('   多：' + extra.join(', '))
+
+  check('手写常量 INTERNAL_ACHIEVEMENT_COUNT 与源码实际条数一致',
+    steam.INTERNAL_ACHIEVEMENT_COUNT, srcIds.length)
+
+  check('成就总数不超过 Steam 上限', apiNames.length <= steam.STEAM_ACHIEVEMENT_LIMIT, true)
+  if (apiNames.length > steam.STEAM_ACHIEVEMENT_LIMIT) {
+    console.log(`   当前 ${apiNames.length} > ${steam.STEAM_ACHIEVEMENT_LIMIT}`)
+  }
 }
 
 console.log(`\n=== 结果：${failures === 0 ? '全部通过' : failures + ' 项失败'} ===`)

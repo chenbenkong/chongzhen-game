@@ -8,6 +8,12 @@
   display: flex;
   flex-direction: column;
   animation: fadeInUp 0.4s ease both;
+  /* 吃满 .main-content 透传下来的高度（见 GameScreen.css 的纵向骨架）。
+     min-height:auto 保留 —— 事件内容比视口高时由本面板内部滚动，
+     而不是把整页顶高把底部操作栏推出屏幕。 */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
@@ -130,7 +136,7 @@
 
 .event-pending-hint {
   margin-top: 6px;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #c9a227;
   letter-spacing: 1px;
   font-family: 'KaiTi', 'STKaiti', 'SimKai', '楷体', serif;
@@ -149,7 +155,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.4rem;
+  font-size: 0.48rem;
   color: #5a4830;
   letter-spacing: 0;
 }
@@ -239,7 +245,7 @@
 }
 
 .speaker-title-compact {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   color: #6b5a3a;
   letter-spacing: 0.5px;
 }
@@ -286,7 +292,7 @@
 }
 
 .quote-text-compact {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   line-height: 1.4;
   color: #9a8870;
   margin: 0;
@@ -334,7 +340,7 @@
 }
 
 .speaker-title {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #6b5a3a;
   letter-spacing: 1px;
 }
@@ -385,7 +391,7 @@
 }
 
 .narrative-paragraph {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   line-height: 1.45;
   color: #9a8870;
   text-align: justify;
@@ -396,14 +402,14 @@
 
 @media (max-width: 480px) {
   .narrative-paragraph {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     line-height: 1.4;
   }
 }
 
 /* 决策引导 */
 .situation-prompt {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: #b0a080;
   letter-spacing: 0.5px;
   padding: 4px 0;
@@ -412,7 +418,7 @@
 
 @media (max-width: 480px) {
   .situation-prompt {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -439,7 +445,7 @@
   border-radius: 2px;
   color: rgba(197, 165, 90, 0.5);
   font-family: var(--font-body);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   letter-spacing: 0.35em;
   text-indent: 0.35em;
   cursor: pointer;
@@ -514,7 +520,7 @@
   right: 12px;
   top: 12px;
   font-family: var(--font-heading);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #5a3020;
   letter-spacing: 1px;
 }
@@ -532,7 +538,7 @@
 }
 
 .choice-title {
-  font-size: 0.85rem;
+  font-size: 0.98rem;
   color: #c9b896;
   letter-spacing: 0.5px;
   line-height: 1.4;
@@ -543,7 +549,7 @@
 }
 
 .choice-storyline-shift {
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   color: #8b7540;
   background: rgba(139, 105, 20, 0.1);
   border: 1px solid rgba(139, 105, 20, 0.25);
@@ -558,13 +564,13 @@
     font-size: 0.82rem;
   }
   .choice-storyline-shift {
-    font-size: 0.65rem;
+    font-size: 0.73rem;
     padding: 1px 5px;
   }
 }
 
 .choice-description {
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   color: #7a6850;
   line-height: 1.4;
   letter-spacing: 0.3px;
@@ -572,7 +578,7 @@
 }
 
 .choice-lock-reason {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #6b3030;
   margin-top: 6px;
   letter-spacing: 0.5px;
@@ -659,7 +665,7 @@
 }
 
 .selected-choice-title {
-  font-size: 0.85rem;
+  font-size: 0.98rem;
   color: #d4b870;
   letter-spacing: 0.3px;
   line-height: 1.35;
@@ -667,7 +673,7 @@
 }
 
 .selected-choice-desc {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #8a7860;
   line-height: 1.35;
 }
@@ -701,7 +707,7 @@
 .effect-tag {
   padding: 4px 8px;
   border-radius: 3px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.5px;
   border: 1px solid;
@@ -733,7 +739,7 @@
 }
 
 .tag-item {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #8b7540;
   letter-spacing: 1px;
 }
@@ -757,14 +763,14 @@
 }
 
 .echo-label {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: #6b5a3a;
   margin-bottom: 3px;
   letter-spacing: 0.5px;
 }
 
 .echo-text {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   line-height: 1.4;
   color: #9a8870;
   margin: 0;
@@ -801,7 +807,7 @@
   border: 1px solid rgba(139, 90, 50, 0.35);
   border-radius: 3px;
   color: #8b6a40;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
   letter-spacing: 1px;
@@ -1095,7 +1101,7 @@
 /* 尝试次数提示 */
 .attempt-cost {
   color: #a05040;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 

@@ -16,19 +16,17 @@
 ## 关于项目定位
 
 本项目以 **Steam 商业发行的质量标准**为工程基准来打磨（可构建、可测试、可打包、
-离线可运行、键盘可通关、存档可迁移），但**目前并不打算真的上架发行**，
-定位是 GitHub Pages 在线演示 / 个人作品。
-
-因此：
+离线可运行、键盘可通关、存档可迁移）。
 
 - ✅ 工程质量已对齐发布级要求，详见 **[docs/STEAM_RELEASE.md](docs/STEAM_RELEASE.md)**
 - 📌 已知的遗留问题见 **[docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)**
-- ⚪ 内容合规、素材商用授权、账号资质等**发行专属事项不构成本项目的欠账**，
-  仅在 `STEAM_RELEASE.md` §3 作为"将来若发行"的参考清单记录
+- ⚠️ **内容合规**（成人向内容分级、非自愿性描写）需要项目所有者自行处置，
+  这是上 Steam 的硬性阻断项，见 [docs/STEAM_RELEASE.md](docs/STEAM_RELEASE.md) §3.1
 
-> 另外：早期线上版本设有一道**访问口令门**（口令 `chongzhen`）。
-> 该门禁已在本版本中**彻底移除**——源码与构建产物均已确认不再包含
-> `cz-gate` / `czCheck` / `cz_ok` / 明文口令，并且有自动化测试与 CI 检查守住这一点。
+> **进入时不再有任何拦截**：早期版本有一道客户端口令门，早已删除；
+> 首次进入时强制弹出的 8 页教程也已改为不自动弹出 ——
+> 教程仍可随时从状态栏「问 帮助」打开，但不再是开局的前置步骤。
+> 自动化测试与 CI 检查会守住这两点，防止回归。
 
 ---
 
@@ -94,7 +92,8 @@
 
 - **结局图鉴**按八卷分类收藏：仕林卷、忠烈卷、隐逸卷、贰臣卷、浮沉卷、朝局卷、个志卷、异闻卷
 - **生平回顾**汇总出生、科举、升迁、贬官、婚姻、抉择、死亡等 `LifeRecord`
-- **成就系统**内置 100+ 条成就定义
+- **成就系统**内置 **100 个**成就定义 —— 正好卡在 Steam 单 App 的成就上限内，
+  游戏内定义与 `desktop/steam.cjs` 的映射表由 `npm run check:steam` 逐条对拍
 - **死亡结局**独立呈现
 
 ### 系统与体验
@@ -102,11 +101,18 @@
 - **存档**：3 个手动槽 + 独立自动存档槽，带格式版本号与自动迁移
   （`SAVE_SCHEMA_VERSION`，旧存档读到即升级）
 - **存档失败不再静默**：`localStorage` 配额耗尽会明确提示，而不是悄悄丢进度
+- **排版基准**：全局字号由 `html { font-size }` 统一控制（当前 **18px**），
+  各组件用 rem 排版，改这一个值即可整体缩放。实测事件正文 **17.1px**、
+  选项标题 **17.6px**、选项描述 **15.8px**（此前分别为 12.8 / 13.6 / 12px）
+- **版面吃满视口**：主玩法是"状态栏 / 剧情线 / 事件区 / 操作栏」的定高骨架，
+  事件区与侧栏各自内部滚动 —— 消除了此前 1440×900 下页面底部 183px 的空档，
+  也保证「进 下 月」在任何桌面分辨率下都无需滚动即可点击
 - **BGM**：内置背景音乐，带上下文、开关与加载失败提示
-- **新手教程 / 帮助**：`TutorialModal`，可由标题屏或游戏内打开
+- **新手教程 / 帮助**：`TutorialModal`，可由标题屏或游戏内随时打开，
+  **首次进入不再自动弹出**
 - **错误边界**：崩溃时给出可操作的恢复界面，而不是白屏
 - **移动端适配**：`viewport-fit=cover` + `env(safe-area-inset-*)`，
-  覆盖 360px 到 1920px 共 9 档视口的布局回归测试
+  覆盖 360px 到 1920px 共 9 档视口 × 标题屏/主玩法两屏的布局回归测试
 - **可访问性**：所有对话框统一使用 `useModal` 钩子
   （`role="dialog"` / `aria-modal` / ESC / Tab 焦点环 / 焦点归还 / 滚动锁定），
   核心玩法可纯键盘完成，事件与结算通过 `aria-live` 播报
@@ -116,9 +122,13 @@
 - **首屏兜底**：启动占位层独立于 `#root`，并带 20 秒失败兜底界面
 - **听天由命**：选项列表下方的随机选择入口，从**可选**的选项中随机挑一个
   （锁定项不会被选中），供选择困难时使用
-- **调试面板「幽灵模式」**：状态栏右上角的入口，**默认常驻可见**（项目所有者的选择）。
-  可改属性、跳年份，并能浏览全部事件与全部结局。加 `?debug=0` 临时隐藏，`?debug=1` 恢复。
-  ⚠️ 它包含未解锁结局的剧透 —— 若要发行，请把 `src/utils/debug.ts` 里的默认返回值改成 `false`
+- **调试面板「幽灵模式」**：状态栏右上角的入口，可改属性、跳年份，
+  并浏览全部事件与全部结局。默认值由**构建模式**决定：
+  - `npm run build`（GitHub Pages 演示站、本地开发）→ **默认开启**
+  - `npm run build:steam`（Electron / Steam 发行物）→ **默认关闭**
+
+  两者都不需要改代码，也不会出现"忘了改回来"的事故。
+  另外 `?debug=0` / `?debug=1` 可临时覆盖（会记住选择）。
 
 ### AI 增强（可选，需自备 API Key）
 
@@ -211,13 +221,27 @@ chongzhen-game/
 
 ## 本地运行
 
-**前置要求：** Node.js 20+（CI 使用 Node 20）
+**前置要求：** Node.js **22.22.2 以上**（CI 使用 Node 24）
+
+> 为什么下限这么高：单元测试依赖链是 jsdom@30 → undici@8.11.2，
+> 后者会执行 
+equire('node:worker_threads').markAsUncloneable，
+> 而该 API 自 **Node 22.19** 才存在。在更早的 Node 上它是 undefined，
+> 于是加载期直接抛 TypeError: webidl.util.markAsUncloneable is not a function，
+> 整步测试失败。
+>
+> 这不是理论风险：2026-10-03 之后连续三次部署就是这样失败的，
+> 导致 GitHub Pages 静默停留在旧版本。
+> 跑 
+pm run check:node 可以在本地立刻发现版本不满足。
 
 ```bash
 npm install          # 安装依赖
+npm run check:node   # 校验 Node 版本是否满足依赖的 engines 要求
 npm run dev          # 启动开发服务器（http://localhost:5173）
 npm run typecheck    # 仅做类型检查
-npm run build        # 类型检查 + 生产构建（输出到 dist/）
+npm run build        # 类型检查 + 生产构建（输出到 dist/，调试面板默认开启）
+npm run build:steam  # 发行构建（同上，但调试面板默认关闭）
 npm run preview      # 本地预览构建产物（http://localhost:4173）
 ```
 
@@ -256,9 +280,12 @@ cd tests
 npm install
 npx playwright install chromium   # 首次需要下载浏览器
 npm test                          # 冒烟：口令门移除 / 启动 / 字体 / 难度 / 开局 / 存档 / 无报错
-npm run test:layout               # 9 档视口：横向溢出 + 主按钮是否落在首屏内
+npm run test:layout               # 9 档视口 × 标题屏+主玩法：横向溢出 / 关键控件是否在视口内
 node font-check.mjs               # 自托管字体的分片按需加载诊断
+node store-assets.mjs             # 生成 Steam 商店页物料到 store-assets/
 ```
+
+> 根目录也有等价脚本：`npm run test:e2e`、`npm run test:layout`。
 
 也可以直接对着线上地址跑：
 
@@ -266,14 +293,41 @@ node font-check.mjs               # 自托管字体的分片按需加载诊断
 cd tests && BASE_URL=https://chenbenkong.github.io/chongzhen-game/ npm test
 ```
 
+### Steam 相关检查
+
+```bash
+npm run check:steam    # 成就映射表与 achievement.ts 逐条对拍 + 不超过 Steam 上限 100
+```
+
+这一项抓到过一个真实缺陷：曾有 5 个结局成就只补进了游戏内、漏了 Steam 侧登记，
+而当时的断言只比对两个手写常量（都是 105），完全看不出来。
+现在改为直接解析源码对拍，三种漂移（缺、多、数量超限）都会失败。
+
+### 生成 Steam 商店页物料
+
+```bash
+npm run build && npm run preview      # 终端 1
+cd tests && node store-assets.mjs     # 终端 2
+```
+
+按 Steamworks 后台的精确尺寸产出胶囊图、页面背景、库页面横幅与 5 张 1920×1080 截图，
+并生成 `store-assets/README-STORE.md` 说明每张图对应后台哪个栏位。
+产物已 gitignore（8.8 MB 二进制，可随时重新生成）。
+
+> ⚠️ 这些是**尺寸合规的占位物料**，用于先把后台配置流程跑通。
+> 正式发行前请美术重做封面与截图 —— 商店页首图直接决定点击率。
+
 ### 桌面版（Electron）
 
 ```bash
-npm run build            # 先构建 Web 产物
 npm run desktop:install  # 安装 desktop/ 的依赖
 npm run desktop:dev      # 开发运行
 npm run desktop:dist     # 产出安装包（Windows NSIS / Linux AppImage / macOS dmg）
 ```
+
+`desktop:dist` 会先自动执行 `npm run build:steam`（`predist` 钩子），
+所以发行物里「幽灵模式」调试面板**默认关闭** —— 它能浏览全部结局（含未解锁剧透），
+商业发行不允许默认暴露。演示站用普通 `npm run build`，面板默认开启。
 
 详见 [desktop/README.md](desktop/README.md)。**注意：安装包尚未在真实机器上产出并验收过。**
 
@@ -310,17 +364,22 @@ AI Key 通过仓库 Secret `VITE_AI_API_KEY` 注入（未设置则线上 AI 功�
 
 - **纯前端单机游戏**：没有服务端与账号系统，进度全部存在浏览器 `localStorage`。
   清理浏览器数据或换设备会丢失存档。桌面版提供了文件存档接口，但**游戏内尚未接入**。
-- **访问口令门已移除**：旧版本的线上口令仅用于给演示加一层遮挡，本身不具备任何安全性。
-  现已删除，并有自动化测试防止回归。
-- **调试面板「幽灵模式」**：默认常驻可见（见上文）。`?debug=0` 隐藏，`?debug=1` 恢复。
-  它会剧透未解锁的结局，因此**若要发行必须改掉默认值**（`src/utils/debug.ts`）。
+- **进入时没有任何拦截**：客户端口令门已删除；首次进入强制弹出的教程
+  也已改为不自动弹出（见 `useGameEngine` 里 `showTutorial` 处的注释）。
+  两者都有自动化测试防止回归。
+- **调试面板「幽灵模式」**：默认值由构建模式决定 —— 演示站开启、发行物关闭，
+  无需改代码。`?debug=0` / `?debug=1` 可临时覆盖。
+- **成就数 100**：正好等于 Steam 单 App 上限。原来是 110 个（且其中 5 个漏了
+  Steam 侧登记），裁剪过程与理由见 `achievement.ts` 里 `RETIRED_ACHIEVEMENT_IDS`。
 - **AI 功能会消耗第三方额度**：谋士对谈与插图生成依赖外部 OpenAI 兼容接口。
   插图生成单次通常需要 30–120 秒（客户端超时设为 120s）。
 - **历史内容以叙事为主**：事件基于明末史实改编，但为了游戏性做了简化与虚构，
   不应作为史料参考。
 - **字体**：标题字体随包自托管；正文使用系统中文衬线栈，不拉取网络字体，
   离线与首次渲染表现都更好。
-- **内容分级**：项目包含成人向内容，见 [docs/STEAM_RELEASE.md](docs/STEAM_RELEASE.md)。
+- **内容分级**：项目包含成人向内容，**且含非自愿性描写**。
+  这是上 Steam 的硬性阻断项，必须先处置 —— 见
+  [docs/STEAM_RELEASE.md](docs/STEAM_RELEASE.md) §3.1。
 
 ## 许可
 

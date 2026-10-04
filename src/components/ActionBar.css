@@ -20,7 +20,7 @@
 }
 
 .turn-info {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: #4a3820;
   letter-spacing: 1px;
 }
@@ -40,7 +40,7 @@
   border: 1px solid #2a2015;
   border-radius: 3px;
   color: #8b7540;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background, color, border-color, transform, box-shadow, opacity, fill, stroke 0.3s ease;
   letter-spacing: 1px;
@@ -123,7 +123,7 @@
   
   .action-btn {
     padding: 8px 14px;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     letter-spacing: 1px;
   }
   
@@ -134,7 +134,7 @@
   }
   
   .turn-info {
-    font-size: 0.72rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -173,7 +173,7 @@
   
   .action-btn {
     padding: 8px 12px;
-    font-size: 0.75rem;
+    font-size: 0.83rem;
     flex: 1;
     justify-content: center;
   }

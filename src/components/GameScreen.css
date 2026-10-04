@@ -1,8 +1,57 @@
+/* ============================================================
+   纵向骨架：让内容吃满视口高度
+   ============================================================
+   改造前（实测 1440×900）：整页内容只排到 y≈717，底部留下 183px 纯黑空档。
+   根因有两处：
+     1. `.game-screen-body` 这个包裹层**完全没有样式**，只是个普通块级盒；
+     2. `.game-main` 是 `align-items: start`，栅格项按内容高度贴顶对齐，不拉伸。
+   于是中间的 `.main-content` 只有事件本身那么高（≈518px），撑不满剩余空间。
+
+   改法：把这条链做成 flex 列，各层依次 `flex: 1`，
+   事件面板拿到所有剩余高度并在内部滚动。这样既消掉了空档，
+   也让放大后的正文有地方放（字号提升后事件内容更高，更需要这块空间）。
+   ============================================================ */
 .game-screen {
   padding: 4px 20px 20px;
   /* 100vh 在移动端动态工具栏下高于可视区域，底部操作栏会被推到屏幕外 */
   min-height: 100vh;
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ------------------------------------------------------------
+   宽屏三栏布局：把可视高度固定下来，让内部滚动真正生效
+   ------------------------------------------------------------
+   只写 `min-height: 100dvh` 是不够的：那样 flex 容器的高度仍然由内容决定，
+   子项的 `flex: 1` 只是在一个"已经被内容撑大"的高度里分份额，起不到压缩作用。
+   实测 1280×800（Steam Deck 分辨率）时内容总高约 992px > 800px，
+   结果底部操作栏被顶出视口 224px —— 玩家想点「进 下 月」还得先滚动。
+
+   这里改用**确定高度** `height: 100dvh`：容器高度锁定为视口，
+   里面的状态栏 / 剧情条 / 事件区 / 操作栏按 flex 分配，
+   放不下的内容（侧栏面板、事件正文）在各自内部滚动。
+
+   两个前提：
+   · 只在宽屏（>1024px）生效。窄屏是单列堆叠布局，侧栏排在事件面板之后，
+     整页滚动才是对的，锁死高度会把下半部分直接截掉。
+   · 结局界面排除在外。GameOverScreen 是一张长页面，需要整页滚动。
+     用 :not(.game-screen--ended) 精确排除。
+------------------------------------------------------------ */
+@media (min-width: 1025px) {
+  .game-screen:not(.game-screen--ended) {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+}
+
+.game-screen-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  /* 允许内部滚动容器收缩，避免内容把整页顶高（默认 min-height:auto 会阻止收缩） */
+  min-height: 0;
 }
 
 .game-main {
@@ -10,7 +59,32 @@
   grid-template-columns: 220px 1fr 220px;
   gap: 16px;
   margin-bottom: 16px;
-  align-items: start;
+  /* 由 start 改为 stretch：中间列吃满剩余高度，两侧栏跟随，
+     不再在页面底部留出空白带 */
+  align-items: stretch;
+  flex: 1;
+  /* min-height:0 是关键：不写的话 flex/grid 项目默认 min-height:auto，
+     会被自身内容撑开。侧栏两块面板加起来约 880px，一旦允许撑开，
+     这一行就会高于可用高度，把底部操作栏顶出视口。 */
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* 两侧栏：高度受 .game-main 约束，内容超出时各自内部滚动。
+   （改造前它们是自然高度的，所以矮屏上会把整页顶得很长） */
+.sidebar,
+.right-sidebar {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* 中间列：把高度透传给事件面板 */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
 }
 
 /* 平板 */
@@ -27,15 +101,30 @@
 @media (max-width: 1024px) {
   .game-main {
     grid-template-columns: 1fr;
+    /* 单列堆叠时不再让某一列"吃满剩余高度"：
+       侧栏会被挤到事件面板后面并被压扁。恢复自然流，整页正常滚动。 */
+    align-items: start;
+    flex: none;
+    min-height: auto;
+    overflow: visible;
   }
-  
+
+  .main-content {
+    order: 1;
+    display: block;
+  }
+
   .sidebar,
   .right-sidebar {
     order: 2;
+    /* 堆叠布局下恢复自然高度，由整页滚动承载 */
+    overflow-y: visible;
+    min-height: auto;
   }
-  
-  .main-content {
-    order: 1;
+
+  .event-display {
+    flex: none;
+    overflow-y: visible;
   }
 }
 
@@ -101,7 +190,7 @@
 }
 
 .history-panel li {
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   color: rgba(245,230,200,0.55);
   padding: 5px 0;
   border-bottom: 1px solid rgba(197,165,90,0.06);
@@ -352,7 +441,7 @@
   margin-bottom: 4px;
 }
 .identity-desc {
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   color: #6b5a3a;
 }
 
@@ -401,7 +490,7 @@
 }
 .merit-next {
   margin-top: 8px;
-  font-size: 0.75rem;
+  font-size: 0.83rem;
   color: #5a4830;
 }
 

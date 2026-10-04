@@ -5,6 +5,24 @@ import path from 'node:path'
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
 
+/**
+ * 「幽灵模式」调试面板的构建期默认值。
+ *
+ * 该面板能改属性、跳年份，并直接浏览**全部事件与全部结局**（含未解锁剧透），
+ * 因此商业发行版必须默认关闭 —— 这是 Steam 审核会看的地方。
+ *
+ * 判定规则（`--mode steam` 或环境变量 CZ_DEBUG_PANEL_DEFAULT=0 时关闭）：
+ *   - `npm run build`        → true：GitHub Pages 演示站与本地预览保留这个工具
+ *   - `npm run build:steam`  → false：发行物默认关闭
+ *
+ * 这样同一份源码在演示站里默认打开、在发行物里默认关闭，两边都不需要改代码，
+ * 也不会出现"忘了改回来"的事故。玩家仍可用 ?debug=1 / ?debug=0 临时覆盖。
+ */
+function resolveDebugPanelDefault(mode) {
+  if (process.env.CZ_DEBUG_PANEL_DEFAULT === '0') return false
+  return mode !== 'steam'
+}
+
 // 说明：
 // - base 固定为相对路径 './'：同一份产物要同时跑在
 //     GitHub Pages 子路径（/chongzhen-game/）、本地 preview、以及 Electron 的 file:// 下。
@@ -13,10 +31,11 @@ const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 
 // - 已移除旧版 file-tree-api 开发插件：它会在 dev server 上以 CORS:* 暴露
 //   /api/file-tree 与 /api/file（可读取项目根下任意文件），属于面向生产交付的隐患，
 //   且其配套页面 public/file-tree.html 已清理。
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
   define: {
-    __APP_VERSION__: JSON.stringify(pkg.version)
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __DEBUG_PANEL_DEFAULT__: JSON.stringify(resolveDebugPanelDefault(mode))
   },
   plugins: [
     react({
@@ -137,4 +156,4 @@ export default defineConfig({
       '@types': path.resolve(__dirname, './src/types')
     }
   }
-})
+}))
