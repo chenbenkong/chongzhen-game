@@ -21,6 +21,7 @@
     "test:crash": "npm --prefix tests run test:crash",
     "test:fuzz": "npm --prefix tests run test:fuzz",
     "test:mem": "npm --prefix tests run test:mem",
+    "test:deadend": "npm --prefix tests run test:deadend",
     "check:node": "node scripts/check-node-engine.cjs",
     "check:steam": "node desktop/smoke-test.cjs",
     "assets:icons": "python scripts/generate-icons.py",

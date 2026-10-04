@@ -322,6 +322,13 @@ function GameScreen(props: GameScreenProps) {
           onReturnToMenu={handleReturnToMenu}
           turn={gameState.turn}
           canProceed={!currentEvent || isProcessing}
+          blockedReason={
+            currentEvent
+              ? pendingEvents.length > 0
+                ? `本月尚有 ${pendingEvents.length} 个事件待处理 —— 请在事件面板中逐个处理，点「继 续」推进`
+                : '请先处理当前事件，点「继 续」推进'
+              : undefined
+          }
         />
 
         <ResignConfirmDialog

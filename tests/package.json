@@ -11,7 +11,8 @@
     "test:crash": "node crash-hunt.mjs",
     "test:fuzz": "node save-fuzz.mjs",
     "test:mem": "node mem-check.mjs",
-    "assets:store": "node store-assets.mjs"
+    "assets:store": "node store-assets.mjs",
+    "test:deadend": "node diag-deadend.mjs"
   },
   "devDependencies": {
     "playwright": "^1.49.0"

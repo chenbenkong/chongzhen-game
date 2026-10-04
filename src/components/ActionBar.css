@@ -29,6 +29,30 @@
   flex: 1;
   display: flex;
   justify-content: center;
+  /* 按钮 + 禁用说明并排；说明可能在窄屏换行，故允许纵向排列 */
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* 「进 下 月」被禁用时的常驻说明。
+   这个按钮只在没有待处理事件时才可用，而几乎每个月都会生成事件 ——
+   也就是说它在正常游玩中长期是灰的。没有这句说明，玩家只会看到一个
+   "坏了的"主按钮（曾被当成 bug 反馈："下月的按钮怎么无法点击了"）。 */
+.action-hint {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: rgba(197, 165, 90, 0.5);
+  letter-spacing: 0.3px;
+  max-width: 46ch;
+  /* 不用 aria-live：这是常驻静态说明，不是状态变化播报 */
+}
+
+@media (max-width: 720px) {
+  .action-hint {
+    text-align: center;
+    max-width: 100%;
+  }
 }
 
 .action-btn {
